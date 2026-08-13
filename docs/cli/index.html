@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Database CLI reference · SQL Terminal</title>
+<meta name="description" content="psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb and clickhouse-client — connection flags, meta-commands and the flags that actually matter.">
+<meta name="keywords" content="psql mysql sqlite3 sqlcmd sqlplus bq snowsql duckdb clickhouse-client cli connection string meta command backslash dot command">
+<link rel="canonical" href="https://sql.manual.dev/cli/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Database CLI reference · SQL Terminal">
+<meta property="og:description" content="psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb and clickhouse-client — connection flags, meta-commands and the flags that actually matter.">
+<meta property="og:url" content="https://sql.manual.dev/cli/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Database CLI reference · SQL Terminal">
+<meta name="twitter:description" content="psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb and clickhouse-client — connection flags, meta-commands and the flags that actually matter.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Database CLI reference · SQL Terminal","headline":"Database CLI reference","description":"psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb and clickhouse-client — connection flags, meta-commands and the flags that actually matter.","url":"https://sql.manual.dev/cli/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link is-active" aria-current="page" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/cli/">cli</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">CLI</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">intermediate</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">Vendor-specific</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Database CLI reference</h1><p class="lede">psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb and clickhouse-client — connection flags, meta-commands and the flags that actually matter.</p><p>Every engine ships a terminal client, and each has its own dialect of flags and meta-commands. This page covers the ones you will use daily.</p>
+<h2 id="psql-postgresql" class="hd hd--2"><a class="hd__anchor" href="#psql-postgresql" aria-label="Link to psql — PostgreSQL">#</a>psql — PostgreSQL</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Connecting</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-320">COPY</button></span></figcaption><pre id="code-320" class="code__pre"><code class="lang-bash">psql<span class="o"> -h</span> localhost<span class="o"> -p</span> 5432<span class="o"> -U</span> postgres<span class="o"> -d</span> app
+psql <span class="s">&quot;postgresql://user:pass@host:5432/app?sslmode=require&quot;</span>
+psql <span class="s">&quot;host=localhost dbname=app user=postgres sslmode=require&quot;</span>
+
+<span class="p">#</span> environment variables, so credentials stay out of shell history
+export PGHOST=localhost PGUSER=postgres PGDATABASE=app PGPASSWORD=…
+psql</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Flag</th><th scope="col">Meaning</th></tr></thead><tbody><tr><th scope="row"><code>-h host</code></th><td>Server host, or a socket directory</td></tr><tr><th scope="row"><code>-p port</code></th><td>Port (default 5432)</td></tr><tr><th scope="row"><code>-U user</code></th><td>Role to connect as</td></tr><tr><th scope="row"><code>-d dbname</code></th><td>Database name</td></tr><tr><th scope="row"><code>-c &quot;SQL&quot;</code></th><td>Run one statement and exit</td></tr><tr><th scope="row"><code>-f file.sql</code></th><td>Run a script file</td></tr><tr><th scope="row"><code>-A -t</code></th><td>Unaligned output, no headers — for piping to other tools</td></tr><tr><th scope="row"><code>-F &#39;,&#39;</code></th><td>Field separator (with <code>-A</code>)</td></tr><tr><th scope="row"><code>-v ON_ERROR_STOP=1</code></th><td><strong>Abort a script on the first error</strong> — essential in migrations</td></tr><tr><th scope="row"><code>-1</code> / <code>--single-transaction</code></th><td>Wrap the whole script in one transaction</td></tr><tr><th scope="row"><code>-E</code></th><td>Echo the SQL that meta-commands run — a great way to learn the catalog</td></tr><tr><th scope="row"><code>-X</code></th><td>Ignore <code>~/.psqlrc</code> (use in scripts for reproducibility)</td></tr></tbody></table></div>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Meta-commands</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-321">COPY</button></span></figcaption><pre id="code-321" class="code__pre"><code class="lang-text">\l                 list databases              \dt              list tables
+\c dbname          connect to another db       \d table         describe a table
+\dn                list schemas                \d+ table        describe with sizes and comments
+\du                list roles                  \di              list indexes
+\dv                list views                  \df              list functions
+\dp                show privileges             \sf func         show a function&#39;s source
+\x                 toggle expanded output      \timing          toggle query timing
+\e                 edit the query in $EDITOR   \watch 5         re-run every 5 seconds
+\i file.sql        run a script                \copy t FROM &#39;f.csv&#39; CSV HEADER
+\o out.txt         send output to a file       \! command       run a shell command
+\set VAR value     set a variable              \q               quit
+\?                 meta-command help           \h SELECT        SQL syntax help</code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A ~/.psqlrc worth having</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-322">COPY</button></span></figcaption><pre id="code-322" class="code__pre"><code class="lang-bash">\set QUIET 1
+\timing on
+\x auto                                    -- expanded output only when rows are wide
+\set ON_ERROR_ROLLBACK interactive
+\set HISTFILE ~/.psql_history-:DBNAME
+\set PROMPT1 <span class="s">&#39;%[%033[1;32m%]%n@%M:%&gt;/%/%[%033[0m%]%R%# &#39;</span>
+\pset null <span class="s">&#39;¤&#39;</span>                             -- make NULLs visible
+\set QUIET 0</code></pre></figure>
+<p>::: tip Two flags that prevent most migration accidents <code>-v ON_ERROR_STOP=1</code> makes psql exit non-zero on the first error instead of ploughing on. <code>--single-transaction</code> makes the whole script atomic. Together they turn a half-applied migration into a clean rollback. :::</p>
+<h2 id="mysql-mysql-mariadb" class="hd hd--2"><a class="hd__anchor" href="#mysql-mysql-mariadb" aria-label="Link to mysql — MySQL / MariaDB">#</a>mysql — MySQL / MariaDB</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Connecting</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-323">COPY</button></span></figcaption><pre id="code-323" class="code__pre"><code class="lang-bash">mysql<span class="o"> -h</span> 127.0.0.1<span class="o"> -P</span> 3306<span class="o"> -u</span> root<span class="o"> -p</span> app
+mysql<span class="o"> --defaults-file</span>=~/.my.cnf app        <span class="c"># credentials from a file, not the CLI</span>
+mysql<span class="o"> -e</span> <span class="s">&quot;SELECT COUNT(*) FROM orders&quot;</span> app</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Flag</th><th scope="col">Meaning</th></tr></thead><tbody><tr><th scope="row"><code>-h host -P port</code></th><td>Note the <strong>uppercase</strong> <code>-P</code> for port</td></tr><tr><th scope="row"><code>-u user -p</code></th><td>User; <code>-p</code> prompts (never put the password after it in a shared shell)</td></tr><tr><th scope="row"><code>-e &quot;SQL&quot;</code></th><td>Execute and exit</td></tr><tr><th scope="row"><code>-B</code> / <code>--batch</code></th><td>Tab-separated, unquoted output for piping</td></tr><tr><th scope="row"><code>--table</code></th><td>Force table formatting even when not on a TTY</td></tr><tr><th scope="row"><code>--vertical</code> / <code>\G</code></th><td>One column per line</td></tr><tr><th scope="row"><code>--safe-updates</code></th><td>Refuse UPDATE/DELETE without a key in WHERE</td></tr><tr><th scope="row"><code>--ssl-mode=REQUIRED</code></th><td>Enforce TLS</td></tr></tbody></table></div>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">In-session commands</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-324">COPY</button></span></figcaption><pre id="code-324" class="code__pre"><code class="lang-text">SHOW DATABASES;              USE app;
+SHOW TABLES;                 DESCRIBE orders;   -- or: EXPLAIN orders
+SHOW CREATE TABLE orders\G   SHOW INDEX FROM orders;
+SHOW FULL PROCESSLIST;       SHOW ENGINE INNODB STATUS\G
+SHOW VARIABLES LIKE &#39;%timeout%&#39;;   SHOW STATUS LIKE &#39;Threads%&#39;;
+source script.sql            system ls          -- run a shell command
+\G                           -- end a statement with \G for vertical output</code></pre></figure>
+<p>::: warn 127.0.0.1 and localhost are not the same to the mysql client <code>localhost</code> uses a Unix socket; <code>127.0.0.1</code> uses TCP. They can resolve to different accounts in the <code>mysql.user</code> table, and one may work while the other is refused. :::</p>
+<h2 id="sqlite3-sqlite" class="hd hd--2"><a class="hd__anchor" href="#sqlite3-sqlite" aria-label="Link to sqlite3 — SQLite">#</a>sqlite3 — SQLite</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Opening</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-325">COPY</button></span></figcaption><pre id="code-325" class="code__pre"><code class="lang-bash">sqlite3 app.db                    <span class="c"># opens (and creates if absent)</span>
+sqlite3 :memory:                  <span class="c"># in-memory database</span>
+sqlite3 app.db <span class="s">&quot;SELECT COUNT(*) FROM orders;&quot;</span>
+sqlite3<span class="o"> -csv</span><span class="o"> -header</span> app.db <span class="s">&quot;SELECT * FROM orders&quot;</span> &gt; orders.csv</code></pre></figure>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Dot commands</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-326">COPY</button></span></figcaption><pre id="code-326" class="code__pre"><code class="lang-text">.tables                list tables            .schema orders     show DDL
+.databases             attached databases     .indexes orders    list indexes
+.mode box|csv|json|table|markdown             .headers on
+.import data.csv t     import a CSV           .once out.txt      next result to a file
+.output file.txt       redirect output        .read script.sql   run a script
+.dump                  SQL dump of everything .backup backup.db  safe online backup
+.timer on              show query timings     .expert            index suggestions
+.eqp on                auto EXPLAIN QUERY PLAN  .quit</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PRAGMAs that matter</span><span class="code__engine" data-engine="sqlite">SQLite</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-327">COPY</button></span></figcaption><pre id="code-327" class="code__pre"><code class="lang-sql"><span class="k">PRAGMA</span> foreign_keys <span class="o">=</span> <span class="k">ON</span>;        <span class="c">-- OFF by default, and per connection!</span>
+<span class="k">PRAGMA</span> journal_mode <span class="o">=</span> WAL;       <span class="c">-- concurrent readers with one writer</span>
+<span class="k">PRAGMA</span> synchronous <span class="o">=</span> NORMAL;     <span class="c">-- safe with WAL, much faster than FULL</span>
+<span class="k">PRAGMA</span> busy_timeout <span class="o">=</span> <span class="n">5000</span>;      <span class="c">-- wait instead of failing with SQLITE_BUSY</span>
+<span class="k">PRAGMA</span> integrity_check;
+<span class="k">PRAGMA</span> <span class="k">optimize</span>;                 <span class="c">-- run before closing a long-lived connection</span></code></pre></figure>
+<h2 id="sqlcmd-sql-server" class="hd hd--2"><a class="hd__anchor" href="#sqlcmd-sql-server" aria-label="Link to sqlcmd — SQL Server">#</a>sqlcmd — SQL Server</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Connecting</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-328">COPY</button></span></figcaption><pre id="code-328" class="code__pre"><code class="lang-bash">sqlcmd<span class="o"> -S</span> localhost,1433<span class="o"> -U</span> sa<span class="o"> -P</span> <span class="s">&#39;password&#39;</span><span class="o"> -d</span> app<span class="o"> -C</span>   <span class="c"># -C trusts the server cert</span>
+sqlcmd<span class="o"> -S</span> localhost<span class="o"> -E</span><span class="o"> -d</span> app                            <span class="c"># -E = Windows integrated auth</span>
+sqlcmd<span class="o"> -S</span> localhost<span class="o"> -U</span> sa<span class="o"> -P</span> <span class="s">&#39;…&#39;</span><span class="o"> -Q</span> <span class="s">&quot;SELECT @@VERSION&quot;</span>   <span class="c"># -Q runs and exits, -q stays</span>
+sqlcmd<span class="o"> -S</span> localhost<span class="o"> -U</span> sa<span class="o"> -P</span> <span class="s">&#39;…&#39;</span><span class="o"> -i</span> script.sql<span class="o"> -b</span>        <span class="c"># -b = exit code on error</span></code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Flag</th><th scope="col">Meaning</th></tr></thead><tbody><tr><th scope="row"><code>-S server[,port]</code></th><td>Comma before the port, not a colon</td></tr><tr><th scope="row"><code>-d db</code></th><td>Database</td></tr><tr><th scope="row"><code>-E</code></th><td>Trusted (integrated) connection</td></tr><tr><th scope="row"><code>-Q &quot;SQL&quot;</code> / <code>-q &quot;SQL&quot;</code></th><td>Execute and exit / execute and stay</td></tr><tr><th scope="row"><code>-i in.sql -o out.txt</code></th><td>Input and output files</td></tr><tr><th scope="row"><code>-b</code></th><td>Return a non-zero exit code on error</td></tr><tr><th scope="row"><code>-s &quot;,&quot; -W -h -1</code></th><td>CSV-ish output: separator, trim, no header rule</td></tr></tbody></table></div>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">In-session</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-329">COPY</button></span></figcaption><pre id="code-329" class="code__pre"><code class="lang-text">GO                     -- batch separator; sqlcmd sends everything above it
+:setvar name value     -- define a variable
+:r other.sql           -- include a file
+EXEC sp_help &#39;orders&#39;; EXEC sp_helpindex &#39;orders&#39;; EXEC sp_who2;
+SET STATISTICS IO, TIME ON;
+:exit</code></pre></figure>
+<h2 id="sqlplus-oracle" class="hd hd--2"><a class="hd__anchor" href="#sqlplus-oracle" aria-label="Link to sqlplus — Oracle">#</a>sqlplus — Oracle</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Connecting</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-330">COPY</button></span></figcaption><pre id="code-330" class="code__pre"><code class="lang-bash">sqlplus user/password@//host:1521/servicename
+sqlplus / as sysdba
+sqlplus<span class="o"> -S</span> user/pass@db @script.sql        <span class="c"># -S silent, @ runs a script</span></code></pre></figure>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Formatting and commands</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-331">COPY</button></span></figcaption><pre id="code-331" class="code__pre"><code class="lang-text">SET PAGESIZE 100 LINESIZE 200 FEEDBACK OFF HEADING ON
+SET SERVEROUTPUT ON             -- so DBMS_OUTPUT.PUT_LINE appears
+COLUMN name FORMAT A30
+DESC orders                     -- describe
+SHOW USER / SHOW PARAMETER      -- session info
+SPOOL out.txt … SPOOL OFF       -- capture output
+/                               -- re-run the last statement (and end PL/SQL blocks)
+EXIT</code></pre></figure>
+<p>::: warn A trailing slash is not decoration in SQL*Plus A semicolon ends a SQL statement; a lone <code>/</code> on its own line executes the buffer and is <strong>required</strong> to terminate a PL/SQL block. Scripts fail silently without it. :::</p>
+<h2 id="cloud-and-analytical-clients" class="hd hd--2"><a class="hd__anchor" href="#cloud-and-analytical-clients" aria-label="Link to Cloud and analytical clients">#</a>Cloud and analytical clients</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">bq — BigQuery</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-332">COPY</button></span></figcaption><pre id="code-332" class="code__pre"><code class="lang-bash">bq query<span class="o"> --use_legacy_sql</span>=false <span class="s">&#39;SELECT COUNT(*) FROM \`project.dataset.table\`&#39;</span>
+bq query<span class="o"> --dry_run</span><span class="o"> --use_legacy_sql</span>=false <span class="s">&#39;SELECT …&#39;</span>   <span class="c"># bytes that WOULD be scanned — check cost first</span>
+bq ls project:dataset
+bq show<span class="o"> --schema</span><span class="o"> --format</span>=prettyjson project:dataset.table
+bq load<span class="o"> --source_format</span>=CSV<span class="o"> --autodetect</span> dataset.table gs://bucket/file.csv
+bq extract dataset.table gs://bucket/export-*.csv</code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">snowsql — Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-333">COPY</button></span></figcaption><pre id="code-333" class="code__pre"><code class="lang-bash">snowsql<span class="o"> -a</span> account.region<span class="o"> -u</span> user<span class="o"> -d</span> db<span class="o"> -s</span> schema<span class="o"> -w</span> warehouse<span class="o"> -r</span> role
+snowsql<span class="o"> -q</span> <span class="s">&quot;SELECT CURRENT_VERSION()&quot;</span>
+snowsql<span class="o"> -f</span> script.sql<span class="o"> -o</span> output_format=csv
+<span class="p">#</span> in session: !set, !source, !exit, !help</code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">duckdb</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-334">COPY</button></span></figcaption><pre id="code-334" class="code__pre"><code class="lang-bash">duckdb                                     <span class="c"># in-memory</span>
+duckdb analytics.duckdb                    <span class="c"># persistent file</span>
+duckdb<span class="o"> -c</span> <span class="s">&quot;SELECT * FROM read_csv_auto(&#39;data.csv&#39;) LIMIT 5&quot;</span>
+duckdb<span class="o"> -c</span> <span class="s">&quot;SELECT * FROM &#39;events/*.parquet&#39; WHERE ts &gt; &#39;2026-01-01&#39;&quot;</span>
+duckdb<span class="o"> -c</span> <span class="s">&quot;ATTACH &#39;postgres://user@host/db&#39; AS pg (TYPE postgres); SELECT * FROM pg.orders LIMIT 5&quot;</span>
+<span class="p">#</span> dot commands mirror sqlite3: .tables .schema .mode .timer</code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">clickhouse-client</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-335">COPY</button></span></figcaption><pre id="code-335" class="code__pre"><code class="lang-bash">clickhouse-client<span class="o"> --host</span> localhost<span class="o"> --user</span> default<span class="o"> --password</span>
+clickhouse-client<span class="o"> -q</span> <span class="s">&quot;SELECT count() FROM events&quot;</span><span class="o"> --format</span> PrettyCompact
+clickhouse-client<span class="o"> -q</span> <span class="s">&quot;SELECT * FROM events LIMIT 10&quot;</span><span class="o"> --format</span> JSONEachRow
+clickhouse-local<span class="o"> -q</span> <span class="s">&quot;SELECT * FROM file(&#39;data.csv&#39;, CSV)&quot;</span>   <span class="c"># no server needed</span></code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">psql against Redshift</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-336">COPY</button></span></figcaption><pre id="code-336" class="code__pre"><code class="lang-bash">psql<span class="o"> -h</span> cluster.abc123.eu-west-1.redshift.amazonaws.com<span class="o"> -p</span> 5439<span class="o"> -U</span> admin<span class="o"> -d</span> dev
+aws redshift-data execute-statement<span class="o"> --cluster-identifier</span> c<span class="o"> --database</span> dev<span class="o"> --sql</span> <span class="s">&quot;SELECT 1&quot;</span></code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Db2 and CockroachDB</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-337">COPY</button></span></figcaption><pre id="code-337" class="code__pre"><code class="lang-bash">db2 connect to sample user db2inst1 using password
+db2 <span class="s">&quot;SELECT * FROM syscat.tables FETCH FIRST 5 ROWS ONLY&quot;</span>
+cockroach sql<span class="o"> --insecure</span><span class="o"> --host</span>=localhost:26257</code></pre></figure>
+<h2 id="cross-engine-habits-worth-forming" class="hd hd--2"><a class="hd__anchor" href="#cross-engine-habits-worth-forming" aria-label="Link to Cross-engine habits worth forming">#</a>Cross-engine habits worth forming</h2>
+<p>::: danger Never put a password in the command line It lands in shell history, in <code>ps</code> output visible to every user on the machine, and in process accounting logs. Use <code>~/.pgpass</code>, <code>~/.my.cnf</code> (mode 600), environment variables, a secrets manager, or an interactive prompt. :::</p>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">~/.pgpass — mode 0600, one line per target</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-338">COPY</button></span></figcaption><pre id="code-338" class="code__pre"><code class="lang-bash"><span class="p">#</span> hostname:port:database:username:password
+localhost:5432:app:postgres:secret
+*:5432:*:readonly:othersecret</code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">~/.my.cnf</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-339">COPY</button></span></figcaption><pre id="code-339" class="code__pre"><code class="lang-bash">[client]
+user = app
+password = secret
+host = 127.0.0.1</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Task</th><th scope="col">psql</th><th scope="col">mysql</th><th scope="col">sqlite3</th><th scope="col">sqlcmd</th></tr></thead><tbody><tr><th scope="row">List tables</th><td><code>\dt</code></td><td><code>SHOW TABLES;</code></td><td><code>.tables</code></td><td><code>SELECT name FROM sys.tables</code></td></tr><tr><th scope="row">Describe</th><td><code>\d t</code></td><td><code>DESCRIBE t;</code></td><td><code>.schema t</code></td><td><code>EXEC sp_help &#39;t&#39;</code></td></tr><tr><th scope="row">Run a file</th><td><code>\i f.sql</code></td><td><code>source f.sql</code></td><td><code>.read f.sql</code></td><td><code>:r f.sql</code></td></tr><tr><th scope="row">CSV out</th><td><code>\copy … TO &#39;f&#39; CSV</code></td><td><code>-B</code> + redirect</td><td><code>.mode csv</code></td><td><code>-s&quot;,&quot; -W</code></td></tr><tr><th scope="row">Timing</th><td><code>\timing</code></td><td>on by default</td><td><code>.timer on</code></td><td><code>SET STATISTICS TIME ON</code></td></tr><tr><th scope="row">Quit</th><td><code>\q</code></td><td><code>\q</code> / <code>exit</code></td><td><code>.quit</code></td><td><code>:exit</code></td></tr></tbody></table></div>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/admin/"><span class="rel__t">Administration</span><span class="rel__a">→</span></a><a class="rel__i" href="/cheatsheets/"><span class="rel__t">Cheat sheets</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">Database explorer</span><span class="rel__a">→</span></a><a class="rel__i" href="/commands/"><span class="rel__t">Commands</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#psql-postgresql">psql — PostgreSQL</a></li><li class="toc__i toc__i--2"><a href="#mysql-mysql-mariadb">mysql — MySQL / MariaDB</a></li><li class="toc__i toc__i--2"><a href="#sqlite3-sqlite">sqlite3 — SQLite</a></li><li class="toc__i toc__i--2"><a href="#sqlcmd-sql-server">sqlcmd — SQL Server</a></li><li class="toc__i toc__i--2"><a href="#sqlplus-oracle">sqlplus — Oracle</a></li><li class="toc__i toc__i--2"><a href="#cloud-and-analytical-clients">Cloud and analytical clients</a></li><li class="toc__i toc__i--2"><a href="#cross-engine-habits-worth-forming">Cross-engine habits worth forming</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Snowflake · SQL Terminal</title>
+<meta name="description" content="Storage separated from compute. Virtual warehouses, zero-copy cloning, time travel — and a cost model you must actively manage.">
+<meta name="keywords" content="Snowflake sql reference syntax types indexes transactions performance cli">
+<link rel="canonical" href="https://sql.manual.dev/databases/snowflake/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Snowflake · SQL Terminal">
+<meta property="og:description" content="Storage separated from compute. Virtual warehouses, zero-copy cloning, time travel — and a cost model you must actively manage.">
+<meta property="og:url" content="https://sql.manual.dev/databases/snowflake/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Snowflake · SQL Terminal">
+<meta name="twitter:description" content="Storage separated from compute. Virtual warehouses, zero-copy cloning, time travel — and a cost model you must actively manage.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Snowflake · SQL Terminal","headline":"Snowflake","description":"Storage separated from compute. Virtual warehouses, zero-copy cloning, time travel — and a cost model you must actively manage.","url":"https://sql.manual.dev/databases/snowflake/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link is-active" aria-current="page" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Engines</p><ul class="sb__list"><li><a class="sb__link" href="/databases/postgresql/">PostgreSQL</a></li><li><a class="sb__link" href="/databases/mysql/">MySQL</a></li><li><a class="sb__link" href="/databases/sqlite/">SQLite</a></li><li><a class="sb__link" href="/databases/sqlserver/">SQL Server</a></li><li><a class="sb__link" href="/databases/oracle/">Oracle Database</a></li><li><a class="sb__link" href="/databases/redshift/">Amazon Redshift</a></li><li><a class="sb__link is-active" aria-current="page" href="/databases/snowflake/">Snowflake</a></li><li><a class="sb__link" href="/databases/bigquery/">Google BigQuery</a></li><li><a class="sb__link" href="/databases/duckdb/">DuckDB</a></li><li><a class="sb__link" href="/databases/mariadb/">MariaDB</a></li><li><a class="sb__link" href="/databases/clickhouse/">ClickHouse</a></li><li><a class="sb__link" href="/databases/trino/">Trino / Presto</a></li><li><a class="sb__link" href="/databases/databricks/">Databricks SQL</a></li><li><a class="sb__link" href="/databases/cockroachdb/">CockroachDB</a></li><li><a class="sb__link" href="/databases/db2/">IBM Db2</a></li><li><a class="sb__link" href="/databases/synapse/">Azure Synapse</a></li></ul></div><div class="sb__group"><p class="sb__title">Cross-engine</p><ul class="sb__list"><li><a class="sb__link" href="/dialects/">Dialect overview</a></li><li><a class="sb__link" href="/comparison/">Dialect diff</a></li><li><a class="sb__link" href="/datatypes/">Data types</a></li><li><a class="sb__link" href="/cli/">CLI reference</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/databases/">databases</a><span class="crumb__sep">/</span><a href="/databases/snowflake/">snowflake</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">ENGINE</span><span class="pmeta__v">Snowflake</span></div><div class="pmeta__i"><span class="pmeta__k">VERSION</span><span class="pmeta__v">Continuous</span></div><div class="pmeta__i"><span class="pmeta__k">LICENSE</span><span class="pmeta__v">Managed service</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Snowflake</h1><p class="lede">Storage separated from compute. Virtual warehouses, zero-copy cloning, time travel — and a cost model you must actively manage.</p><div class="tags"><span class="tag">Cloud warehouse · Multi-cluster</span><span class="tag">Managed service</span><span class="tag">CLI: snowsql</span></div><h2 id="overview" class="hd hd--2"><a class="hd__anchor" href="#overview" aria-label="Link to Overview">#</a>Overview</h2>
+<p>Snowflake separates storage (columnar micro-partitions in cloud object storage) from compute (virtual warehouses you size and suspend independently). Multiple warehouses read the same data with no contention, which is what makes concurrent workloads straightforward.</p>
+<dl class="kv"><div class="kv__row"><dt>LAUNCHED</dt><dd>2014</dd></div><div class="kv__row"><dt>DEPLOYMENT</dt><dd>Managed SaaS on AWS, Azure and GCP</dd></div><div class="kv__row"><dt>COMPUTE</dt><dd>Virtual warehouses, XS → 6XL, resized instantly</dd></div><div class="kv__row"><dt>STORAGE</dt><dd>Immutable micro-partitions (~16 MB compressed) with automatic metadata</dd></div><div class="kv__row"><dt>BEST FOR</dt><dd>Cloud data warehousing, data sharing, semi-structured data at scale</dd></div></dl>
+<h2 id="compute-cost" class="hd hd--2"><a class="hd__anchor" href="#compute-cost" aria-label="Link to Compute &amp; cost">#</a>Compute &amp; cost</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Warehouse management is cost management</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-431">COPY</button></span></figcaption><pre id="code-431" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> WAREHOUSE analytics <span class="k">WITH</span>
+  WAREHOUSE_SIZE <span class="o">=</span> <span class="s">&#39;MEDIUM&#39;</span>
+  AUTO_SUSPEND <span class="o">=</span> <span class="n">60</span>            <span class="c">-- seconds of idle before suspending — the biggest single saving</span>
+  AUTO_RESUME <span class="o">=</span> <span class="k">TRUE</span>
+  MIN_CLUSTER_COUNT <span class="o">=</span> <span class="n">1</span> MAX_CLUSTER_COUNT <span class="o">=</span> <span class="n">4</span>;   <span class="c">-- multi-cluster serves concurrency, not speed</span>
+
+<span class="k">ALTER</span> WAREHOUSE analytics <span class="k">SET</span> WAREHOUSE_SIZE <span class="o">=</span> <span class="s">&#39;LARGE&#39;</span>;   <span class="c">-- instant, no data movement</span></code></pre></figure>
+<p>::: tip Sizing up vs scaling out A <strong>larger</strong> warehouse makes a single query faster (more nodes on one job). <strong>More clusters</strong> let more queries run at once. Choosing the wrong axis is the most common Snowflake cost mistake. :::</p>
+<h2 id="semi-structured-data" class="hd hd--2"><a class="hd__anchor" href="#semi-structured-data" aria-label="Link to Semi-structured data">#</a>Semi-structured data</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">VARIANT is a first-class type</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-432">COPY</button></span></figcaption><pre id="code-432" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">events</span> (raw <span class="t">VARIANT</span>);
+<span class="k">COPY</span> <span class="k">INTO</span> events <span class="k">FROM</span> <span class="v">@stage</span> FILE_FORMAT <span class="o">=</span> (<span class="k">TYPE</span> <span class="o">=</span> <span class="t">JSON</span>);
+
+<span class="k">SELECT</span> raw<span class="v">:user</span>.<span class="k">name</span><span class="o">::</span><span class="t">STRING</span>       <span class="k">AS</span> <span class="k">name</span>,
+       raw<span class="v">:items</span>[<span class="n">0</span>].sku<span class="o">::</span><span class="t">STRING</span>    <span class="k">AS</span> first_sku,
+       f.value<span class="v">:qty</span><span class="o">::</span><span class="t">NUMBER</span>         <span class="k">AS</span> qty
+<span class="k">FROM</span>   events, <span class="k">LATERAL</span> <span class="f">FLATTEN</span>(<span class="k">input</span> <span class="o">=&gt;</span> raw<span class="v">:items</span>) f;</code></pre></figure>
+<h2 id="time-travel-cloning" class="hd hd--2"><a class="hd__anchor" href="#time-travel-cloning" aria-label="Link to Time travel &amp; cloning">#</a>Time travel &amp; cloning</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Two features nothing else matches</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-433">COPY</button></span></figcaption><pre id="code-433" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders <span class="k">AT</span> (<span class="k">OFFSET</span> <span class="o">=&gt;</span> <span class="o">-</span><span class="n">3600</span>);                    <span class="c">-- one hour ago</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders <span class="k">BEFORE</span> (<span class="k">STATEMENT</span> <span class="o">=&gt;</span> <span class="s">&#39;01a2b3c4-…&#39;</span>);      <span class="c">-- before a bad statement</span>
+UNDROP <span class="k">TABLE</span> orders;
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> orders_test CLONE orders;      <span class="c">-- zero-copy: instant, no extra storage</span>
+<span class="k">CREATE</span> <span class="k">DATABASE</span> dev CLONE prod;             <span class="c">-- an entire environment in seconds</span></code></pre></figure>
+<h2 id="pipelines" class="hd hd--2"><a class="hd__anchor" href="#pipelines" aria-label="Link to Pipelines">#</a>Pipelines</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Streams and tasks</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-434">COPY</button></span></figcaption><pre id="code-434" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> STREAM orders_stream <span class="k">ON</span> <span class="k">TABLE</span> orders;          <span class="c">-- change data capture</span>
+<span class="k">CREATE</span> TASK load_summary
+  WAREHOUSE <span class="o">=</span> etl SCHEDULE <span class="o">=</span> <span class="s">&#39;5 MINUTE&#39;</span>
+  <span class="k">WHEN</span> SYSTEM$STREAM_HAS_DATA(<span class="s">&#39;orders_stream&#39;</span>)
+<span class="k">AS</span> <span class="k">MERGE</span> <span class="k">INTO</span> summary <span class="k">USING</span> orders_stream …;
+<span class="k">CREATE</span> PIPE p AUTO_INGEST <span class="o">=</span> <span class="k">TRUE</span> <span class="k">AS</span> <span class="k">COPY</span> <span class="k">INTO</span> t <span class="k">FROM</span> <span class="v">@stage</span>;  <span class="c">-- Snowpipe</span></code></pre></figure>
+<h2 id="performance-governance" class="hd hd--2"><a class="hd__anchor" href="#performance-governance" aria-label="Link to Performance &amp; governance">#</a>Performance &amp; governance</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Where the credits went</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-435">COPY</button></span></figcaption><pre id="code-435" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY <span class="k">ORDER</span> <span class="k">BY</span> total_elapsed_time <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY;
+<span class="k">ALTER</span> <span class="k">TABLE</span> big_table <span class="k">CLUSTER</span> <span class="k">BY</span> (event_date);   <span class="c">-- only worth it on very large tables</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> t <span class="k">ADD</span> <span class="k">SEARCH</span> OPTIMIZATION;           <span class="c">-- point lookups; extra cost</span></code></pre></figure>
+<p>Snowflake enforces strict RBAC — privileges are granted only to roles, and roles are hierarchical.</p>
+<h2 id="best-practices" class="hd hd--2"><a class="hd__anchor" href="#best-practices" aria-label="Link to Best practices">#</a>Best practices</h2>
+<ul class="list"><li>Set <code>AUTO_SUSPEND</code> to 60 seconds on every warehouse.</li><li>Separate warehouses per workload (ETL / BI / ad-hoc) so one cannot starve another.</li><li>Use <code>GRANT … ON FUTURE</code> so new objects inherit access.</li><li>Only <code>NOT NULL</code> is enforced — every other constraint is metadata for the optimizer.</li><li>Clone rather than copy for dev/test environments.</li><li>Query the result cache deliberately: byte-identical SQL on unchanged data is free.</li></ul>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/comparison/"><span class="rel__t">Dialect diff</span><span class="rel__a">→</span></a><a class="rel__i" href="/datatypes/"><span class="rel__t">Data types</span><span class="rel__a">→</span></a><a class="rel__i" href="/cli/"><span class="rel__t">CLI reference</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">All engines</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#overview">Overview</a></li><li class="toc__i toc__i--2"><a href="#compute-cost">Compute &amp; cost</a></li><li class="toc__i toc__i--2"><a href="#semi-structured-data">Semi-structured data</a></li><li class="toc__i toc__i--2"><a href="#time-travel-cloning">Time travel &amp; cloning</a></li><li class="toc__i toc__i--2"><a href="#pipelines">Pipelines</a></li><li class="toc__i toc__i--2"><a href="#performance-governance">Performance &amp; governance</a></li><li class="toc__i toc__i--2"><a href="#best-practices">Best practices</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

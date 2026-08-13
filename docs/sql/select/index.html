@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SELECT · SQL Terminal</title>
+<meta name="description" content="The full SELECT anatomy, clause evaluation order, aliases, expressions, and what SELECT * really costs.">
+<meta name="keywords" content="select from where group by having order by limit alias distinct expression projection star">
+<link rel="canonical" href="https://sql.manual.dev/sql/select/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="SELECT · SQL Terminal">
+<meta property="og:description" content="The full SELECT anatomy, clause evaluation order, aliases, expressions, and what SELECT * really costs.">
+<meta property="og:url" content="https://sql.manual.dev/sql/select/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SELECT · SQL Terminal">
+<meta name="twitter:description" content="The full SELECT anatomy, clause evaluation order, aliases, expressions, and what SELECT * really costs.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"SELECT · SQL Terminal","headline":"SELECT","description":"The full SELECT anatomy, clause evaluation order, aliases, expressions, and what SELECT * really costs.","url":"https://sql.manual.dev/sql/select/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link is-active" aria-current="page" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/select/">select</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">DML</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>SELECT</h1><p class="lede">The full SELECT anatomy, clause evaluation order, aliases, expressions, and what SELECT * really costs.</p><p><code>SELECT</code> retrieves rows. Every other query construct — joins, subqueries, CTEs, windows, set operations — hangs off it.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Full clause order (as written)</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-84">COPY</button></span></figcaption><pre id="code-84" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span>   <span class="id">[DISTINCT]</span> select_list
+<span class="k">FROM</span>     table_reference <span class="id">[join …]</span>
+<span class="k">WHERE</span>    row_predicate
+<span class="k">GROUP</span> <span class="k">BY</span> grouping_columns
+<span class="k">HAVING</span>   group_predicate
+<span class="k">WINDOW</span>   window_name <span class="k">AS</span> (…)
+<span class="k">ORDER</span> <span class="k">BY</span> sort_expressions
+<span class="k">LIMIT</span>    n <span class="k">OFFSET</span> m</code></pre></figure>
+<p>Remember that the <em>evaluation</em> order differs: <code>FROM → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT</code>. See <a href="/sql/what-is-sql/#logical-evaluation-order">what is SQL</a>.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A realistic query</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=SELECT%20%20%20c.country%2C%0A%20%20%20%20%20%20%20%20%20COUNT(*)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20AS%20orders%2C%0A%20%20%20%20%20%20%20%20%20SUM(o.total)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20AS%20revenue%2C%0A%20%20%20%20%20%20%20%20%20SUM(o.total)%20%2F%20NULLIF(COUNT(DISTINCT%20c.id)%2C%200)%20AS%20revenue_per_customer%0AFROM%20%20%20%20%20orders%20o%0AJOIN%20%20%20%20%20customers%20c%20ON%20c.id%20%3D%20o.customer_id%0AWHERE%20%20%20%20o.status%20%3D%20'paid'%0A%20%20AND%20%20%20%20o.created_at%20%3E%3D%20DATE%20'2026-01-01'%0AGROUP%20BY%20c.country%0AHAVING%20%20%20SUM(o.total)%20%3E%2010000%0AORDER%20BY%20revenue%20DESC%0ALIMIT%20%20%20%2020%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-85">COPY</button></span></figcaption><pre id="code-85" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span>   c.country,
+         <span class="f">COUNT</span>(<span class="o">*</span>)                                    <span class="k">AS</span> orders,
+         <span class="f">SUM</span>(o.total)                                <span class="k">AS</span> revenue,
+         <span class="f">SUM</span>(o.total) <span class="o">/</span> <span class="k">NULLIF</span>(<span class="f">COUNT</span>(<span class="k">DISTINCT</span> c.id), <span class="n">0</span>) <span class="k">AS</span> revenue_per_customer
+<span class="k">FROM</span>     orders o
+<span class="k">JOIN</span>     customers c <span class="k">ON</span> c.id <span class="o">=</span> o.customer_id
+<span class="k">WHERE</span>    o.<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;paid&#39;</span>
+  <span class="k">AND</span>    o.created_at <span class="o">&gt;=</span> <span class="t">DATE</span> <span class="s">&#39;2026-01-01&#39;</span>
+<span class="k">GROUP</span> <span class="k">BY</span> c.country
+<span class="k">HAVING</span>   <span class="f">SUM</span>(o.total) <span class="o">&gt;</span> <span class="n">10000</span>
+<span class="k">ORDER</span> <span class="k">BY</span> revenue <span class="k">DESC</span>
+<span class="k">LIMIT</span>    <span class="n">20</span>;</code></pre></figure>
+<h2 id="the-select-list" class="hd hd--2"><a class="hd__anchor" href="#the-select-list" aria-label="Link to The select list">#</a>The select list</h2>
+<p>You can project columns, literals, expressions, function calls, subqueries and window functions.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Everything that can appear in a select list</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-86">COPY</button></span></figcaption><pre id="code-86" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span>
+    o.id,                                             <span class="c">-- column</span>
+    <span class="s">&#39;order&#39;</span>                            <span class="k">AS</span> record_type,<span class="c">-- literal</span>
+    o.total <span class="o">*</span> <span class="n">1.2</span>                      <span class="k">AS</span> total_gross,<span class="c">-- expression</span>
+    <span class="f">UPPER</span>(c.email)                     <span class="k">AS</span> email,      <span class="c">-- function</span>
+    <span class="k">CASE</span> <span class="k">WHEN</span> o.total <span class="o">&gt;</span> <span class="n">500</span> <span class="k">THEN</span> <span class="s">&#39;large&#39;</span> <span class="k">ELSE</span> <span class="s">&#39;small&#39;</span> <span class="k">END</span> <span class="k">AS</span> bucket,
+    (<span class="k">SELECT</span> <span class="f">MAX</span>(paid_at) <span class="k">FROM</span> payments p <span class="k">WHERE</span> p.order_id <span class="o">=</span> o.id) <span class="k">AS</span> last_payment,
+    <span class="f">ROW_NUMBER</span>() <span class="k">OVER</span> (<span class="k">PARTITION</span> <span class="k">BY</span> o.customer_id <span class="k">ORDER</span> <span class="k">BY</span> o.created_at) <span class="k">AS</span> seq
+<span class="k">FROM</span> orders o <span class="k">JOIN</span> customers c <span class="k">ON</span> c.id <span class="o">=</span> o.customer_id;</code></pre></figure>
+<h2 id="aliases" class="hd hd--2"><a class="hd__anchor" href="#aliases" aria-label="Link to Aliases">#</a>Aliases</h2>
+<p><code>AS</code> is optional for columns in every engine and for tables in most, but writing it is clearer and avoids a nasty class of typo:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A missing comma silently becomes an alias</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-87">COPY</button></span></figcaption><pre id="code-87" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> first_name last_name <span class="k">FROM</span> users;   <span class="c">-- ONE column, aliased &#39;last_name&#39;. No error.</span>
+<span class="k">SELECT</span> first_name, last_name <span class="k">FROM</span> users;  <span class="c">-- what you meant</span></code></pre></figure>
+<p>Double quotes make aliases with spaces or case; single quotes are <strong>strings</strong>, not identifiers (SQL Server and MySQL accept them here, but it is not portable):</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Quoting aliases</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-88">COPY</button></span></figcaption><pre id="code-88" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> total <span class="k">AS</span> <span class="id">&quot;Total Revenue&quot;</span> <span class="k">FROM</span> orders;   <span class="c">-- portable</span></code></pre></figure>
+<h2 id="select-distinct" class="hd hd--2"><a class="hd__anchor" href="#select-distinct" aria-label="Link to SELECT DISTINCT">#</a>SELECT DISTINCT</h2>
+<p>Removes duplicate result rows after the select list is evaluated. It considers <code>NULL</code>s equal to each other.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">DISTINCT applies to the whole row</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=SELECT%20DISTINCT%20country%2C%20city%20FROM%20customers%3B%20%20--%20distinct%20PAIRS%2C%20not%20distinct%20countries">TRY IT</a><button class="code__btn" type="button" data-copy="code-89">COPY</button></span></figcaption><pre id="code-89" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="k">DISTINCT</span> country, city <span class="k">FROM</span> customers;  <span class="c">-- distinct PAIRS, not distinct countries</span></code></pre></figure>
+<p>PostgreSQL adds <code>DISTINCT ON</code>, which keeps the first row per group according to <code>ORDER BY</code>:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Latest order per customer, in one clause</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-90">COPY</button></span></figcaption><pre id="code-90" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="k">ON</span> (customer_id) customer_id, id, total, created_at
+<span class="k">FROM</span>   orders
+<span class="k">ORDER</span>  <span class="k">BY</span> customer_id, created_at <span class="k">DESC</span>;</code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported — DISTINCT ON"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span><span class="sup__note">DISTINCT ON</span></li><li class="sup sup--ok" title="DuckDB: Supported — DISTINCT ON"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">DuckDB</span><span class="sr-only">Supported</span><span class="sup__note">DISTINCT ON</span></li><li class="sup sup--no" title="MySQL: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">MySQL</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="SQLite: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">SQLite</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="SQL Server: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">SQL Server</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Oracle: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Oracle</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="BigQuery: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">BigQuery</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Snowflake: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Snowflake</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Redshift: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Redshift</span><span class="sr-only">Unsupported</span></li></ul>
+<p>The portable equivalent uses a window function — see the <a href="/cookbook/#latest-row-per-group">cookbook recipe</a>.</p>
+<h2 id="select-without-from" class="hd hd--2"><a class="hd__anchor" href="#select-without-from" aria-label="Link to SELECT without FROM">#</a>SELECT without FROM</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Scalar evaluation</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=SELECT%201%20%2B%201%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20PostgreSQL%2C%20MySQL%2C%20SQLite%2C%20SQL%20Server%2C%20Snowflake%2C%20BigQuery%2C%20DuckDB%0ASELECT%201%20%2B%201%20FROM%20dual%3B%20%20%20%20%20%20%20%20%20%20%20%20%20--%20Oracle%20(DUAL%20is%20a%20one-row%20dummy%20table)%3B%20MySQL%20also%20accepts%20it%0ASELECT%201%20%2B%201%20FROM%20sysibm.sysdummy1%3B%20--%20Db2">TRY IT</a><button class="code__btn" type="button" data-copy="code-91">COPY</button></span></figcaption><pre id="code-91" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="n">1</span> <span class="o">+</span> <span class="n">1</span>;                       <span class="c">-- PostgreSQL, MySQL, SQLite, SQL Server, Snowflake, BigQuery, DuckDB</span>
+<span class="k">SELECT</span> <span class="n">1</span> <span class="o">+</span> <span class="n">1</span> <span class="k">FROM</span> dual;             <span class="c">-- Oracle (DUAL is a one-row dummy table); MySQL also accepts it</span>
+<span class="k">SELECT</span> <span class="n">1</span> <span class="o">+</span> <span class="n">1</span> <span class="k">FROM</span> sysibm.sysdummy1; <span class="c">-- Db2</span></code></pre></figure>
+<h2 id="select" class="hd hd--2"><a class="hd__anchor" href="#select" aria-label="Link to SELECT *">#</a>SELECT *</h2>
+<p>Convenient in the console, a liability in code.</p>
+<ul class="list"><li><strong>Breaks on schema change.</strong> A new column appears in every result; a dropped one breaks positional access.</li><li><strong>Defeats index-only scans.</strong> A covering index cannot satisfy <code>SELECT *</code>, forcing a heap/table lookup per row.</li><li><strong>Costs real money on columnar engines.</strong> BigQuery, Redshift, Snowflake, ClickHouse and Databricks read only referenced columns. <code>SELECT *</code> on a 200-column table can scan 50× the bytes — and BigQuery bills on bytes scanned.</li><li><strong>Ambiguous after joins.</strong> Two <code>id</code> columns in the result, order dependent on the join order.</li></ul>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Excluding columns without listing them all</span><span class="code__engine" data-engine="bigquery">BigQuery</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-92">COPY</button></span></figcaption><pre id="code-92" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">EXCEPT</span> (password_hash, internal_notes) <span class="k">FROM</span> users;         <span class="c">-- BigQuery</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">REPLACE</span> (<span class="f">UPPER</span>(email) <span class="k">AS</span> email) <span class="k">FROM</span> users;                <span class="c">-- BigQuery</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Same idea elsewhere</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-93">COPY</button></span></figcaption><pre id="code-93" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">EXCLUDE</span> (password_hash) <span class="k">FROM</span> users;              <span class="c">-- Snowflake, DuckDB</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">EXCEPT</span> (password_hash) <span class="k">FROM</span> users;               <span class="c">-- Databricks, DuckDB</span>
+<span class="c">-- PostgreSQL, MySQL, SQL Server, Oracle: no equivalent — list the columns.</span></code></pre></figure>
+<h2 id="row-limiting" class="hd hd--2"><a class="hd__anchor" href="#row-limiting" aria-label="Link to Row limiting">#</a>Row limiting</h2>
+<p>The single least portable clause in daily use. Full comparison in the <a href="/comparison/#limit-rows">dialect diff</a>.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Syntax</th></tr></thead><tbody><tr><th scope="row">PostgreSQL, MySQL, SQLite, Redshift, BigQuery, Snowflake, DuckDB, ClickHouse, CockroachDB</th><td><code>LIMIT 10 OFFSET 20</code></td></tr><tr><th scope="row">SQL Server, Synapse</th><td><code>SELECT TOP 10 …</code> or <code>OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY</code> (needs <code>ORDER BY</code>)</td></tr><tr><th scope="row">Oracle 12c+, Db2, PostgreSQL 8.4+</th><td><code>OFFSET 20 ROWS FETCH FIRST 10 ROWS ONLY</code> (ANSI)</td></tr><tr><th scope="row">Oracle 11g and earlier</th><td><code>WHERE ROWNUM &lt;= 10</code> wrapped around an ordered subquery</td></tr></tbody></table></div>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/where/"><span class="rel__t">WHERE</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/group-by/"><span class="rel__t">GROUP BY</span><span class="rel__a">→</span></a><a class="rel__i" href="/joins/"><span class="rel__t">Joins</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/limit/"><span class="rel__t">LIMIT &amp; pagination</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/drop-truncate/"><span class="pager__d">← PREV</span><span class="pager__t">DROP, TRUNCATE &amp; COMMENT</span></a><a class="pager__i pager__i--next" href="/sql/insert/"><span class="pager__d">NEXT →</span><span class="pager__t">INSERT</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#the-select-list">The select list</a></li><li class="toc__i toc__i--2"><a href="#aliases">Aliases</a></li><li class="toc__i toc__i--2"><a href="#select-distinct">SELECT DISTINCT</a></li><li class="toc__i toc__i--2"><a href="#select-without-from">SELECT without FROM</a></li><li class="toc__i toc__i--2"><a href="#select">SELECT *</a></li><li class="toc__i toc__i--2"><a href="#row-limiting">Row limiting</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

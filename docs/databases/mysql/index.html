@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MySQL · SQL Terminal</title>
+<meta name="description" content="The web&#39;s default database. InnoDB clustered storage, wide hosting support, and a set of defaults worth auditing.">
+<meta name="keywords" content="MySQL sql reference syntax types indexes transactions performance cli">
+<link rel="canonical" href="https://sql.manual.dev/databases/mysql/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="MySQL · SQL Terminal">
+<meta property="og:description" content="The web&#39;s default database. InnoDB clustered storage, wide hosting support, and a set of defaults worth auditing.">
+<meta property="og:url" content="https://sql.manual.dev/databases/mysql/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MySQL · SQL Terminal">
+<meta name="twitter:description" content="The web&#39;s default database. InnoDB clustered storage, wide hosting support, and a set of defaults worth auditing.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"MySQL · SQL Terminal","headline":"MySQL","description":"The web's default database. InnoDB clustered storage, wide hosting support, and a set of defaults worth auditing.","url":"https://sql.manual.dev/databases/mysql/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link is-active" aria-current="page" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Engines</p><ul class="sb__list"><li><a class="sb__link" href="/databases/postgresql/">PostgreSQL</a></li><li><a class="sb__link is-active" aria-current="page" href="/databases/mysql/">MySQL</a></li><li><a class="sb__link" href="/databases/sqlite/">SQLite</a></li><li><a class="sb__link" href="/databases/sqlserver/">SQL Server</a></li><li><a class="sb__link" href="/databases/oracle/">Oracle Database</a></li><li><a class="sb__link" href="/databases/redshift/">Amazon Redshift</a></li><li><a class="sb__link" href="/databases/snowflake/">Snowflake</a></li><li><a class="sb__link" href="/databases/bigquery/">Google BigQuery</a></li><li><a class="sb__link" href="/databases/duckdb/">DuckDB</a></li><li><a class="sb__link" href="/databases/mariadb/">MariaDB</a></li><li><a class="sb__link" href="/databases/clickhouse/">ClickHouse</a></li><li><a class="sb__link" href="/databases/trino/">Trino / Presto</a></li><li><a class="sb__link" href="/databases/databricks/">Databricks SQL</a></li><li><a class="sb__link" href="/databases/cockroachdb/">CockroachDB</a></li><li><a class="sb__link" href="/databases/db2/">IBM Db2</a></li><li><a class="sb__link" href="/databases/synapse/">Azure Synapse</a></li></ul></div><div class="sb__group"><p class="sb__title">Cross-engine</p><ul class="sb__list"><li><a class="sb__link" href="/dialects/">Dialect overview</a></li><li><a class="sb__link" href="/comparison/">Dialect diff</a></li><li><a class="sb__link" href="/datatypes/">Data types</a></li><li><a class="sb__link" href="/cli/">CLI reference</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/databases/">databases</a><span class="crumb__sep">/</span><a href="/databases/mysql/">mysql</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">ENGINE</span><span class="pmeta__v">MySQL</span></div><div class="pmeta__i"><span class="pmeta__k">VERSION</span><span class="pmeta__v">8.4 LTS</span></div><div class="pmeta__i"><span class="pmeta__k">LICENSE</span><span class="pmeta__v">GPLv2 / commercial</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>MySQL</h1><p class="lede">The web&#39;s default database. InnoDB clustered storage, wide hosting support, and a set of defaults worth auditing.</p><div class="tags"><span class="tag">OLTP · Row store</span><span class="tag">GPLv2 / commercial (Oracle)</span><span class="tag">CLI: mysql</span></div><h2 id="overview" class="hd hd--2"><a class="hd__anchor" href="#overview" aria-label="Link to Overview">#</a>Overview</h2>
+<p>MySQL is the most widely deployed open-source RDBMS, and the default in most shared hosting and PHP/Rails/WordPress stacks. Modern MySQL 8 is a substantially different product from the 5.x versions many teams remember: it has window functions, CTEs, real <code>CHECK</code> constraints, atomic DDL and a proper data dictionary.</p>
+<dl class="kv"><div class="kv__row"><dt>FIRST RELEASE</dt><dd>1995</dd></div><div class="kv__row"><dt>LICENSE</dt><dd>GPLv2 or commercial (Oracle Corporation)</dd></div><div class="kv__row"><dt>CURRENT</dt><dd>8.4 LTS / 9.x innovation releases</dd></div><div class="kv__row"><dt>WIRE PROTOCOL</dt><dd>MySQL client/server protocol, port 3306</dd></div><div class="kv__row"><dt>STORAGE ENGINE</dt><dd>InnoDB (default; MyISAM is legacy and not crash-safe)</dd></div><div class="kv__row"><dt>DEFAULT ISOLATION</dt><dd>REPEATABLE READ — unusual, and worth knowing</dd></div><div class="kv__row"><dt>BEST FOR</dt><dd>Web applications, read-heavy OLTP, wide ecosystem support</dd></div></dl>
+<h2 id="architecture" class="hd hd--2"><a class="hd__anchor" href="#architecture" aria-label="Link to Architecture">#</a>Architecture</h2>
+<p>MySQL is <strong>thread-per-connection</strong>, so connections are much cheaper than PostgreSQL&#39;s processes — thousands are workable. The server splits into a SQL layer (parser, optimizer, cache) and a pluggable storage engine layer.</p>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">InnoDB storage</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-391">COPY</button></span></figcaption><pre id="code-391" class="code__pre"><code class="lang-text">Table = clustered B-tree keyed by the PRIMARY KEY
+  └── the PK IS the table; rows live in its leaf pages
+Secondary index = B-tree of (index columns → PRIMARY KEY value)
+  └── a secondary lookup traverses TWO trees unless the index covers the query</code></pre></figure>
+<p>::: warn Three consequences of clustered storage</p>
+<ol class="list"><li><strong>Keep the primary key narrow.</strong> Every secondary index stores a copy of it.</li><li><strong>Insert in key order where you can.</strong> Random UUID keys scatter writes across every page, causing splits and write amplification. Use an ordered id or UUIDv7.</li><li><strong>Covering indexes matter more here</strong>, because the alternative is a second B-tree traversal per row.</li></ol>
+<p>:::</p>
+<h2 id="installation" class="hd hd--2"><a class="hd__anchor" href="#installation" aria-label="Link to Installation">#</a>Installation</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Install</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-392">COPY</button></span></figcaption><pre id="code-392" class="code__pre"><code class="lang-bash">sudo apt install mysql-server                     <span class="c"># Debian/Ubuntu</span>
+brew install mysql &amp;&amp; brew services start mysql   <span class="c"># macOS</span>
+docker run<span class="o"> -d</span><span class="o"> --name</span> mysql<span class="o"> -e</span> MYSQL_ROOT_PASSWORD=secret<span class="o"> -p</span> 3306:3306 mysql:8.4
+sudo mysql_secure_installation                    <span class="c"># always run this on a new server</span></code></pre></figure>
+<h2 id="cli-connection" class="hd hd--2"><a class="hd__anchor" href="#cli-connection" aria-label="Link to CLI &amp; connection">#</a>CLI &amp; connection</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">mysql client</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-393">COPY</button></span></figcaption><pre id="code-393" class="code__pre"><code class="lang-bash">mysql<span class="o"> -h</span> 127.0.0.1<span class="o"> -P</span> 3306<span class="o"> -u</span> root<span class="o"> -p</span> app     <span class="c"># note: uppercase -P for port</span>
+mysql<span class="o"> --defaults-file</span>=~/.my.cnf app           <span class="c"># credentials from a 0600 file</span>
+mysql<span class="o"> -e</span> <span class="s">&quot;SELECT VERSION()&quot;</span><span class="o"> -B</span>                <span class="c"># batch output for pipes</span></code></pre></figure>
+<p>::: warn localhost is not 127.0.0.1 The client treats <code>localhost</code> as a Unix socket and <code>127.0.0.1</code> as TCP. MySQL grants are per <code>&#39;user&#39;@&#39;host&#39;</code>, so one can work while the other is refused with &quot;Access denied&quot;. :::</p>
+<h2 id="data-types" class="hd hd--2"><a class="hd__anchor" href="#data-types" aria-label="Link to Data types">#</a>Data types</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Category</th><th scope="col">Types</th><th scope="col">Notes</th></tr></thead><tbody><tr><th scope="row">Integer</th><td><code>TINYINT</code> <code>SMALLINT</code> <code>MEDIUMINT</code> <code>INT</code> <code>BIGINT</code> <code>[UNSIGNED]</code></td><td><code>UNSIGNED</code> doubles the positive range</td></tr><tr><th scope="row">Decimal</th><td><code>DECIMAL(p,s)</code> <code>FLOAT</code> <code>DOUBLE</code></td><td><code>DECIMAL</code> for money, always</td></tr><tr><th scope="row">String</th><td><code>CHAR</code> <code>VARCHAR</code> <code>TEXT</code> <code>MEDIUMTEXT</code> <code>LONGTEXT</code></td><td><code>TEXT</code> is off-page; only a prefix can be indexed</td></tr><tr><th scope="row">Date/time</th><td><code>DATE</code> <code>DATETIME</code> <code>TIMESTAMP</code> <code>TIME</code> <code>YEAR</code></td><td><code>TIMESTAMP</code> is UTC-normalised but only spans 1970–2038</td></tr><tr><th scope="row">Binary</th><td><code>BINARY</code> <code>VARBINARY</code> <code>BLOB</code></td><td><code>BINARY(16)</code> is the efficient UUID storage</td></tr><tr><th scope="row">Other</th><td><code>JSON</code> <code>ENUM</code> <code>SET</code> <code>GEOMETRY</code> <code>VECTOR</code> (9.0+)</td><td></td></tr></tbody></table></div>
+<p>::: danger utf8 is not UTF-8 MySQL&#39;s historical <code>utf8</code> charset stores at most 3 bytes per character and cannot represent emoji or many CJK characters. The real thing is <strong><code>utf8mb4</code></strong>, the default since 8.0. Check inherited schemas:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-394">COPY</button></span></figcaption><pre id="code-394" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> table_name, table_collation <span class="k">FROM</span> information_schema.<span class="k">tables</span>
+<span class="k">WHERE</span> table_schema <span class="o">=</span> <span class="k">DATABASE</span>() <span class="k">AND</span> table_collation <span class="k">NOT</span> <span class="k">LIKE</span> <span class="s">&#39;utf8mb4%&#39;</span>;</code></pre></figure>
+<p>:::</p>
+<h2 id="indexes" class="hd hd--2"><a class="hd__anchor" href="#indexes" aria-label="Link to Indexes">#</a>Indexes</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Index syntax</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-395">COPY</button></span></figcaption><pre id="code-395" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> idx_customer <span class="k">ON</span> <span class="f">orders</span> (customer_id);
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> uq_email <span class="k">ON</span> <span class="f">users</span> (email);
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_prefix <span class="k">ON</span> <span class="f">articles</span> (<span class="f">title</span>(<span class="n">50</span>));           <span class="c">-- prefix index for long text</span>
+<span class="k">CREATE</span> <span class="k">FULLTEXT</span> <span class="k">INDEX</span> ft_body <span class="k">ON</span> <span class="f">articles</span> (title, body);
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_lower <span class="k">ON</span> <span class="f">users</span> ((<span class="f">LOWER</span>(email)));          <span class="c">-- functional index (8.0.13+)</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> t <span class="k">ADD</span> <span class="k">INDEX</span> <span class="f">idx</span> (c), ALGORITHM<span class="o">=</span>INPLACE, <span class="k">LOCK</span><span class="o">=</span><span class="k">NONE</span>;   <span class="c">-- online</span></code></pre></figure>
+<p>MySQL has <strong>no partial indexes</strong> and <strong>no covering <code>INCLUDE</code></strong> — put the extra columns in the key instead. It also creates an index on every foreign key column automatically, unlike PostgreSQL.</p>
+<h2 id="writes" class="hd hd--2"><a class="hd__anchor" href="#writes" aria-label="Link to Writes">#</a>Writes</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL-specific write syntax</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-396">COPY</button></span></figcaption><pre id="code-396" class="code__pre"><code class="lang-sql"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="f">t</span> (a, b) <span class="k">VALUES</span> (<span class="n">1</span>, <span class="n">2</span>) <span class="k">AS</span> <span class="k">new</span>
+<span class="k">ON</span> DUPLICATE <span class="k">KEY</span> <span class="k">UPDATE</span> b <span class="o">=</span> <span class="k">new</span>.b;             <span class="c">-- upsert (8.0.20+ alias form)</span>
+
+<span class="k">UPDATE</span> orders o <span class="k">JOIN</span> customers c <span class="k">ON</span> c.id <span class="o">=</span> o.customer_id
+<span class="k">SET</span> o.country <span class="o">=</span> c.country;                     <span class="c">-- join in the UPDATE clause</span>
+
+<span class="k">DELETE</span> oi <span class="k">FROM</span> order_items oi <span class="k">JOIN</span> orders o <span class="k">ON</span> o.id <span class="o">=</span> oi.order_id <span class="k">WHERE</span> o.cancelled;
+
+<span class="k">UPDATE</span> t <span class="k">SET</span> x <span class="o">=</span> <span class="n">1</span> <span class="k">WHERE</span> cond <span class="k">ORDER</span> <span class="k">BY</span> id <span class="k">LIMIT</span> <span class="n">5000</span>;   <span class="c">-- batched</span></code></pre></figure>
+<p>::: danger Two statements to avoid <strong><code>INSERT IGNORE</code></strong> downgrades <em>every</em> error to a warning — truncated strings, invalid dates, failed foreign keys — not just duplicates.</p>
+<p><strong><code>REPLACE INTO</code></strong> is a <code>DELETE</code> followed by an <code>INSERT</code>. It wipes columns you did not supply, fires delete triggers, and cascades to child rows. Use <code>ON DUPLICATE KEY UPDATE</code>. :::</p>
+<h2 id="transactions" class="hd hd--2"><a class="hd__anchor" href="#transactions" aria-label="Link to Transactions">#</a>Transactions</h2>
+<p>Default isolation is <strong><code>REPEATABLE READ</code></strong>, which is stricter than most engines&#39; default and is implemented with <strong>gap locks</strong> — locks on the ranges between index entries — to prevent phantoms. Gap locks are a common source of deadlocks in write-heavy workloads; many high-throughput shops switch to <code>READ COMMITTED</code>.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Transaction control</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-397">COPY</button></span></figcaption><pre id="code-397" class="code__pre"><code class="lang-sql"><span class="k">SET</span> <span class="k">SESSION</span> <span class="k">TRANSACTION</span> <span class="k">ISOLATION</span> <span class="k">LEVEL</span> <span class="k">READ</span> <span class="k">COMMITTED</span>;
+<span class="k">START</span> <span class="k">TRANSACTION</span>;
+  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> accounts <span class="k">WHERE</span> id <span class="o">=</span> <span class="n">1</span> <span class="k">FOR</span> <span class="k">UPDATE</span>;
+  <span class="k">UPDATE</span> accounts <span class="k">SET</span> balance <span class="o">=</span> balance <span class="o">-</span> <span class="n">100</span> <span class="k">WHERE</span> id <span class="o">=</span> <span class="n">1</span>;
+<span class="k">COMMIT</span>;
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> jobs <span class="k">WHERE</span> state<span class="o">=</span><span class="s">&#39;queued&#39;</span> <span class="k">LIMIT</span> <span class="n">1</span> <span class="k">FOR</span> <span class="k">UPDATE</span> <span class="k">SKIP</span> <span class="k">LOCKED</span>;   <span class="c">-- 8.0+</span>
+<span class="k">SHOW</span> <span class="k">ENGINE</span> INNODB <span class="k">STATUS</span>\G   <span class="c">-- LATEST DETECTED DEADLOCK section</span></code></pre></figure>
+<p>::: warn No transactional DDL Every DDL statement performs an implicit commit before and after. A migration that fails halfway leaves the schema partly changed — write each MySQL migration step to be independently re-runnable. :::</p>
+<h2 id="json" class="hd hd--2"><a class="hd__anchor" href="#json" aria-label="Link to JSON">#</a>JSON</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">JSON access and indexing</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-398">COPY</button></span></figcaption><pre id="code-398" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> data <span class="o">-&gt;&gt;</span> <span class="s">&#39;$.user.email&#39;</span> <span class="k">AS</span> email <span class="k">FROM</span> events;      <span class="c">-- unquoted text</span>
+<span class="k">SELECT</span> <span class="f">JSON_EXTRACT</span>(data, <span class="s">&#39;$.items[0].sku&#39;</span>) <span class="k">FROM</span> orders;
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> events, <span class="f">JSON_TABLE</span>(data, <span class="s">&#39;$.items[*]&#39;</span>
+       <span class="k">COLUMNS</span> (sku <span class="f">VARCHAR</span>(<span class="n">32</span>) <span class="t">PATH</span> <span class="s">&#39;$.sku&#39;</span>)) <span class="k">AS</span> t;
+
+<span class="c">-- JSON cannot be indexed directly; index a generated column:</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> events
+  <span class="k">ADD</span> <span class="k">COLUMN</span> event_name <span class="f">VARCHAR</span>(<span class="n">64</span>) <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> (data <span class="o">-&gt;&gt;</span> <span class="s">&#39;$.event&#39;</span>) <span class="k">STORED</span>,
+  <span class="k">ADD</span> <span class="k">INDEX</span> <span class="f">idx_event_name</span> (event_name);
+
+<span class="c">-- multi-valued index for arrays (8.0.17+):</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">INDEX</span> <span class="f">idx_tags</span> ((<span class="k">CAST</span>(data <span class="o">-&gt;</span> <span class="s">&#39;$.tags&#39;</span> <span class="k">AS</span> <span class="f">CHAR</span>(<span class="n">40</span>) <span class="k">ARRAY</span>)));</code></pre></figure>
+<h2 id="replication-backup" class="hd hd--2"><a class="hd__anchor" href="#replication-backup" aria-label="Link to Replication &amp; backup">#</a>Replication &amp; backup</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Replication</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-399">COPY</button></span></figcaption><pre id="code-399" class="code__pre"><code class="lang-sql"><span class="k">CHANGE</span> REPLICATION <span class="k">SOURCE</span> <span class="k">TO</span> SOURCE_HOST<span class="o">=</span><span class="s">&#39;primary&#39;</span>, SOURCE_AUTO_POSITION<span class="o">=</span><span class="n">1</span>;
+<span class="k">START</span> <span class="k">REPLICA</span>;
+<span class="k">SHOW</span> <span class="k">REPLICA</span> <span class="k">STATUS</span>\G     <span class="c">-- Seconds_Behind_Source, Replica_IO_Running, Replica_SQL_Running</span></code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Backup</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-400">COPY</button></span></figcaption><pre id="code-400" class="code__pre"><code class="lang-bash">mysqldump<span class="o"> --single-transaction</span><span class="o"> --routines</span><span class="o"> --triggers</span><span class="o"> --events</span> \
+         <span class="o"> --set-gtid-purged</span>=ON app &gt; app.sql      <span class="c"># --single-transaction = non-blocking on InnoDB</span>
+mysqlpump<span class="o"> --parallel-schemas</span>=4 app &gt; app.sql
+xtrabackup<span class="o"> --backup</span><span class="o"> --target-dir</span>=/backup/base     <span class="c"># physical hot backup</span></code></pre></figure>
+<p>Use <strong>GTID-based replication</strong> (<code>gtid_mode=ON</code>) — it makes failover and replica rebuilds far simpler than binlog file/position tracking.</p>
+<h2 id="performance-monitoring" class="hd hd--2"><a class="hd__anchor" href="#performance-monitoring" aria-label="Link to Performance &amp; monitoring">#</a>Performance &amp; monitoring</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Diagnostics</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-401">COPY</button></span></figcaption><pre id="code-401" class="code__pre"><code class="lang-sql"><span class="k">EXPLAIN</span> <span class="k">ANALYZE</span> <span class="k">SELECT</span> …;                       <span class="c">-- 8.0.18+, actual timings</span>
+<span class="k">SHOW</span> <span class="k">FULL</span> PROCESSLIST;
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> sys.schema_unused_indexes;
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> sys.statements_with_full_table_scans <span class="k">LIMIT</span> <span class="n">20</span>;
+<span class="k">SELECT</span> digest_text, count_star, <span class="f">ROUND</span>(avg_timer_wait<span class="o">/</span><span class="n">1e9</span>,<span class="n">2</span>) <span class="k">AS</span> avg_ms
+<span class="k">FROM</span> performance_schema.events_statements_summary_by_digest <span class="k">ORDER</span> <span class="k">BY</span> sum_timer_wait <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Setting</th><th scope="col">Guidance</th></tr></thead><tbody><tr><th scope="row"><code>innodb_buffer_pool_size</code></th><td>50–70% of RAM — the single most important setting</td></tr><tr><th scope="row"><code>innodb_flush_log_at_trx_commit</code></th><td><code>1</code> for full durability; <code>2</code> trades ~1 s of commits for speed</td></tr><tr><th scope="row"><code>innodb_log_file_size</code></th><td>25% of the buffer pool</td></tr><tr><th scope="row"><code>innodb_flush_method</code></th><td><code>O_DIRECT</code> on Linux</td></tr><tr><th scope="row"><code>max_connections</code></th><td>200–500; use ProxySQL beyond that</td></tr><tr><th scope="row"><code>slow_query_log</code> + <code>long_query_time=1</code></th><td>Turn on before you need it</td></tr></tbody></table></div>
+<p>::: note The query cache is gone MySQL 8 removed the query cache entirely — it was a global mutex and a scalability bottleneck. Cache in your application instead. :::</p>
+<h2 id="security" class="hd hd--2"><a class="hd__anchor" href="#security" aria-label="Link to Security">#</a>Security</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Users, roles and grants</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-402">COPY</button></span></figcaption><pre id="code-402" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">USER</span> <span class="s">&#39;app&#39;</span>@<span class="s">&#39;10.0.%&#39;</span> IDENTIFIED <span class="k">BY</span> <span class="s">&#39;…&#39;</span> REQUIRE SSL;
+<span class="k">CREATE</span> <span class="k">ROLE</span> <span class="s">&#39;app_rw&#39;</span>;
+<span class="k">GRANT</span> <span class="k">SELECT</span>, <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span> <span class="k">ON</span> app.<span class="o">*</span> <span class="k">TO</span> <span class="s">&#39;app_rw&#39;</span>;
+<span class="k">GRANT</span> <span class="s">&#39;app_rw&#39;</span> <span class="k">TO</span> <span class="s">&#39;app&#39;</span>@<span class="s">&#39;10.0.%&#39;</span>;
+<span class="k">SET</span> <span class="k">DEFAULT</span> <span class="k">ROLE</span> <span class="k">ALL</span> <span class="k">TO</span> <span class="s">&#39;app&#39;</span>@<span class="s">&#39;10.0.%&#39;</span>;   <span class="c">-- roles are inactive until activated!</span>
+<span class="k">SHOW</span> GRANTS <span class="k">FOR</span> <span class="s">&#39;app&#39;</span>@<span class="s">&#39;10.0.%&#39;</span>;</code></pre></figure>
+<h2 id="best-practices" class="hd hd--2"><a class="hd__anchor" href="#best-practices" aria-label="Link to Best practices">#</a>Best practices</h2>
+<ul class="list"><li>Verify <code>sql_mode</code> includes <code>STRICT_TRANS_TABLES</code> and <code>ONLY_FULL_GROUP_BY</code> — without them MySQL silently truncates data and returns arbitrary values from groups.</li><li>Use <code>utf8mb4</code>, not <code>utf8</code>.</li><li>Keep the primary key narrow, monotonically increasing, and never a random UUID.</li><li>Raise <code>group_concat_max_len</code> — it truncates at 1024 bytes silently.</li><li>Specify <code>ALGORITHM=INSTANT</code> on <code>ALTER TABLE</code> so a surprise table rebuild errors instead of locking for an hour.</li><li>Prefer <code>ON DUPLICATE KEY UPDATE</code> over <code>INSERT IGNORE</code> and <code>REPLACE INTO</code>.</li><li>Enable GTIDs before you need to fail over.</li><li>Remember MySQL has no <code>FULL OUTER JOIN</code>, no <code>EXCEPT</code> before 8.0.31, and no deferrable constraints.</li></ul>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/comparison/"><span class="rel__t">Dialect diff</span><span class="rel__a">→</span></a><a class="rel__i" href="/datatypes/"><span class="rel__t">Data types</span><span class="rel__a">→</span></a><a class="rel__i" href="/cli/"><span class="rel__t">CLI reference</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">All engines</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#overview">Overview</a></li><li class="toc__i toc__i--2"><a href="#architecture">Architecture</a></li><li class="toc__i toc__i--2"><a href="#installation">Installation</a></li><li class="toc__i toc__i--2"><a href="#cli-connection">CLI &amp; connection</a></li><li class="toc__i toc__i--2"><a href="#data-types">Data types</a></li><li class="toc__i toc__i--2"><a href="#indexes">Indexes</a></li><li class="toc__i toc__i--2"><a href="#writes">Writes</a></li><li class="toc__i toc__i--2"><a href="#transactions">Transactions</a></li><li class="toc__i toc__i--2"><a href="#json">JSON</a></li><li class="toc__i toc__i--2"><a href="#replication-backup">Replication &amp; backup</a></li><li class="toc__i toc__i--2"><a href="#performance-monitoring">Performance &amp; monitoring</a></li><li class="toc__i toc__i--2"><a href="#security">Security</a></li><li class="toc__i toc__i--2"><a href="#best-practices">Best practices</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MERGE / UPSERT · SQL Terminal</title>
+<meta name="description" content="The standard MERGE statement, its concurrency caveats, and the native upsert syntax in engines that lack it.">
+<meta name="keywords" content="merge upsert on conflict on duplicate key when matched slowly changing dimension scd2 idempotent load">
+<link rel="canonical" href="https://sql.manual.dev/sql/merge/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="MERGE / UPSERT · SQL Terminal">
+<meta property="og:description" content="The standard MERGE statement, its concurrency caveats, and the native upsert syntax in engines that lack it.">
+<meta property="og:url" content="https://sql.manual.dev/sql/merge/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MERGE / UPSERT · SQL Terminal">
+<meta name="twitter:description" content="The standard MERGE statement, its concurrency caveats, and the native upsert syntax in engines that lack it.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"MERGE / UPSERT · SQL Terminal","headline":"MERGE / UPSERT","description":"The standard MERGE statement, its concurrency caveats, and the native upsert syntax in engines that lack it.","url":"https://sql.manual.dev/sql/merge/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/merge/">merge</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">DML</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">advanced</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL:2003</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>MERGE / UPSERT</h1><p class="lede">The standard MERGE statement, its concurrency caveats, and the native upsert syntax in engines that lack it.</p><p><code>MERGE</code> applies inserts, updates and deletes to a target table from a source in one statement — the standard way to express an upsert or a warehouse load.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Full MERGE (SQL:2003)</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=MERGE%20INTO%20customers%20AS%20t%0AUSING%20staging_customers%20AS%20s%0A%20%20%20ON%20t.id%20%3D%20s.id%0AWHEN%20MATCHED%20AND%20s.is_deleted%20%3D%20TRUE%20THEN%0A%20%20%20%20DELETE%0AWHEN%20MATCHED%20AND%20(t.email%2C%20t.country)%20IS%20DISTINCT%20FROM%20(s.email%2C%20s.country)%20THEN%0A%20%20%20%20UPDATE%20SET%20email%20%3D%20s.email%2C%20country%20%3D%20s.country%2C%20updated_at%20%3D%20CURRENT_TIMESTAMP%0AWHEN%20NOT%20MATCHED%20THEN%0A%20%20%20%20INSERT%20(id%2C%20email%2C%20country)%20VALUES%20(s.id%2C%20s.email%2C%20s.country)%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-126">COPY</button></span></figcaption><pre id="code-126" class="code__pre"><code class="lang-sql"><span class="k">MERGE</span> <span class="k">INTO</span> customers <span class="k">AS</span> t
+<span class="k">USING</span> staging_customers <span class="k">AS</span> s
+   <span class="k">ON</span> t.id <span class="o">=</span> s.id
+<span class="k">WHEN</span> <span class="k">MATCHED</span> <span class="k">AND</span> s.is_deleted <span class="o">=</span> <span class="k">TRUE</span> <span class="k">THEN</span>
+    <span class="k">DELETE</span>
+<span class="k">WHEN</span> <span class="k">MATCHED</span> <span class="k">AND</span> (t.email, t.country) <span class="k">IS</span> <span class="k">DISTINCT</span> <span class="k">FROM</span> (s.email, s.country) <span class="k">THEN</span>
+    <span class="k">UPDATE</span> <span class="k">SET</span> email <span class="o">=</span> s.email, country <span class="o">=</span> s.country, updated_at <span class="o">=</span> <span class="k">CURRENT_TIMESTAMP</span>
+<span class="k">WHEN</span> <span class="k">NOT</span> <span class="k">MATCHED</span> <span class="k">THEN</span>
+    <span class="k">INSERT</span> (id, email, country) <span class="k">VALUES</span> (s.id, s.email, s.country);</code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported — 15+"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span><span class="sup__note">15+</span></li><li class="sup sup--ok" title="Oracle: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Oracle</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="SQL Server: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQL Server</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Snowflake: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Snowflake</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="BigQuery: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">BigQuery</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Databricks: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Databricks</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Synapse: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Synapse</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="teradata: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">teradata</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Redshift: Supported — 2023+"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Redshift</span><span class="sr-only">Supported</span><span class="sup__note">2023+</span></li><li class="sup sup--ok" title="DuckDB: Supported — 1.4+"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">DuckDB</span><span class="sr-only">Supported</span><span class="sup__note">1.4+</span></li><li class="sup sup--no" title="MySQL: Unsupported — ON DUPLICATE KEY"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">MySQL</span><span class="sr-only">Unsupported</span><span class="sup__note">ON DUPLICATE KEY</span></li><li class="sup sup--no" title="SQLite: Unsupported — ON CONFLICT"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">SQLite</span><span class="sr-only">Unsupported</span><span class="sup__note">ON CONFLICT</span></li><li class="sup sup--no" title="ClickHouse: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">ClickHouse</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="CockroachDB: Unsupported — UPSERT"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">CockroachDB</span><span class="sr-only">Unsupported</span><span class="sup__note">UPSERT</span></li><li class="sup sup--ok" title="Trino: Supported — connector dependent"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Trino</span><span class="sr-only">Supported</span><span class="sup__note">connector dependent</span></li></ul>
+<h2 id="when-the-engine-has-no-merge" class="hd hd--2"><a class="hd__anchor" href="#when-the-engine-has-no-merge" aria-label="Link to When the engine has no MERGE">#</a>When the engine has no MERGE</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL (any version) / SQLite / DuckDB / CockroachDB</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-127">COPY</button></span></figcaption><pre id="code-127" class="code__pre"><code class="lang-sql"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="f">customers</span> (id, email, country)
+<span class="k">SELECT</span> id, email, country <span class="k">FROM</span> staging_customers
+<span class="k">ON</span> <span class="k">CONFLICT</span> (id) <span class="k">DO</span> <span class="k">UPDATE</span>
+   <span class="k">SET</span> email <span class="o">=</span> EXCLUDED.email, country <span class="o">=</span> EXCLUDED.country, updated_at <span class="o">=</span> <span class="f">now</span>()
+ <span class="k">WHERE</span> (customers.email, customers.country) <span class="k">IS</span> <span class="k">DISTINCT</span> <span class="k">FROM</span> (EXCLUDED.email, EXCLUDED.country);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL / MariaDB</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-128">COPY</button></span></figcaption><pre id="code-128" class="code__pre"><code class="lang-sql"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="f">customers</span> (id, email, country)
+<span class="k">SELECT</span> id, email, country <span class="k">FROM</span> staging_customers <span class="k">AS</span> s
+<span class="k">ON</span> DUPLICATE <span class="k">KEY</span> <span class="k">UPDATE</span> email <span class="o">=</span> s.email, country <span class="o">=</span> s.country;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">CockroachDB shorthand</span><span class="code__engine" data-engine="cockroachdb">CockroachDB</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-129">COPY</button></span></figcaption><pre id="code-129" class="code__pre"><code class="lang-sql">UPSERT <span class="k">INTO</span> <span class="f">customers</span> (id, email, country) <span class="k">SELECT</span> id, email, country <span class="k">FROM</span> staging_customers;</code></pre></figure>
+<p>::: note ON CONFLICT needs a unique index <code>ON CONFLICT (col)</code> requires an actual unique constraint or unique index on <code>col</code> — the &quot;conflict target&quot;. Without one, PostgreSQL raises <em>&quot;there is no unique or exclusion constraint matching the ON CONFLICT specification&quot;</em>. Use <code>ON CONFLICT ON CONSTRAINT constraint_name</code> to be explicit. :::</p>
+<h2 id="concurrency-merge-is-not-atomic-against-concurrent-writers" class="hd hd--2"><a class="hd__anchor" href="#concurrency-merge-is-not-atomic-against-concurrent-writers" aria-label="Link to Concurrency: MERGE is not atomic against concurrent writers">#</a>Concurrency: MERGE is not atomic against concurrent writers</h2>
+<p>Under <code>READ COMMITTED</code>, two concurrent <code>MERGE</code> statements can both find no matching row and both attempt an insert; one fails with a duplicate key error, or worse, both succeed if no unique constraint exists.</p>
+<ul class="list"><li><strong>PostgreSQL</strong>: <code>INSERT … ON CONFLICT</code> <em>is</em> internally atomic and is the safe choice under concurrency. <code>MERGE</code> (15+) is not — it can raise a unique violation and must be retried.</li><li><strong>SQL Server</strong>: <code>MERGE</code> requires <code>HOLDLOCK</code>/<code>SERIALIZABLE</code> on the target to be safe: <code>MERGE INTO t WITH (HOLDLOCK)</code>. Without it, deadlocks and duplicate-key errors under load are well documented.</li><li><strong>Oracle</strong>: <code>MERGE</code> takes row locks as it goes; concurrent inserts of the same key still collide. A unique constraint plus retry is the reliable pattern.</li></ul>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The concurrency-safe SQL Server form</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-130">COPY</button></span></figcaption><pre id="code-130" class="code__pre"><code class="lang-sql"><span class="k">MERGE</span> <span class="k">INTO</span> dbo.customers <span class="k">WITH</span> (HOLDLOCK) <span class="k">AS</span> t
+<span class="k">USING</span> (<span class="k">SELECT</span> <span class="v">@id</span> <span class="k">AS</span> id, <span class="v">@email</span> <span class="k">AS</span> email) <span class="k">AS</span> s <span class="k">ON</span> t.id <span class="o">=</span> s.id
+<span class="k">WHEN</span> <span class="k">MATCHED</span>     <span class="k">THEN</span> <span class="k">UPDATE</span> <span class="k">SET</span> email <span class="o">=</span> s.email
+<span class="k">WHEN</span> <span class="k">NOT</span> <span class="k">MATCHED</span> <span class="k">THEN</span> <span class="k">INSERT</span> (id, email) <span class="k">VALUES</span> (s.id, s.email);</code></pre></figure>
+<p>::: warn Always put a unique constraint behind an upsert Whatever syntax you use, the only thing that actually prevents duplicates under concurrency is a unique index. The statement then either succeeds or raises a violation you can retry — instead of silently writing two rows. :::</p>
+<h2 id="a-slowly-changing-dimension-type-2" class="hd hd--2"><a class="hd__anchor" href="#a-slowly-changing-dimension-type-2" aria-label="Link to A slowly changing dimension (Type 2)">#</a>A slowly changing dimension (Type 2)</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SCD2 load with MERGE</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-131">COPY</button></span></figcaption><pre id="code-131" class="code__pre"><code class="lang-sql"><span class="k">MERGE</span> <span class="k">INTO</span> dim_customer <span class="k">AS</span> t
+<span class="k">USING</span> (
+    <span class="k">SELECT</span> s.customer_id, s.email, s.country, <span class="k">CURRENT_DATE</span> <span class="k">AS</span> effective_from
+    <span class="k">FROM</span>   staging_customer s
+) <span class="k">AS</span> s
+   <span class="k">ON</span> t.customer_id <span class="o">=</span> s.customer_id <span class="k">AND</span> t.is_current <span class="o">=</span> <span class="k">TRUE</span>
+<span class="k">WHEN</span> <span class="k">MATCHED</span> <span class="k">AND</span> (t.email <span class="o">&lt;&gt;</span> s.email <span class="k">OR</span> t.country <span class="o">&lt;&gt;</span> s.country) <span class="k">THEN</span>
+    <span class="k">UPDATE</span> <span class="k">SET</span> t.is_current <span class="o">=</span> <span class="k">FALSE</span>, t.effective_to <span class="o">=</span> s.effective_from
+<span class="k">WHEN</span> <span class="k">NOT</span> <span class="k">MATCHED</span> <span class="k">THEN</span>
+    <span class="k">INSERT</span> (customer_id, email, country, effective_from, effective_to, is_current)
+    <span class="k">VALUES</span> (s.customer_id, s.email, s.country, s.effective_from, <span class="t">DATE</span> <span class="s">&#39;9999-12-31&#39;</span>, <span class="k">TRUE</span>);
+<span class="c">-- Note: a single MERGE cannot both close the old row and insert the new one for the</span>
+<span class="c">-- same key. Run the INSERT of new versions as a second statement.</span></code></pre></figure>
+<p>::: danger MERGE cannot match a target row twice If the source contains two rows with the same join key, standard <code>MERGE</code> raises an error (&quot;attempted to update the same row twice&quot; / ORA-30926). Deduplicate the source first:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-132">COPY</button></span></figcaption><pre id="code-132" class="code__pre"><code class="lang-sql"><span class="k">USING</span> (<span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="k">ON</span> (id) <span class="o">*</span> <span class="k">FROM</span> staging <span class="k">ORDER</span> <span class="k">BY</span> id, updated_at <span class="k">DESC</span>) <span class="k">AS</span> s</code></pre></figure>
+<p>:::</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/insert/"><span class="rel__t">INSERT</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/update/"><span class="rel__t">UPDATE</span><span class="rel__a">→</span></a><a class="rel__i" href="/transactions/#isolation-levels"><span class="rel__t">Isolation levels</span><span class="rel__a">→</span></a><a class="rel__i" href="/cookbook/#upsert"><span class="rel__t">Cookbook: upsert</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/delete/"><span class="pager__d">← PREV</span><span class="pager__t">DELETE</span></a><a class="pager__i pager__i--next" href="/sql/where/"><span class="pager__d">NEXT →</span><span class="pager__t">WHERE &amp; predicates</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#when-the-engine-has-no-merge">When the engine has no MERGE</a></li><li class="toc__i toc__i--2"><a href="#concurrency-merge-is-not-atomic-against-concurrent-writers">Concurrency: MERGE is not atomic against concurrent writers</a></li><li class="toc__i toc__i--2"><a href="#a-slowly-changing-dimension-type-2">A slowly changing dimension (Type 2)</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

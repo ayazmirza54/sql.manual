@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PostgreSQL · SQL Terminal</title>
+<meta name="description" content="The most standards-compliant open-source RDBMS: extensible types, MVCC, and the richest indexing of any engine.">
+<meta name="keywords" content="PostgreSQL sql reference syntax types indexes transactions performance cli">
+<link rel="canonical" href="https://sql.manual.dev/databases/postgresql/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="PostgreSQL · SQL Terminal">
+<meta property="og:description" content="The most standards-compliant open-source RDBMS: extensible types, MVCC, and the richest indexing of any engine.">
+<meta property="og:url" content="https://sql.manual.dev/databases/postgresql/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PostgreSQL · SQL Terminal">
+<meta name="twitter:description" content="The most standards-compliant open-source RDBMS: extensible types, MVCC, and the richest indexing of any engine.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"PostgreSQL · SQL Terminal","headline":"PostgreSQL","description":"The most standards-compliant open-source RDBMS: extensible types, MVCC, and the richest indexing of any engine.","url":"https://sql.manual.dev/databases/postgresql/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link is-active" aria-current="page" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Engines</p><ul class="sb__list"><li><a class="sb__link is-active" aria-current="page" href="/databases/postgresql/">PostgreSQL</a></li><li><a class="sb__link" href="/databases/mysql/">MySQL</a></li><li><a class="sb__link" href="/databases/sqlite/">SQLite</a></li><li><a class="sb__link" href="/databases/sqlserver/">SQL Server</a></li><li><a class="sb__link" href="/databases/oracle/">Oracle Database</a></li><li><a class="sb__link" href="/databases/redshift/">Amazon Redshift</a></li><li><a class="sb__link" href="/databases/snowflake/">Snowflake</a></li><li><a class="sb__link" href="/databases/bigquery/">Google BigQuery</a></li><li><a class="sb__link" href="/databases/duckdb/">DuckDB</a></li><li><a class="sb__link" href="/databases/mariadb/">MariaDB</a></li><li><a class="sb__link" href="/databases/clickhouse/">ClickHouse</a></li><li><a class="sb__link" href="/databases/trino/">Trino / Presto</a></li><li><a class="sb__link" href="/databases/databricks/">Databricks SQL</a></li><li><a class="sb__link" href="/databases/cockroachdb/">CockroachDB</a></li><li><a class="sb__link" href="/databases/db2/">IBM Db2</a></li><li><a class="sb__link" href="/databases/synapse/">Azure Synapse</a></li></ul></div><div class="sb__group"><p class="sb__title">Cross-engine</p><ul class="sb__list"><li><a class="sb__link" href="/dialects/">Dialect overview</a></li><li><a class="sb__link" href="/comparison/">Dialect diff</a></li><li><a class="sb__link" href="/datatypes/">Data types</a></li><li><a class="sb__link" href="/cli/">CLI reference</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/databases/">databases</a><span class="crumb__sep">/</span><a href="/databases/postgresql/">postgresql</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">ENGINE</span><span class="pmeta__v">PostgreSQL</span></div><div class="pmeta__i"><span class="pmeta__k">VERSION</span><span class="pmeta__v">18</span></div><div class="pmeta__i"><span class="pmeta__k">LICENSE</span><span class="pmeta__v">PostgreSQL License</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>PostgreSQL</h1><p class="lede">The most standards-compliant open-source RDBMS: extensible types, MVCC, and the richest indexing of any engine.</p><div class="tags"><span class="tag">OLTP · Object-relational</span><span class="tag">PostgreSQL License (open source)</span><span class="tag">CLI: psql</span></div><h2 id="overview" class="hd hd--2"><a class="hd__anchor" href="#overview" aria-label="Link to Overview">#</a>Overview</h2>
+<p>PostgreSQL is an object-relational database with an unusually strong commitment to correctness and extensibility. It has the most complete SQL standard coverage of any open-source engine, a genuine extension system (PostGIS, pgvector, TimescaleDB, pg_trgm), and index types no other engine offers.</p>
+<dl class="kv"><div class="kv__row"><dt>FIRST RELEASE</dt><dd>1996 (as PostgreSQL; POSTGRES from 1986)</dd></div><div class="kv__row"><dt>LICENSE</dt><dd>PostgreSQL License — permissive, BSD-like</dd></div><div class="kv__row"><dt>CURRENT MAJOR</dt><dd>18 (annual major releases each autumn, 5 years of support)</dd></div><div class="kv__row"><dt>WIRE PROTOCOL</dt><dd>PostgreSQL frontend/backend protocol, port 5432</dd></div><div class="kv__row"><dt>DEFAULT ISOLATION</dt><dd>READ COMMITTED</dd></div><div class="kv__row"><dt>CONCURRENCY</dt><dd>MVCC — readers never block writers</dd></div><div class="kv__row"><dt>BEST FOR</dt><dd>OLTP, mixed workloads, geospatial, JSON documents, anything needing correctness</dd></div></dl>
+<h2 id="architecture" class="hd hd--2"><a class="hd__anchor" href="#architecture" aria-label="Link to Architecture">#</a>Architecture</h2>
+<p>PostgreSQL uses a <strong>process-per-connection</strong> model: the postmaster forks a backend process for each client. That makes connections comparatively expensive — a few hundred is a practical ceiling without a pooler.</p>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Process model</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-379">COPY</button></span></figcaption><pre id="code-379" class="code__pre"><code class="lang-text">postmaster (supervisor)
+├── backend process        one per client connection
+├── background writer      flushes dirty shared buffers
+├── checkpointer           writes a consistent checkpoint to disk
+├── WAL writer             flushes the write-ahead log
+├── autovacuum launcher    → autovacuum workers (reclaim dead tuples, refresh stats)
+├── stats collector        cumulative statistics
+└── walsender / walreceiver  streaming replication</code></pre></figure>
+<p>Storage is a <strong>heap</strong>: rows are stored unordered in 8 KB pages, with indexes as separate structures pointing at physical tuple ids (<code>ctid</code>). This differs fundamentally from MySQL and SQL Server, where the primary key clusters the table — which is why &quot;keep the primary key narrow&quot; is MySQL advice, not PostgreSQL advice.</p>
+<p>::: note MVCC and why VACUUM exists An <code>UPDATE</code> writes a <strong>new row version</strong> and marks the old one dead; a <code>DELETE</code> only marks. Old versions stay in the table until <code>VACUUM</code> reclaims them, which is what keeps readers from blocking writers. The cost is that a heavily-updated table grows (&quot;bloat&quot;) unless autovacuum keeps up — and autovacuum cannot reclaim rows any open transaction might still need to see. :::</p>
+<h2 id="installation" class="hd hd--2"><a class="hd__anchor" href="#installation" aria-label="Link to Installation">#</a>Installation</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Install</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-380">COPY</button></span></figcaption><pre id="code-380" class="code__pre"><code class="lang-bash"><span class="p">#</span> Debian / Ubuntu
+sudo apt install postgresql-18 postgresql-client-18
+
+<span class="p">#</span> macOS
+brew install postgresql@18 &amp;&amp; brew services start postgresql@18
+
+<span class="p">#</span> Docker — the fastest way to get a throwaway instance
+docker run<span class="o"> -d</span><span class="o"> --name</span> pg<span class="o"> -e</span> POSTGRES_PASSWORD=secret<span class="o"> -p</span> 5432:5432 postgres:18
+
+<span class="p">#</span> initialise a fresh data directory manually
+initdb<span class="o"> -D</span> /var/lib/postgresql/data<span class="o"> --data-checksums</span>   <span class="c"># enable checksums; you cannot add them later cheaply</span>
+pg_ctl<span class="o"> -D</span> /var/lib/postgresql/data<span class="o"> -l</span> logfile start</code></pre></figure>
+<h2 id="cli-connection" class="hd hd--2"><a class="hd__anchor" href="#cli-connection" aria-label="Link to CLI &amp; connection">#</a>CLI &amp; connection</h2>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">psql</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-381">COPY</button></span></figcaption><pre id="code-381" class="code__pre"><code class="lang-bash">psql<span class="o"> -h</span> localhost<span class="o"> -p</span> 5432<span class="o"> -U</span> postgres<span class="o"> -d</span> app
+psql <span class="s">&quot;postgresql://user:pass@host:5432/app?sslmode=require&quot;</span>
+psql<span class="o"> -c</span> <span class="s">&quot;SELECT version()&quot;</span>
+psql<span class="o"> -f</span> migration.sql<span class="o"> -v</span> ON_ERROR_STOP=1<span class="o"> --single-transaction</span></code></pre></figure>
+<p>Full meta-command reference on the <a href="/cli/#psql-postgresql">CLI page</a> and the <a href="/cheatsheets/postgresql-cli/">psql cheat sheet</a>.</p>
+<h2 id="data-types" class="hd hd--2"><a class="hd__anchor" href="#data-types" aria-label="Link to Data types">#</a>Data types</h2>
+<p>PostgreSQL&#39;s type system is its distinguishing feature.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Category</th><th scope="col">Types</th></tr></thead><tbody><tr><th scope="row">Numeric</th><td><code>SMALLINT</code> <code>INTEGER</code> <code>BIGINT</code> <code>NUMERIC(p,s)</code> <code>REAL</code> <code>DOUBLE PRECISION</code></td></tr><tr><th scope="row">Character</th><td><code>TEXT</code> <code>VARCHAR(n)</code> <code>CHAR(n)</code> — <strong><code>TEXT</code> has no performance penalty</strong></td></tr><tr><th scope="row">Date/time</th><td><code>DATE</code> <code>TIME</code> <code>TIMESTAMP</code> <code>TIMESTAMPTZ</code> <code>INTERVAL</code></td></tr><tr><th scope="row">Boolean</th><td><code>BOOLEAN</code> — a real three-valued type</td></tr><tr><th scope="row">JSON</th><td><code>JSON</code> (text) <code>JSONB</code> (binary, indexable)</td></tr><tr><th scope="row">Arrays</th><td>Any type followed by <code>[]</code>, 1-indexed</td></tr><tr><th scope="row">Ranges</th><td><code>INT4RANGE</code> <code>NUMRANGE</code> <code>TSTZRANGE</code> <code>DATERANGE</code> + multiranges</td></tr><tr><th scope="row">Network</th><td><code>INET</code> <code>CIDR</code> <code>MACADDR</code></td></tr><tr><th scope="row">Geometric</th><td><code>POINT</code> <code>LINE</code> <code>POLYGON</code> (and PostGIS for real spatial work)</td></tr><tr><th scope="row">Other</th><td><code>UUID</code> <code>XML</code> <code>BYTEA</code> <code>TSVECTOR</code> <code>ENUM</code> <code>COMPOSITE</code> <code>DOMAIN</code></td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Types no other mainstream engine has</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-382">COPY</button></span></figcaption><pre id="code-382" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">reservations</span> (
+    room_id  <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span>,
+    period   TSTZRANGE <span class="k">NOT</span> <span class="k">NULL</span>,
+    guests   <span class="t">TEXT</span>[] <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="s">&#39;{}&#39;</span>,
+    details  <span class="t">JSONB</span>,
+    <span class="c">-- declaratively impossible to double-book a room:</span>
+    <span class="k">EXCLUDE</span> <span class="k">USING</span> <span class="f">GIST</span> (room_id <span class="k">WITH</span> <span class="o">=</span>, period <span class="k">WITH</span> <span class="o">&amp;&amp;</span>)
+);</code></pre></figure>
+<h2 id="indexes" class="hd hd--2"><a class="hd__anchor" href="#indexes" aria-label="Link to Indexes">#</a>Indexes</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Type</th><th scope="col">Use for</th></tr></thead><tbody><tr><th scope="row"><strong>B-tree</strong></th><td>Default. <code>=</code>, ranges, <code>ORDER BY</code>, <code>MIN</code>/<code>MAX</code>, prefix <code>LIKE &#39;a%&#39;</code></td></tr><tr><th scope="row"><strong>GIN</strong></th><td>JSONB containment, array membership, full-text, trigram</td></tr><tr><th scope="row"><strong>GiST</strong></th><td>Geometry, ranges, exclusion constraints, nearest-neighbour</td></tr><tr><th scope="row"><strong>SP-GiST</strong></th><td>Quadtrees, tries, IP prefix lookups</td></tr><tr><th scope="row"><strong>BRIN</strong></th><td>Very large naturally-ordered tables — a tiny index over block ranges</td></tr><tr><th scope="row"><strong>Hash</strong></th><td>Equality only; WAL-logged and crash-safe since 10</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The index toolkit</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-383">COPY</button></span></figcaption><pre id="code-383" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">CONCURRENTLY</span> idx_a <span class="k">ON</span> <span class="f">t</span> (col);              <span class="c">-- non-blocking build</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_b <span class="k">ON</span> <span class="f">t</span> (a, b <span class="k">DESC</span>) <span class="k">INCLUDE</span> (c);         <span class="c">-- composite + covering</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_c <span class="k">ON</span> <span class="f">t</span> (<span class="f">lower</span>(email));                  <span class="c">-- functional</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_d <span class="k">ON</span> <span class="f">t</span> (created_at) <span class="k">WHERE</span> <span class="k">status</span><span class="o">=</span><span class="s">&#39;open&#39;</span>;<span class="c">-- partial</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_e <span class="k">ON</span> docs <span class="k">USING</span> <span class="f">GIN</span> (data jsonb_path_ops);
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_f <span class="k">ON</span> logs <span class="k">USING</span> <span class="f">BRIN</span> (created_at);      <span class="c">-- ~0.1% the size of a B-tree</span></code></pre></figure>
+<h2 id="transactions" class="hd hd--2"><a class="hd__anchor" href="#transactions" aria-label="Link to Transactions">#</a>Transactions</h2>
+<p>Default <code>READ COMMITTED</code>. <code>REPEATABLE READ</code> gives true snapshot isolation (stricter than the standard — it also prevents phantoms). <code>SERIALIZABLE</code> uses <strong>SSI</strong>: it takes no extra locks, but may abort a transaction at commit with SQLSTATE <code>40001</code>, so applications must retry.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Locking patterns</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-384">COPY</button></span></figcaption><pre id="code-384" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> jobs <span class="k">WHERE</span> <span class="k">status</span><span class="o">=</span><span class="s">&#39;queued&#39;</span> <span class="k">ORDER</span> <span class="k">BY</span> id <span class="k">LIMIT</span> <span class="n">1</span>
+<span class="k">FOR</span> <span class="k">UPDATE</span> <span class="k">SKIP</span> <span class="k">LOCKED</span>;      <span class="c">-- the canonical job-queue query</span>
+
+<span class="k">SELECT</span> <span class="f">pg_advisory_xact_lock</span>(<span class="f">hashtext</span>(<span class="s">&#39;nightly-job&#39;</span>));   <span class="c">-- app-level mutex, auto-released at commit</span></code></pre></figure>
+<h2 id="json" class="hd hd--2"><a class="hd__anchor" href="#json" aria-label="Link to JSON">#</a>JSON</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">JSONB in practice</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-385">COPY</button></span></figcaption><pre id="code-385" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> idx_events_data <span class="k">ON</span> events <span class="k">USING</span> <span class="f">GIN</span> (data jsonb_path_ops);
+
+<span class="k">SELECT</span> data <span class="o">-&gt;&gt;</span> <span class="s">&#39;event&#39;</span>                     <span class="k">AS</span> <span class="k">name</span>,
+       data <span class="o">-&gt;</span> <span class="s">&#39;user&#39;</span> <span class="o">-&gt;&gt;</span> <span class="s">&#39;email&#39;</span>           <span class="k">AS</span> email,
+       (data <span class="c">#&gt;&gt; &#39;{meta,duration_ms}&#39;)::int AS ms</span>
+<span class="k">FROM</span>   events
+<span class="k">WHERE</span>  data @<span class="o">&gt;</span> <span class="s">&#39;{&quot;event&quot;:&quot;purchase&quot;}&#39;</span>       <span class="c">-- uses the GIN index</span>
+<span class="k">ORDER</span>  <span class="k">BY</span> id <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">100</span>;</code></pre></figure>
+<h2 id="full-text-search" class="hd hd--2"><a class="hd__anchor" href="#full-text-search" aria-label="Link to Full-text search">#</a>Full-text search</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Ranked search with a stored vector</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-386">COPY</button></span></figcaption><pre id="code-386" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> articles <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="k">search</span> <span class="t">tsvector</span>
+  <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> (<span class="f">to_tsvector</span>(<span class="s">&#39;english&#39;</span>, <span class="k">coalesce</span>(title,<span class="s">&#39;&#39;</span>) <span class="o">||</span> <span class="s">&#39; &#39;</span> <span class="o">||</span> <span class="k">coalesce</span>(body,<span class="s">&#39;&#39;</span>))) <span class="k">STORED</span>;
+<span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> articles <span class="k">USING</span> <span class="f">GIN</span> (<span class="k">search</span>);
+
+<span class="k">SELECT</span> id, title, <span class="f">ts_rank</span>(<span class="k">search</span>, q) <span class="k">AS</span> rank
+<span class="k">FROM</span>   articles, <span class="f">websearch_to_tsquery</span>(<span class="s">&#39;english&#39;</span>, <span class="s">&#39;index performance -mysql&#39;</span>) q
+<span class="k">WHERE</span>  <span class="k">search</span> @@ q <span class="k">ORDER</span> <span class="k">BY</span> rank <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;</code></pre></figure>
+<h2 id="partitioning" class="hd hd--2"><a class="hd__anchor" href="#partitioning" aria-label="Link to Partitioning">#</a>Partitioning</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Declarative partitioning (10+)</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-387">COPY</button></span></figcaption><pre id="code-387" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">events</span> (id <span class="t">BIGINT</span>, created_at <span class="t">TIMESTAMPTZ</span> <span class="k">NOT</span> <span class="k">NULL</span>, payload <span class="t">JSONB</span>)
+<span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">RANGE</span> (created_at);
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> events_2026_08 <span class="k">PARTITION</span> <span class="k">OF</span> events
+  <span class="k">FOR</span> <span class="k">VALUES</span> <span class="k">FROM</span> (<span class="s">&#39;2026-08-01&#39;</span>) <span class="k">TO</span> (<span class="s">&#39;2026-09-01&#39;</span>);
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> events <span class="k">DETACH</span> <span class="k">PARTITION</span> events_2025_08;   <span class="c">-- retention in O(1)</span></code></pre></figure>
+<h2 id="replication-backup" class="hd hd--2"><a class="hd__anchor" href="#replication-backup" aria-label="Link to Replication &amp; backup">#</a>Replication &amp; backup</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Mechanism</th><th scope="col">Use</th></tr></thead><tbody><tr><th scope="row">Streaming (physical)</th><td>Read replicas, HA, exact byte-level copy</td></tr><tr><th scope="row">Logical replication</th><td>Per-table replication, major-version upgrades, CDC to other systems</td></tr><tr><th scope="row"><code>pg_dump -Fc</code></th><td>Logical backup — portable, selective restore</td></tr><tr><th scope="row"><code>pg_basebackup</code> + WAL archive</th><td>Physical backup with point-in-time recovery</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Monitoring replication</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-388">COPY</button></span></figcaption><pre id="code-388" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> client_addr, state, <span class="f">pg_wal_lsn_diff</span>(sent_lsn, replay_lsn) <span class="k">AS</span> lag_bytes
+<span class="k">FROM</span>   pg_stat_replication;
+
+<span class="c">-- an inactive slot retains WAL forever and will fill the disk:</span>
+<span class="k">SELECT</span> slot_name, active, <span class="f">pg_size_pretty</span>(<span class="f">pg_wal_lsn_diff</span>(<span class="f">pg_current_wal_lsn</span>(), restart_lsn))
+<span class="k">FROM</span>   pg_replication_slots;</code></pre></figure>
+<h2 id="performance-monitoring" class="hd hd--2"><a class="hd__anchor" href="#performance-monitoring" aria-label="Link to Performance &amp; monitoring">#</a>Performance &amp; monitoring</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The queries to know</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-389">COPY</button></span></figcaption><pre id="code-389" class="code__pre"><code class="lang-sql"><span class="k">EXPLAIN</span> (<span class="k">ANALYZE</span>, BUFFERS, <span class="k">VERBOSE</span>) <span class="k">SELECT</span> …;
+
+<span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> pg_stat_statements;
+<span class="k">SELECT</span> calls, <span class="f">round</span>(total_exec_time<span class="o">::</span><span class="t">numeric</span>,<span class="n">1</span>) <span class="k">AS</span> total_ms, <span class="f">round</span>(mean_exec_time<span class="o">::</span><span class="t">numeric</span>,<span class="n">2</span>) <span class="k">AS</span> mean_ms, <span class="k">query</span>
+<span class="k">FROM</span>   pg_stat_statements <span class="k">ORDER</span> <span class="k">BY</span> total_exec_time <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;
+
+<span class="k">SELECT</span> relname, n_dead_tup, last_autovacuum <span class="k">FROM</span> pg_stat_user_tables <span class="k">ORDER</span> <span class="k">BY</span> n_dead_tup <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">10</span>;
+<span class="k">SELECT</span> relname, seq_scan, idx_scan <span class="k">FROM</span> pg_stat_user_tables <span class="k">WHERE</span> seq_scan <span class="o">&gt;</span> idx_scan;
+<span class="k">SELECT</span> indexrelname, idx_scan, <span class="f">pg_size_pretty</span>(<span class="f">pg_relation_size</span>(indexrelid))
+<span class="k">FROM</span>   pg_stat_user_indexes <span class="k">WHERE</span> idx_scan <span class="o">=</span> <span class="n">0</span>;</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Setting</th><th scope="col">Starting point</th></tr></thead><tbody><tr><th scope="row"><code>shared_buffers</code></th><td>25% of RAM</td></tr><tr><th scope="row"><code>effective_cache_size</code></th><td>50–75% of RAM (an estimate, not an allocation)</td></tr><tr><th scope="row"><code>work_mem</code></th><td>4–64 MB — <strong>per sort node, per connection</strong>; raise carefully</td></tr><tr><th scope="row"><code>maintenance_work_mem</code></th><td>512 MB–2 GB (vacuum, index builds)</td></tr><tr><th scope="row"><code>max_connections</code></th><td>100–200, with PgBouncer in front</td></tr><tr><th scope="row"><code>random_page_cost</code></th><td>1.1 on SSD (the default 4.0 assumes spinning disks)</td></tr><tr><th scope="row"><code>wal_compression</code></th><td><code>on</code></td></tr></tbody></table></div>
+<h2 id="security" class="hd hd--2"><a class="hd__anchor" href="#security" aria-label="Link to Security">#</a>Security</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Least privilege, and row-level security</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-390">COPY</button></span></figcaption><pre id="code-390" class="code__pre"><code class="lang-sql"><span class="k">REVOKE</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="k">SCHEMA</span> <span class="k">public</span> <span class="k">FROM</span> <span class="k">PUBLIC</span>;
+<span class="k">CREATE</span> <span class="k">ROLE</span> app_rw;
+<span class="k">GRANT</span> <span class="k">USAGE</span> <span class="k">ON</span> <span class="k">SCHEMA</span> app <span class="k">TO</span> app_rw;
+<span class="k">GRANT</span> <span class="k">SELECT</span>, <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span> <span class="k">ON</span> <span class="k">ALL</span> <span class="k">TABLES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> app <span class="k">TO</span> app_rw;
+<span class="k">ALTER</span> <span class="k">DEFAULT</span> <span class="k">PRIVILEGES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> app <span class="k">GRANT</span> <span class="k">SELECT</span>, <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span> <span class="k">ON</span> <span class="k">TABLES</span> <span class="k">TO</span> app_rw;
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> documents <span class="k">ENABLE</span> <span class="k">ROW</span> <span class="k">LEVEL</span> <span class="k">SECURITY</span>;
+<span class="k">CREATE</span> <span class="k">POLICY</span> tenant <span class="k">ON</span> documents <span class="k">USING</span> (tenant_id <span class="o">=</span> <span class="f">current_setting</span>(<span class="s">&#39;app.tenant_id&#39;</span>)<span class="o">::</span><span class="t">bigint</span>);</code></pre></figure>
+<p>Authentication is configured in <code>pg_hba.conf</code>, evaluated top to bottom: use <code>scram-sha-256</code> (never <code>md5</code> or <code>trust</code>) and require TLS for anything crossing a network.</p>
+<h2 id="extensions-worth-knowing" class="hd hd--2"><a class="hd__anchor" href="#extensions-worth-knowing" aria-label="Link to Extensions worth knowing">#</a>Extensions worth knowing</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Extension</th><th scope="col">Purpose</th></tr></thead><tbody><tr><th scope="row"><code>pg_stat_statements</code></th><td>Query performance history — install it on every server</td></tr><tr><th scope="row"><code>PostGIS</code></th><td>The most complete spatial implementation in any database</td></tr><tr><th scope="row"><code>pgvector</code></th><td>Vector similarity search with HNSW/IVFFlat indexes</td></tr><tr><th scope="row"><code>pg_trgm</code></th><td>Trigram indexes making <code>LIKE &#39;%x%&#39;</code> and fuzzy matching fast</td></tr><tr><th scope="row"><code>TimescaleDB</code></th><td>Time-series hypertables, compression, continuous aggregates</td></tr><tr><th scope="row"><code>pg_partman</code></th><td>Automated partition creation and retention</td></tr><tr><th scope="row"><code>pgcrypto</code></th><td>Hashing and encryption functions</td></tr><tr><th scope="row"><code>postgres_fdw</code></th><td>Query another PostgreSQL server as if it were local</td></tr></tbody></table></div>
+<h2 id="best-practices" class="hd hd--2"><a class="hd__anchor" href="#best-practices" aria-label="Link to Best practices">#</a>Best practices</h2>
+<ul class="list"><li>Use <code>TIMESTAMPTZ</code>, never bare <code>TIMESTAMP</code>, for anything that records when something happened.</li><li>Use <code>TEXT</code> unless a length limit is a genuine business rule.</li><li>Prefer <code>JSONB</code> over <code>JSON</code>; promote fields you filter on to real columns.</li><li>Lowercase <code>snake_case</code> identifiers — never <code>&quot;CamelCase&quot;</code>.</li><li>Index every foreign key column; PostgreSQL does not do it for you.</li><li>Set <code>lock_timeout</code> and <code>statement_timeout</code> before running DDL.</li><li>Set <code>idle_in_transaction_session_timeout</code> — long transactions block vacuum.</li><li>Put a connection pooler in front before you reach ~200 connections.</li><li>Monitor transaction ID age; wraparound protection stops writes entirely.</li><li>Install <code>pg_stat_statements</code> on day one, not during the incident.</li></ul>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/comparison/"><span class="rel__t">Dialect diff</span><span class="rel__a">→</span></a><a class="rel__i" href="/datatypes/"><span class="rel__t">Data types</span><span class="rel__a">→</span></a><a class="rel__i" href="/cli/"><span class="rel__t">CLI reference</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">All engines</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#overview">Overview</a></li><li class="toc__i toc__i--2"><a href="#architecture">Architecture</a></li><li class="toc__i toc__i--2"><a href="#installation">Installation</a></li><li class="toc__i toc__i--2"><a href="#cli-connection">CLI &amp; connection</a></li><li class="toc__i toc__i--2"><a href="#data-types">Data types</a></li><li class="toc__i toc__i--2"><a href="#indexes">Indexes</a></li><li class="toc__i toc__i--2"><a href="#transactions">Transactions</a></li><li class="toc__i toc__i--2"><a href="#json">JSON</a></li><li class="toc__i toc__i--2"><a href="#full-text-search">Full-text search</a></li><li class="toc__i toc__i--2"><a href="#partitioning">Partitioning</a></li><li class="toc__i toc__i--2"><a href="#replication-backup">Replication &amp; backup</a></li><li class="toc__i toc__i--2"><a href="#performance-monitoring">Performance &amp; monitoring</a></li><li class="toc__i toc__i--2"><a href="#security">Security</a></li><li class="toc__i toc__i--2"><a href="#extensions-worth-knowing">Extensions worth knowing</a></li><li class="toc__i toc__i--2"><a href="#best-practices">Best practices</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL Terminal — The complete SQL &amp; database reference.</title>
+<meta name="description" content="SQL Terminal is a complete, searchable SQL and database reference: ANSI SQL, PostgreSQL, MySQL, SQLite, SQL Server, Oracle, Redshift, Snowflake, BigQuery and more — with syntax, examples, dialect differences and an in-browser playground.">
+<meta name="keywords" content="sql reference postgresql mysql sqlite sql server oracle bigquery snowflake redshift duckdb cheat sheet dialect comparison functions">
+<link rel="canonical" href="https://sql.manual.dev/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="SQL Terminal — The complete SQL &amp; database reference.">
+<meta property="og:description" content="SQL Terminal is a complete, searchable SQL and database reference: ANSI SQL, PostgreSQL, MySQL, SQLite, SQL Server, Oracle, Redshift, Snowflake, BigQuery and more — with syntax, examples, dialect differences and an in-browser playground.">
+<meta property="og:url" content="https://sql.manual.dev/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SQL Terminal — The complete SQL &amp; database reference.">
+<meta name="twitter:description" content="SQL Terminal is a complete, searchable SQL and database reference: ANSI SQL, PostgreSQL, MySQL, SQLite, SQL Server, Oracle, Redshift, Snowflake, BigQuery and more — with syntax, examples, dialect differences and an in-browser playground.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"SQL Terminal — The complete SQL & database reference.","headline":"SQL Terminal","description":"SQL Terminal is a complete, searchable SQL and database reference: ANSI SQL, PostgreSQL, MySQL, SQLite, SQL Server, Oracle, Redshift, Snowflake, BigQuery and more — with syntax, examples, dialect differences and an in-browser playground.","url":"https://sql.manual.dev/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"},"potentialAction":{"@type":"SearchAction","target":"https://sql.manual.dev/search/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+<section class="hero"><div class="hero__in"><div class="hero__grid"><div><p class="hero__cmd"><b>$</b> sql --help</p><h1>SQL <span class="dim">TERMINAL</span></h1><p class="hero__sub">The complete SQL &amp; database reference. Standard SQL, sixteen engines, and every difference between them — searchable in one keystroke.</p><ul class="hero__lines"><li>Learn SQL.</li><li>Compare dialects.</li><li>Explore databases.</li><li>Query faster.</li></ul><button class="hero__search" type="button" data-open-palette aria-label="Open search"><span class="p">$</span><span class="t">search "window functions"</span><span class="cursor" aria-hidden="true"></span><span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span></button><div class="hero__cta"><a class="btn btn--primary" href="/sql/">START WITH SQL →</a><a class="btn" href="/comparison/">DIALECT DIFF</a><a class="btn" href="/playground/">PLAYGROUND</a><a class="btn" href="/cheatsheets/">CHEAT SHEETS</a></div></div><div class="termwin"><div class="termwin__bar"><span class="termwin__dots"><i></i><i></i><i></i></span><span class="termwin__t">~/sql/advanced/window-functions</span></div><div class="termwin__body"><pre><span class="p">$</span> sql --explain "latest order per customer"
+
+<span class="c">-- PostgreSQL · fastest with (customer_id, created_at DESC)</span>
+<span class="k">SELECT DISTINCT ON</span> (customer_id) *
+<span class="k">FROM</span>   orders
+<span class="k">ORDER BY</span> customer_id, created_at <span class="k">DESC</span>;
+
+<span class="c">-- Portable · any engine with window functions</span>
+<span class="k">SELECT</span> * <span class="k">FROM</span> (
+  <span class="k">SELECT</span> o.*, <span class="f">ROW_NUMBER</span>() <span class="k">OVER</span> (
+           <span class="k">PARTITION BY</span> customer_id
+           <span class="k">ORDER BY</span> created_at <span class="k">DESC</span>) <span class="k">AS</span> rn
+  <span class="k">FROM</span> orders o
+) t <span class="k">WHERE</span> rn = <span class="n">1</span>;
+
+<span class="ok">●</span> 16 engines  <span class="ok">●</span> ANSI marked  <span class="ok">●</span> differences shown</pre></div></div></div><div class="stats"><div class="stat"><div class="stat__v">16</div><div class="stat__l">Database engines</div></div><div class="stat"><div class="stat__v">650+</div><div class="stat__l">Indexed entries</div></div><div class="stat"><div class="stat__v">900+</div><div class="stat__l">Code examples</div></div><div class="stat"><div class="stat__v">95+</div><div class="stat__l">Functions</div></div><div class="stat"><div class="stat__v">74+</div><div class="stat__l">Operators</div></div></div></div></section>
+<div class="shell shell--wide shell--nosb">
+  
+  <main class="main" id="main">
+    
+    
+    <section class="section"><div class="section__h"><h2>Quick access</h2><a class="more" href="/databases/">all 16 engines →</a></div><div class="cards"><a class="card" href="/sql/"><span class="card__t">[ SQL Fundamentals ]</span><span class="card__d">Every construct, ANSI vs vendor</span></a><a class="card" href="/databases/postgresql/"><span class="card__t">[ PostgreSQL ]</span><span class="card__d">Types, indexes, JSONB, psql</span></a><a class="card" href="/databases/mysql/"><span class="card__t">[ MySQL ]</span><span class="card__d">InnoDB, sql_mode, JSON</span></a><a class="card" href="/databases/sqlite/"><span class="card__t">[ SQLite ]</span><span class="card__d">PRAGMAs, affinity, WAL</span></a><a class="card" href="/databases/sqlserver/"><span class="card__t">[ SQL Server ]</span><span class="card__d">T-SQL, DMVs, columnstore</span></a><a class="card" href="/databases/oracle/"><span class="card__t">[ Oracle ]</span><span class="card__d">PL/SQL, CONNECT BY, DUAL</span></a><a class="card" href="/databases/redshift/"><span class="card__t">[ Redshift ]</span><span class="card__d">Distkeys, sortkeys, COPY</span></a><a class="card" href="/databases/snowflake/"><span class="card__t">[ Snowflake ]</span><span class="card__d">Warehouses, VARIANT, cloning</span></a><a class="card" href="/databases/bigquery/"><span class="card__t">[ BigQuery ]</span><span class="card__d">Partitioning, cost control</span></a></div></section><section class="section"><div class="section__h"><h2>Reference</h2></div><div class="cards"><a class="card" href="/functions/"><span class="card__t">Function encyclopedia</span><span class="card__d">95 functions with syntax, examples, dialect support and performance notes</span></a><a class="card" href="/comparison/"><span class="card__t">Dialect diff</span><span class="card__d">The same task written for every engine, side by side</span></a><a class="card" href="/datatypes/"><span class="card__t">Data types</span><span class="card__d">Every type and what it is called in each engine</span></a><a class="card" href="/operators/"><span class="card__t">Operators</span><span class="card__d">74 operators, grouped by what they do</span></a><a class="card" href="/joins/"><span class="card__t">Joins</span><span class="card__d">Every join type with row-matching diagrams</span></a><a class="card" href="/windows/"><span class="card__t">Window functions</span><span class="card__d">Frames, ranking, offsets — and the defaults that bite</span></a><a class="card" href="/indexes/"><span class="card__t">Indexes</span><span class="card__d">B-tree, GIN, BRIN, covering, partial — and what blocks them</span></a><a class="card" href="/performance/"><span class="card__t">Performance</span><span class="card__d">Reading EXPLAIN, statistics, and a repeatable method</span></a><a class="card" href="/transactions/"><span class="card__t">Transactions</span><span class="card__d">ACID, isolation levels, MVCC, deadlocks, locking</span></a><a class="card" href="/admin/"><span class="card__t">Administration</span><span class="card__d">Privileges, backup, replication, partitioning, HA</span></a><a class="card" href="/cookbook/"><span class="card__t">SQL cookbook</span><span class="card__d">17 practical &quot;how do I…&quot; recipes</span></a><a class="card" href="/cli/"><span class="card__t">CLI reference</span><span class="card__d">psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb</span></a></div></section><section class="section"><div class="section__h"><h2>How this reference is written</h2></div><div class="minicards"><div class="minicard"><span class="minicard__t">ANSI vs vendor, always marked</span><span class="minicard__d">Nothing is presented as universal when it is not. Every construct carries its standard revision or a vendor tag.</span></div><div class="minicard"><span class="minicard__t">Differences shown, not averaged</span><span class="minicard__d">Where engines diverge, both versions appear — with the reason for the divergence.</span></div><div class="minicard"><span class="minicard__t">Traps called out</span><span class="minicard__d"><code>NOT IN</code> with NULLs, <code>LAST_VALUE</code> frames, <code>LEFT JOIN</code> filtered in <code>WHERE</code>, unenforced warehouse constraints.</span></div><div class="minicard"><span class="minicard__t">Version-aware</span><span class="minicard__d">"Since 8.0", "12c and later", "3.35+" — because half of SQL portability is knowing which version you are on.</span></div></div></section>
+    
+    
+  </main>
+  
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Relational databases, tables, rows &amp; columns · SQL Terminal</title>
+<meta name="description" content="Relations, tuples and attributes — and what tables, rows and columns actually guarantee in a real engine.">
+<meta name="keywords" content="relational model table row column tuple attribute relation cardinality degree normalization">
+<link rel="canonical" href="https://sql.manual.dev/sql/relational-model/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Relational databases, tables, rows &amp; columns · SQL Terminal">
+<meta property="og:description" content="Relations, tuples and attributes — and what tables, rows and columns actually guarantee in a real engine.">
+<meta property="og:url" content="https://sql.manual.dev/sql/relational-model/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Relational databases, tables, rows &amp; columns · SQL Terminal">
+<meta name="twitter:description" content="Relations, tuples and attributes — and what tables, rows and columns actually guarantee in a real engine.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Relational databases, tables, rows & columns · SQL Terminal","headline":"Relational databases, tables, rows & columns","description":"Relations, tuples and attributes — and what tables, rows and columns actually guarantee in a real engine.","url":"https://sql.manual.dev/sql/relational-model/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/relational-model/">relational-model</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Basics</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Relational databases, tables, rows &amp; columns</h1><p class="lede">Relations, tuples and attributes — and what tables, rows and columns actually guarantee in a real engine.</p><p>The relational model, defined by E. F. Codd in 1970, represents all data as <strong>relations</strong>: unordered sets of tuples over a set of named, typed attributes. SQL implements this model loosely — it uses multisets rather than sets, and it adds <code>NULL</code> — but the vocabulary maps directly.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Relational theory</th><th scope="col">SQL</th><th scope="col">Meaning</th></tr></thead><tbody><tr><th scope="row">Relation</th><td>Table</td><td>A named collection of rows with a fixed column list</td></tr><tr><th scope="row">Tuple</th><td>Row / record</td><td>One entity instance</td></tr><tr><th scope="row">Attribute</th><td>Column / field</td><td>One named, typed property</td></tr><tr><th scope="row">Domain</th><td>Data type</td><td>The permitted set of values</td></tr><tr><th scope="row">Cardinality</th><td>Row count</td><td>How many rows</td></tr><tr><th scope="row">Degree</th><td>Column count</td><td>How many columns</td></tr></tbody></table></div>
+<h2 id="tables" class="hd hd--2"><a class="hd__anchor" href="#tables" aria-label="Link to Tables">#</a>Tables</h2>
+<p>A table has a name, an ordered column list, and zero or more rows. Column <em>order</em> is part of the table definition (it affects <code>SELECT *</code> and <code>INSERT</code> without a column list) but is otherwise not meaningful — always name your columns explicitly in production code.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A table definition with its parts labelled</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=CREATE%20TABLE%20employees%20(%0A%20%20%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20BIGINT%20%20%20%20%20%20%20PRIMARY%20KEY%2C%20%20%20%20%20%20%20%20--%20identity%0A%20%20%20%20email%20%20%20%20%20%20%20%20%20%20VARCHAR(255)%20NOT%20NULL%20UNIQUE%2C%20%20%20%20--%20natural%20key%2C%20enforced%0A%20%20%20%20full_name%20%20%20%20%20%20VARCHAR(120)%20NOT%20NULL%2C%0A%20%20%20%20department_id%20%20INT%20%20%20%20%20%20%20%20%20%20REFERENCES%20departments(id)%2C%0A%20%20%20%20salary%20%20%20%20%20%20%20%20%20NUMERIC(12%2C2)%20CHECK%20(salary%20%3E%3D%200)%2C%0A%20%20%20%20hired_at%20%20%20%20%20%20%20DATE%20%20%20%20%20%20%20%20%20NOT%20NULL%20DEFAULT%20CURRENT_DATE%2C%0A%20%20%20%20manager_id%20%20%20%20%20BIGINT%20%20%20%20%20%20%20REFERENCES%20employees(id)%20%20--%20self-reference%0A)%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-4">COPY</button></span></figcaption><pre id="code-4" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">employees</span> (
+    id             <span class="t">BIGINT</span>       <span class="k">PRIMARY</span> <span class="k">KEY</span>,        <span class="c">-- identity</span>
+    email          <span class="f">VARCHAR</span>(<span class="n">255</span>) <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">UNIQUE</span>,    <span class="c">-- natural key, enforced</span>
+    full_name      <span class="f">VARCHAR</span>(<span class="n">120</span>) <span class="k">NOT</span> <span class="k">NULL</span>,
+    department_id  <span class="t">INT</span>          <span class="k">REFERENCES</span> <span class="f">departments</span>(id),
+    salary         <span class="f">NUMERIC</span>(<span class="n">12</span>,<span class="n">2</span>) <span class="k">CHECK</span> (salary <span class="o">&gt;=</span> <span class="n">0</span>),
+    hired_at       <span class="t">DATE</span>         <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_DATE</span>,
+    manager_id     <span class="t">BIGINT</span>       <span class="k">REFERENCES</span> <span class="f">employees</span>(id)  <span class="c">-- self-reference</span>
+);</code></pre></figure>
+<p>::: tip Name things in the singular or plural, but pick one There is no technical difference. <code>employees</code> (plural table, singular row) is the most common convention in application schemas; Oracle shops often use singular. Consistency matters far more than the choice. :::</p>
+<h2 id="rows" class="hd hd--2"><a class="hd__anchor" href="#rows" aria-label="Link to Rows">#</a>Rows</h2>
+<p>A row is one instance. Two rows are <em>duplicates</em> if every column compares equal — which, thanks to <code>NULL</code>, is subtler than it sounds: two rows both containing <code>NULL</code> in a column are treated as duplicates by <code>DISTINCT</code>, <code>GROUP BY</code> and <code>UNION</code> (which use &quot;not distinct from&quot; semantics), but <code>NULL = NULL</code> in a <code>WHERE</code> clause is unknown, not true.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">NULL is one value for grouping, unknown for comparison</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-5">COPY</button></span></figcaption><pre id="code-5" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="k">DISTINCT</span> department_id <span class="k">FROM</span> employees;  <span class="c">-- one row for all the NULLs</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> employees <span class="k">WHERE</span> department_id <span class="o">=</span> <span class="k">NULL</span>;  <span class="c">-- always zero rows</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> employees <span class="k">WHERE</span> department_id <span class="k">IS</span> <span class="k">NULL</span>; <span class="c">-- correct</span></code></pre></figure>
+<h2 id="columns" class="hd hd--2"><a class="hd__anchor" href="#columns" aria-label="Link to Columns">#</a>Columns</h2>
+<p>Every column carries a <strong>name</strong>, a <strong>data type</strong>, an optional <strong>default</strong>, a <strong>nullability</strong> flag and optional <strong>constraints</strong>. Types are not decoration — they determine storage size, comparison and sort behaviour, index compatibility and overflow rules.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Property</th><th scope="col">Set by</th><th scope="col">Notes</th></tr></thead><tbody><tr><th scope="row">Type</th><td><code>column_name TYPE</code></td><td>See the <a href="/datatypes/">data types explorer</a></td></tr><tr><th scope="row">Nullability</th><td><code>NOT NULL</code></td><td>Columns are nullable by default</td></tr><tr><th scope="row">Default</th><td><code>DEFAULT expr</code></td><td>Applied when the column is omitted from <code>INSERT</code>, not when <code>NULL</code> is passed explicitly</td></tr><tr><th scope="row">Collation</th><td><code>COLLATE</code></td><td>Governs comparison and sort order for text</td></tr><tr><th scope="row">Generated</th><td><code>GENERATED ALWAYS AS (…)</code></td><td>Computed from other columns; stored or virtual</td></tr><tr><th scope="row">Identity</th><td><code>GENERATED … AS IDENTITY</code></td><td>Auto-numbering; see <a href="/sql/sequences/">sequences</a></td></tr></tbody></table></div>
+<h2 id="normalization-in-one-screen" class="hd hd--2"><a class="hd__anchor" href="#normalization-in-one-screen" aria-label="Link to Normalization, in one screen">#</a>Normalization, in one screen</h2>
+<p>Normalization removes redundancy so that each fact is stored exactly once. The forms in practical use:</p>
+<ul class="list"><li><strong>1NF</strong> — every column holds a single atomic value; no repeating groups, no comma-separated lists in a text column.</li><li><strong>2NF</strong> — 1NF, plus every non-key column depends on the <em>whole</em> primary key (only relevant with composite keys).</li><li><strong>3NF</strong> — 2NF, plus no non-key column depends on another non-key column (no transitive dependencies).</li><li><strong>BCNF</strong> — a stricter 3NF: every determinant is a candidate key.</li></ul>
+<p>::: note The practical rule Design in 3NF, then denormalize deliberately, with measurements, when a read path demands it. Analytical warehouses (Redshift, Snowflake, BigQuery, Databricks) routinely use wide denormalized star schemas because joins across billions of rows cost more than duplicated columns. :::</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Denormalized vs normalized — the same fact</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-6">COPY</button></span></figcaption><pre id="code-6" class="code__pre"><code class="lang-sql"><span class="c">-- Not 1NF: a list in a column. Cannot be indexed or joined usefully.</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">orders_bad</span> (id <span class="t">INT</span>, product_names <span class="t">TEXT</span>);  <span class="c">-- &#39;Widget, Gizmo, Doodad&#39;</span>
+
+<span class="c">-- 1NF+: one row per fact, joinable, indexable, constrainable.</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">orders</span>      (id <span class="t">INT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>, customer_id <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span>);
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">order_items</span> (
+    order_id   <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="f">orders</span>(id),
+    product_id <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="f">products</span>(id),
+    quantity   <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">CHECK</span> (quantity <span class="o">&gt;</span> <span class="n">0</span>),
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> (order_id, product_id)
+);</code></pre></figure>
+<h2 id="physical-storage-differs-sharply-by-engine" class="hd hd--2"><a class="hd__anchor" href="#physical-storage-differs-sharply-by-engine" aria-label="Link to Physical storage differs sharply by engine">#</a>Physical storage differs sharply by engine</h2>
+<p>The logical model is shared; the physical layout is not, and it drives performance advice that does not transfer between engines.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Row layout</th><th scope="col">Consequence</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>Heap + separate indexes</td><td>Index scans need a heap fetch unless the index covers the query (index-only scan)</td></tr><tr><th scope="row">MySQL/InnoDB</th><td>Clustered by primary key</td><td>Secondary indexes store the PK, so lookups cost two traversals; keep the PK narrow</td></tr><tr><th scope="row">SQL Server</th><td>Heap or clustered index</td><td>The clustered index <em>is</em> the table</td></tr><tr><th scope="row">SQLite</th><td>B-tree per table, rowid-keyed</td><td><code>WITHOUT ROWID</code> tables cluster on the declared PK</td></tr><tr><th scope="row">Redshift / Snowflake / BigQuery / ClickHouse</th><td>Columnar blocks</td><td>Reading fewer <em>columns</em> is what saves I/O; <code>SELECT *</code> is genuinely expensive</td></tr></tbody></table></div>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/keys/"><span class="rel__t">Primary &amp; foreign keys</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/constraints/"><span class="rel__t">Constraints</span><span class="rel__a">→</span></a><a class="rel__i" href="/datatypes/"><span class="rel__t">Data types</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/what-is-sql/"><span class="pager__d">← PREV</span><span class="pager__t">What is SQL?</span></a><a class="pager__i pager__i--next" href="/sql/keys/"><span class="pager__d">NEXT →</span><span class="pager__t">Primary keys &amp; foreign keys</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#tables">Tables</a></li><li class="toc__i toc__i--2"><a href="#rows">Rows</a></li><li class="toc__i toc__i--2"><a href="#columns">Columns</a></li><li class="toc__i toc__i--2"><a href="#normalization-in-one-screen">Normalization, in one screen</a></li><li class="toc__i toc__i--2"><a href="#physical-storage-differs-sharply-by-engine">Physical storage differs sharply by engine</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

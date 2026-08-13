@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WHERE &amp; predicates · SQL Terminal</title>
+<meta name="description" content="Filtering rows: comparison, BETWEEN, IN, LIKE, pattern matching, and writing predicates an index can use.">
+<meta name="keywords" content="where filter predicate between in like ilike regexp sargable index scan comparison operators">
+<link rel="canonical" href="https://sql.manual.dev/sql/where/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="WHERE &amp; predicates · SQL Terminal">
+<meta property="og:description" content="Filtering rows: comparison, BETWEEN, IN, LIKE, pattern matching, and writing predicates an index can use.">
+<meta property="og:url" content="https://sql.manual.dev/sql/where/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WHERE &amp; predicates · SQL Terminal">
+<meta name="twitter:description" content="Filtering rows: comparison, BETWEEN, IN, LIKE, pattern matching, and writing predicates an index can use.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"WHERE & predicates · SQL Terminal","headline":"WHERE & predicates","description":"Filtering rows: comparison, BETWEEN, IN, LIKE, pattern matching, and writing predicates an index can use.","url":"https://sql.manual.dev/sql/where/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link is-active" aria-current="page" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/where/">where</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Querying</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>WHERE &amp; predicates</h1><p class="lede">Filtering rows: comparison, BETWEEN, IN, LIKE, pattern matching, and writing predicates an index can use.</p><p><code>WHERE</code> filters individual rows before grouping. A row survives only when the predicate evaluates to <code>TRUE</code> — <code>FALSE</code> and <code>UNKNOWN</code> are both discarded.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The predicate vocabulary</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=SELECT%20*%20FROM%20orders%0AWHERE%20%20status%20%3D%20'paid'%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20equality%0A%20%20AND%20%20total%20BETWEEN%20100%20AND%20500%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20inclusive%20range%0A%20%20AND%20%20country%20IN%20('DE'%2C%20'FR'%2C%20'ES')%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20set%20membership%0A%20%20AND%20%20created_at%20%3E%3D%20DATE%20'2026-01-01'%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20range%0A%20%20AND%20%20notes%20IS%20NOT%20NULL%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20null%20test%0A%20%20AND%20%20email%20LIKE%20'%25%40example.com'%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20pattern%0A%20%20AND%20%20NOT%20cancelled%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20boolean%20negation">TRY IT</a><button class="code__btn" type="button" data-copy="code-133">COPY</button></span></figcaption><pre id="code-133" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders
+<span class="k">WHERE</span>  <span class="k">status</span> <span class="o">=</span> <span class="s">&#39;paid&#39;</span>                                <span class="c">-- equality</span>
+  <span class="k">AND</span>  total <span class="k">BETWEEN</span> <span class="n">100</span> <span class="k">AND</span> <span class="n">500</span>                      <span class="c">-- inclusive range</span>
+  <span class="k">AND</span>  country <span class="k">IN</span> (<span class="s">&#39;DE&#39;</span>, <span class="s">&#39;FR&#39;</span>, <span class="s">&#39;ES&#39;</span>)                  <span class="c">-- set membership</span>
+  <span class="k">AND</span>  created_at <span class="o">&gt;=</span> <span class="t">DATE</span> <span class="s">&#39;2026-01-01&#39;</span>                <span class="c">-- range</span>
+  <span class="k">AND</span>  notes <span class="k">IS</span> <span class="k">NOT</span> <span class="k">NULL</span>                              <span class="c">-- null test</span>
+  <span class="k">AND</span>  email <span class="k">LIKE</span> <span class="s">&#39;%@example.com&#39;</span>                     <span class="c">-- pattern</span>
+  <span class="k">AND</span>  <span class="k">NOT</span> cancelled;                                 <span class="c">-- boolean negation</span></code></pre></figure>
+<h2 id="comparison-operators" class="hd hd--2"><a class="hd__anchor" href="#comparison-operators" aria-label="Link to Comparison operators">#</a>Comparison operators</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Operator</th><th scope="col">Meaning</th><th scope="col">Notes</th></tr></thead><tbody><tr><th scope="row"><code>=</code> <code>&lt;&gt;</code></th><td>Equal, not equal</td><td><code>!=</code> is accepted everywhere but <code>&lt;&gt;</code> is the standard spelling</td></tr><tr><th scope="row"><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></th><td>Ordering</td><td>Uses the column&#39;s collation for text</td></tr><tr><th scope="row"><code>BETWEEN a AND b</code></th><td><code>x &gt;= a AND x &lt;= b</code></td><td><strong>Inclusive on both ends</strong></td></tr><tr><th scope="row"><code>IN (…)</code></th><td>Set membership</td><td>Beware <code>NULL</code> with <code>NOT IN</code></td></tr><tr><th scope="row"><code>LIKE</code> / <code>NOT LIKE</code></th><td>Pattern, <code>%</code> and <code>_</code> wildcards</td><td>Case sensitivity is engine- and collation-dependent</td></tr><tr><th scope="row"><code>IS NULL</code> / <code>IS NOT NULL</code></th><td>Null test</td><td>The only correct way to test for NULL</td></tr><tr><th scope="row"><code>IS DISTINCT FROM</code></th><td>NULL-safe inequality</td><td>PostgreSQL, Db2, DuckDB, Trino, CockroachDB</td></tr><tr><th scope="row"><code>EXISTS</code></th><td>Subquery returns ≥ 1 row</td><td>Usually the best anti/semi-join form</td></tr></tbody></table></div>
+<p>::: warn BETWEEN and timestamps <code>created_at BETWEEN &#39;2026-01-01&#39; AND &#39;2026-01-31&#39;</code> excludes almost all of 31 January, because the literal means midnight. Use a half-open range instead — it is correct for dates, timestamps and any precision:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-134">COPY</button></span></figcaption><pre id="code-134" class="code__pre"><code class="lang-sql"><span class="k">WHERE</span> created_at <span class="o">&gt;=</span> <span class="t">DATE</span> <span class="s">&#39;2026-01-01&#39;</span>
+  <span class="k">AND</span> created_at <span class="o">&lt;</span>  <span class="t">DATE</span> <span class="s">&#39;2026-02-01&#39;</span></code></pre></figure>
+<p>:::</p>
+<h2 id="pattern-matching" class="hd hd--2"><a class="hd__anchor" href="#pattern-matching" aria-label="Link to Pattern matching">#</a>Pattern matching</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">LIKE</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=WHERE%20email%20LIKE%20'a%25'%20%20%20%20%20%20%20%20%20%20--%20starts%20with%20a%20%20%20%20%20%20%20(index-usable)%0AWHERE%20email%20LIKE%20'%25%40gmail.com'%20--%20ends%20with%20%20%20%20%20%20%20%20%20%20%20(not%20index-usable)%0AWHERE%20email%20LIKE%20'_%40x.com'%20%20%20%20%20--%20exactly%20one%20char%20before%20%40%0AWHERE%20path%20%20LIKE%20'100%5C%25%25'%20ESCAPE%20'%5C'%20%20%20--%20literal%20percent%20sign">TRY IT</a><button class="code__btn" type="button" data-copy="code-135">COPY</button></span></figcaption><pre id="code-135" class="code__pre"><code class="lang-sql"><span class="k">WHERE</span> email <span class="k">LIKE</span> <span class="s">&#39;a%&#39;</span>          <span class="c">-- starts with a       (index-usable)</span>
+<span class="k">WHERE</span> email <span class="k">LIKE</span> <span class="s">&#39;%@gmail.com&#39;</span> <span class="c">-- ends with           (not index-usable)</span>
+<span class="k">WHERE</span> email <span class="k">LIKE</span> <span class="s">&#39;_@x.com&#39;</span>     <span class="c">-- exactly one char before @</span>
+<span class="k">WHERE</span> <span class="t">path</span>  <span class="k">LIKE</span> <span class="s">&#39;100\%%&#39;</span> <span class="k">ESCAPE</span> <span class="s">&#39;\&#39;</span>   <span class="c">-- literal percent sign</span></code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Need</th><th scope="col">PostgreSQL</th><th scope="col">MySQL</th><th scope="col">SQL Server</th><th scope="col">Oracle</th><th scope="col">SQLite</th><th scope="col">BigQuery</th></tr></thead><tbody><tr><th scope="row">Case-insensitive LIKE</th><td><code>ILIKE</code></td><td><code>LIKE</code> (CI collation default)</td><td><code>LIKE</code> (CI collation default)</td><td><code>LIKE</code> + <code>UPPER()</code></td><td><code>LIKE</code> (ASCII CI)</td><td><code>LOWER() LIKE</code></td></tr><tr><th scope="row">Regex match</th><td><code>~</code> <code>~*</code> <code>!~</code></td><td><code>REGEXP</code> / <code>RLIKE</code></td><td><code>LIKE</code> only (or CLR)</td><td><code>REGEXP_LIKE()</code></td><td><code>REGEXP</code> if compiled</td><td><code>REGEXP_CONTAINS()</code></td></tr><tr><th scope="row">Char class</th><td><code><kbd>:digit:</kbd></code></td><td><code><kbd>:digit:</kbd></code></td><td><code>[0-9]</code> in <code>LIKE</code></td><td><code>\d</code></td><td>—</td><td><code>\d</code></td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Regex, per engine</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-136">COPY</button></span></figcaption><pre id="code-136" class="code__pre"><code class="lang-sql"><span class="c">-- PostgreSQL</span>
+<span class="k">WHERE</span> phone <span class="o">~</span> <span class="s">&#39;^\+?[0-9]{10,14}$&#39;</span>
+<span class="c">-- MySQL 8 / MariaDB</span>
+<span class="k">WHERE</span> phone REGEXP <span class="s">&#39;^\\+?[0-9]{10,14}$&#39;</span>
+<span class="c">-- Oracle</span>
+<span class="k">WHERE</span> <span class="f">REGEXP_LIKE</span>(phone, <span class="s">&#39;^\+?[0-9]{10,14}$&#39;</span>)
+<span class="c">-- BigQuery / Databricks / Snowflake</span>
+<span class="k">WHERE</span> <span class="f">REGEXP_CONTAINS</span>(phone, r<span class="s">&#39;^\+?[0-9]{10,14}$&#39;</span>)
+<span class="c">-- SQL Server has no regex: use LIKE with character classes</span>
+<span class="k">WHERE</span> phone <span class="k">LIKE</span> <span class="s">&#39;[0-9][0-9][0-9]%&#39;</span></code></pre></figure>
+<h2 id="sargability-predicates-an-index-can-use" class="hd hd--2"><a class="hd__anchor" href="#sargability-predicates-an-index-can-use" aria-label="Link to Sargability — predicates an index can use">#</a>Sargability — predicates an index can use</h2>
+<p>A predicate is <strong>sargable</strong> (Search ARGument able) when the engine can turn it into an index range scan. Wrapping the column in a function almost always destroys that.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Not sargable → full scan</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-137">COPY</button></span></figcaption><pre id="code-137" class="code__pre"><code class="lang-sql"><span class="k">WHERE</span> <span class="k">YEAR</span>(created_at) <span class="o">=</span> <span class="n">2026</span>
+<span class="k">WHERE</span> <span class="f">UPPER</span>(email) <span class="o">=</span> <span class="s">&#39;A@B.COM&#39;</span>
+<span class="k">WHERE</span> total <span class="o">+</span> <span class="n">0</span> <span class="o">&gt;</span> <span class="n">100</span>
+<span class="k">WHERE</span> <span class="k">CAST</span>(id <span class="k">AS</span> <span class="t">TEXT</span>) <span class="o">=</span> <span class="s">&#39;42&#39;</span>
+<span class="k">WHERE</span> email <span class="k">LIKE</span> <span class="s">&#39;%@example.com&#39;</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Sargable rewrites → index range scan</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=WHERE%20created_at%20%3E%3D%20DATE%20'2026-01-01'%20AND%20created_at%20%3C%20DATE%20'2027-01-01'%0AWHERE%20email%20%3D%20'a%40b.com'%20%20%20%20%20%20%20%20%20%20--%20with%20a%20case-insensitive%20collation%2C%20or%3A%0AWHERE%20total%20%3E%20100%0AWHERE%20id%20%3D%2042%0AWHERE%20reversed_email%20LIKE%20'moc.elpmaxe%40%25'%20%20%20--%20or%20a%20trigram%20index%2C%20see%20below">TRY IT</a><button class="code__btn" type="button" data-copy="code-138">COPY</button></span></figcaption><pre id="code-138" class="code__pre"><code class="lang-sql"><span class="k">WHERE</span> created_at <span class="o">&gt;=</span> <span class="t">DATE</span> <span class="s">&#39;2026-01-01&#39;</span> <span class="k">AND</span> created_at <span class="o">&lt;</span> <span class="t">DATE</span> <span class="s">&#39;2027-01-01&#39;</span>
+<span class="k">WHERE</span> email <span class="o">=</span> <span class="s">&#39;a@b.com&#39;</span>          <span class="c">-- with a case-insensitive collation, or:</span>
+<span class="k">WHERE</span> total <span class="o">&gt;</span> <span class="n">100</span>
+<span class="k">WHERE</span> id <span class="o">=</span> <span class="n">42</span>
+<span class="k">WHERE</span> reversed_email <span class="k">LIKE</span> <span class="s">&#39;moc.elpmaxe@%&#39;</span>   <span class="c">-- or a trigram index, see below</span></code></pre></figure>
+<p>When you genuinely need the function, index the <em>expression</em>:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Functional / computed indexes</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-139">COPY</button></span></figcaption><pre id="code-139" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> idx_users_lower_email <span class="k">ON</span> <span class="f">users</span> (<span class="f">lower</span>(email));   <span class="c">-- PostgreSQL, SQLite, Oracle</span>
+<span class="c">-- then this becomes an index scan:</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> users <span class="k">WHERE</span> <span class="f">lower</span>(email) <span class="o">=</span> <span class="s">&#39;a@b.com&#39;</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Equivalents</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-140">COPY</button></span></figcaption><pre id="code-140" class="code__pre"><code class="lang-sql"><span class="c">-- SQL Server: computed column + index</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> users <span class="k">ADD</span> email_lower <span class="k">AS</span> <span class="f">LOWER</span>(email) PERSISTED;
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_users_email_lower <span class="k">ON</span> <span class="f">users</span> (email_lower);
+<span class="c">-- MySQL 8: functional index</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_users_email_lower <span class="k">ON</span> <span class="f">users</span> ((<span class="f">LOWER</span>(email)));</code></pre></figure>
+<p>For leading-wildcard search, use the engine&#39;s text search machinery rather than <code>LIKE &#39;%x%&#39;</code>:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Trigram index makes LIKE &#39;%foo%&#39; fast</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-141">COPY</button></span></figcaption><pre id="code-141" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> pg_trgm;
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_products_name_trgm <span class="k">ON</span> products <span class="k">USING</span> <span class="f">GIN</span> (<span class="k">name</span> gin_trgm_ops);
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> products <span class="k">WHERE</span> <span class="k">name</span> <span class="k">ILIKE</span> <span class="s">&#39;%widget%&#39;</span>;   <span class="c">-- now an index scan</span></code></pre></figure>
+<h2 id="operator-precedence" class="hd hd--2"><a class="hd__anchor" href="#operator-precedence" aria-label="Link to Operator precedence">#</a>Operator precedence</h2>
+<p><code>NOT</code> binds tighter than <code>AND</code>, which binds tighter than <code>OR</code>. Mixing them without parentheses is a classic bug:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">These mean different things</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-142">COPY</button></span></figcaption><pre id="code-142" class="code__pre"><code class="lang-sql"><span class="k">WHERE</span> <span class="k">status</span> <span class="o">=</span> <span class="s">&#39;paid&#39;</span> <span class="k">OR</span> <span class="k">status</span> <span class="o">=</span> <span class="s">&#39;shipped&#39;</span> <span class="k">AND</span> total <span class="o">&gt;</span> <span class="n">100</span>
+<span class="c">-- parses as:  status=&#39;paid&#39; OR (status=&#39;shipped&#39; AND total&gt;100)</span>
+
+<span class="k">WHERE</span> (<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;paid&#39;</span> <span class="k">OR</span> <span class="k">status</span> <span class="o">=</span> <span class="s">&#39;shipped&#39;</span>) <span class="k">AND</span> total <span class="o">&gt;</span> <span class="n">100</span>
+<span class="c">-- almost certainly what was meant</span></code></pre></figure>
+<h2 id="common-table-driven-filters" class="hd hd--2"><a class="hd__anchor" href="#common-table-driven-filters" aria-label="Link to Common table-driven filters">#</a>Common table-driven filters</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Row constructors compare tuples</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-143">COPY</button></span></figcaption><pre id="code-143" class="code__pre"><code class="lang-sql"><span class="c">-- keyset pagination: &quot;the page after (created_at, id)&quot;</span>
+<span class="k">WHERE</span> (created_at, id) <span class="o">&lt;</span> (<span class="t">TIMESTAMP</span> <span class="s">&#39;2026-03-01 12:00&#39;</span>, <span class="n">918273</span>)
+<span class="k">ORDER</span> <span class="k">BY</span> created_at <span class="k">DESC</span>, id <span class="k">DESC</span>
+<span class="k">LIMIT</span> <span class="n">50</span>;</code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="MySQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MySQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="SQLite: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQLite</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--warn" title="Oracle: Different syntax — equality only"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">Oracle</span><span class="sr-only">Different syntax</span><span class="sup__note">equality only</span></li><li class="sup sup--no" title="SQL Server: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">SQL Server</span><span class="sr-only">Unsupported</span></li><li class="sup sup--ok" title="CockroachDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">CockroachDB</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="DuckDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">DuckDB</span><span class="sr-only">Supported</span></li><li class="sup sup--no" title="BigQuery: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">BigQuery</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Snowflake: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Snowflake</span><span class="sr-only">Unsupported</span></li></ul>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/operators/"><span class="rel__t">Operators</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/null/"><span class="rel__t">NULL</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a><a class="rel__i" href="/performance/"><span class="rel__t">Query optimization</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/merge/"><span class="pager__d">← PREV</span><span class="pager__t">MERGE / UPSERT</span></a><a class="pager__i pager__i--next" href="/sql/group-by/"><span class="pager__d">NEXT →</span><span class="pager__t">GROUP BY &amp; HAVING</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#comparison-operators">Comparison operators</a></li><li class="toc__i toc__i--2"><a href="#pattern-matching">Pattern matching</a></li><li class="toc__i toc__i--2"><a href="#sargability-predicates-an-index-can-use">Sargability — predicates an index can use</a></li><li class="toc__i toc__i--2"><a href="#operator-precedence">Operator precedence</a></li><li class="toc__i toc__i--2"><a href="#common-table-driven-filters">Common table-driven filters</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DELETE · SQL Terminal</title>
+<meta name="description" content="DELETE with joins, deleting duplicates, soft deletes, batching, and reclaiming the space afterwards.">
+<meta name="keywords" content="delete from where using join cascade soft delete batch purge dead tuples vacuum">
+<link rel="canonical" href="https://sql.manual.dev/sql/delete/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="DELETE · SQL Terminal">
+<meta property="og:description" content="DELETE with joins, deleting duplicates, soft deletes, batching, and reclaiming the space afterwards.">
+<meta property="og:url" content="https://sql.manual.dev/sql/delete/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DELETE · SQL Terminal">
+<meta name="twitter:description" content="DELETE with joins, deleting duplicates, soft deletes, batching, and reclaiming the space afterwards.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"DELETE · SQL Terminal","headline":"DELETE","description":"DELETE with joins, deleting duplicates, soft deletes, batching, and reclaiming the space afterwards.","url":"https://sql.manual.dev/sql/delete/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/delete/">delete</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">DML</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>DELETE</h1><p class="lede">DELETE with joins, deleting duplicates, soft deletes, batching, and reclaiming the space afterwards.</p><figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Basic DELETE</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=DELETE%20FROM%20sessions%20WHERE%20expires_at%20%3C%20CURRENT_TIMESTAMP%3B%0ADELETE%20FROM%20sessions%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20every%20row%3B%20still%20row-by-row%20and%20fully%20logged">TRY IT</a><button class="code__btn" type="button" data-copy="code-114">COPY</button></span></figcaption><pre id="code-114" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> <span class="k">FROM</span> sessions <span class="k">WHERE</span> expires_at <span class="o">&lt;</span> <span class="k">CURRENT_TIMESTAMP</span>;
+<span class="k">DELETE</span> <span class="k">FROM</span> sessions;              <span class="c">-- every row; still row-by-row and fully logged</span></code></pre></figure>
+<p>For emptying a whole table, <a href="/sql/drop-truncate/"><code>TRUNCATE</code></a> is dramatically faster.</p>
+<h2 id="delete-with-a-join" class="hd hd--2"><a class="hd__anchor" href="#delete-with-a-join" aria-label="Link to DELETE with a join">#</a>DELETE with a join</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL / Redshift — USING</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-115">COPY</button></span></figcaption><pre id="code-115" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> <span class="k">FROM</span> order_items oi
+<span class="k">USING</span> orders o
+<span class="k">WHERE</span> o.id <span class="o">=</span> oi.order_id
+  <span class="k">AND</span> o.<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;cancelled&#39;</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL / MariaDB — name the table(s) to delete from</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-116">COPY</button></span></figcaption><pre id="code-116" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> oi
+<span class="k">FROM</span>   order_items oi
+<span class="k">JOIN</span>   orders o <span class="k">ON</span> o.id <span class="o">=</span> oi.order_id
+<span class="k">WHERE</span>  o.<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;cancelled&#39;</span>;
+
+<span class="k">DELETE</span> oi, o <span class="k">FROM</span> order_items oi <span class="k">JOIN</span> orders o <span class="k">ON</span> o.id <span class="o">=</span> oi.order_id;  <span class="c">-- both tables</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-117">COPY</button></span></figcaption><pre id="code-117" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> oi
+<span class="k">FROM</span>   order_items oi
+<span class="k">JOIN</span>   orders o <span class="k">ON</span> o.id <span class="o">=</span> oi.order_id
+<span class="k">WHERE</span>  o.<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;cancelled&#39;</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Oracle / SQLite / standard — subquery</span><span class="code__engine" data-engine="oracle">Oracle</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-118">COPY</button></span></figcaption><pre id="code-118" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> <span class="k">FROM</span> order_items
+<span class="k">WHERE</span> order_id <span class="k">IN</span> (<span class="k">SELECT</span> id <span class="k">FROM</span> orders <span class="k">WHERE</span> <span class="k">status</span> <span class="o">=</span> <span class="s">&#39;cancelled&#39;</span>);</code></pre></figure>
+<h2 id="deleting-duplicates-keeping-one" class="hd hd--2"><a class="hd__anchor" href="#deleting-duplicates-keeping-one" aria-label="Link to Deleting duplicates, keeping one">#</a>Deleting duplicates, keeping one</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL — the ctid trick (no key needed)</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-119">COPY</button></span></figcaption><pre id="code-119" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> <span class="k">FROM</span> contacts a
+<span class="k">USING</span> contacts b
+<span class="k">WHERE</span> a.ctid <span class="o">&lt;</span> b.ctid
+  <span class="k">AND</span> <span class="f">lower</span>(a.email) <span class="o">=</span> <span class="f">lower</span>(b.email);   <span class="c">-- keeps the physically-last row per email</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Portable — window function + key</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=DELETE%20FROM%20contacts%0AWHERE%20id%20IN%20(%0A%20%20%20%20SELECT%20id%20FROM%20(%0A%20%20%20%20%20%20%20%20SELECT%20id%2C%20ROW_NUMBER()%20OVER%20(PARTITION%20BY%20lower(email)%20ORDER%20BY%20created_at%20DESC%2C%20id)%20AS%20rn%0A%20%20%20%20%20%20%20%20FROM%20contacts%0A%20%20%20%20)%20d%0A%20%20%20%20WHERE%20d.rn%20%3E%201%0A)%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-120">COPY</button></span></figcaption><pre id="code-120" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> <span class="k">FROM</span> contacts
+<span class="k">WHERE</span> id <span class="k">IN</span> (
+    <span class="k">SELECT</span> id <span class="k">FROM</span> (
+        <span class="k">SELECT</span> id, <span class="f">ROW_NUMBER</span>() <span class="k">OVER</span> (<span class="k">PARTITION</span> <span class="k">BY</span> <span class="f">lower</span>(email) <span class="k">ORDER</span> <span class="k">BY</span> created_at <span class="k">DESC</span>, id) <span class="k">AS</span> rn
+        <span class="k">FROM</span> contacts
+    ) d
+    <span class="k">WHERE</span> d.rn <span class="o">&gt;</span> <span class="n">1</span>
+);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL cannot read the target table in a subquery directly</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-121">COPY</button></span></figcaption><pre id="code-121" class="code__pre"><code class="lang-sql"><span class="c">-- ERROR 1093 unless you nest one level deeper to force materialization:</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> contacts
+<span class="k">WHERE</span> id <span class="k">IN</span> (
+    <span class="k">SELECT</span> id <span class="k">FROM</span> (
+        <span class="k">SELECT</span> id, <span class="f">ROW_NUMBER</span>() <span class="k">OVER</span> (<span class="k">PARTITION</span> <span class="k">BY</span> email <span class="k">ORDER</span> <span class="k">BY</span> created_at <span class="k">DESC</span>) rn
+        <span class="k">FROM</span> contacts
+    ) <span class="k">AS</span> tmp
+    <span class="k">WHERE</span> rn <span class="o">&gt;</span> <span class="n">1</span>
+);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQLite — rowid</span><span class="code__engine" data-engine="sqlite">SQLite</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-122">COPY</button></span></figcaption><pre id="code-122" class="code__pre"><code class="lang-sql"><span class="k">DELETE</span> <span class="k">FROM</span> contacts
+<span class="k">WHERE</span> <span class="t">rowid</span> <span class="k">NOT</span> <span class="k">IN</span> (<span class="k">SELECT</span> <span class="f">MIN</span>(<span class="t">rowid</span>) <span class="k">FROM</span> contacts <span class="k">GROUP</span> <span class="k">BY</span> <span class="f">lower</span>(email));</code></pre></figure>
+<h2 id="soft-deletes" class="hd hd--2"><a class="hd__anchor" href="#soft-deletes" aria-label="Link to Soft deletes">#</a>Soft deletes</h2>
+<p>Marking rows as deleted rather than removing them keeps history and makes &quot;undo&quot; trivial, at the cost of every query needing a filter.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Soft delete + a view that hides the flag</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-123">COPY</button></span></figcaption><pre id="code-123" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">ADD</span> <span class="k">COLUMN</span> deleted_at <span class="t">TIMESTAMPTZ</span>;
+
+<span class="k">UPDATE</span> customers <span class="k">SET</span> deleted_at <span class="o">=</span> <span class="f">now</span>() <span class="k">WHERE</span> id <span class="o">=</span> <span class="n">42</span>;
+
+<span class="k">CREATE</span> <span class="k">VIEW</span> active_customers <span class="k">AS</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> customers <span class="k">WHERE</span> deleted_at <span class="k">IS</span> <span class="k">NULL</span>;
+
+<span class="c">-- keep unique constraints meaningful for live rows only:</span>
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> uq_customers_email_live <span class="k">ON</span> <span class="f">customers</span> (email) <span class="k">WHERE</span> deleted_at <span class="k">IS</span> <span class="k">NULL</span>;
+
+<span class="c">-- and keep the common path indexed:</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_customers_live <span class="k">ON</span> <span class="f">customers</span> (id) <span class="k">WHERE</span> deleted_at <span class="k">IS</span> <span class="k">NULL</span>;</code></pre></figure>
+<p>::: warn Soft deletes and foreign keys do not mix cleanly A foreign key cannot express &quot;must reference a <em>non-deleted</em> row&quot;. Children keep pointing at logically-deleted parents. Either enforce it in application code, or use a trigger, or accept it. :::</p>
+<h2 id="batched-purge" class="hd hd--2"><a class="hd__anchor" href="#batched-purge" aria-label="Link to Batched purge">#</a>Batched purge</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Delete a year of history without a long transaction</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-124">COPY</button></span></figcaption><pre id="code-124" class="code__pre"><code class="lang-sql"><span class="c">-- run in a loop until 0 rows are reported</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> events
+<span class="k">WHERE</span>  id <span class="k">IN</span> (<span class="k">SELECT</span> id <span class="k">FROM</span> events <span class="k">WHERE</span> created_at <span class="o">&lt;</span> <span class="f">now</span>() <span class="o">-</span> <span class="k">interval</span> <span class="s">&#39;1 year&#39;</span>
+              <span class="k">ORDER</span> <span class="k">BY</span> id <span class="k">LIMIT</span> <span class="n">10000</span>);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Partition drop — instant, if the table is partitioned by time</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-125">COPY</button></span></figcaption><pre id="code-125" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> events <span class="k">DETACH</span> <span class="k">PARTITION</span> events_2024_01;
+<span class="k">DROP</span> <span class="k">TABLE</span> events_2024_01;         <span class="c">-- O(1) instead of O(rows)</span></code></pre></figure>
+<p>::: tip Partition by time for anything with a retention policy Deleting a month of data from a 2-billion-row table takes hours as a <code>DELETE</code> and milliseconds as a partition drop. If you know in advance that data expires, partition on the expiry dimension from day one. :::</p>
+<h2 id="space-is-not-returned-automatically" class="hd hd--2"><a class="hd__anchor" href="#space-is-not-returned-automatically" aria-label="Link to Space is not returned automatically">#</a>Space is not returned automatically</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">After a large DELETE</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>Rows become dead tuples. Autovacuum makes the space reusable; <code>VACUUM FULL</code> (exclusive lock) or <code>pg_repack</code> (online) returns it to the OS</td></tr><tr><th scope="row">MySQL/InnoDB</th><td>Space stays in the tablespace. <code>OPTIMIZE TABLE</code> rebuilds; with <code>innodb_file_per_table</code> the file shrinks</td></tr><tr><th scope="row">SQL Server</th><td>Pages are deallocated; run <code>ALTER INDEX … REBUILD</code> to defragment</td></tr><tr><th scope="row">Oracle</th><td>High-water mark stays put; <code>ALTER TABLE … SHRINK SPACE</code> (needs row movement enabled)</td></tr><tr><th scope="row">SQLite</th><td>Freed pages are reused; <code>VACUUM;</code> rewrites the file, or set <code>PRAGMA auto_vacuum</code></td></tr></tbody></table></div>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/drop-truncate/"><span class="rel__t">TRUNCATE</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/update/"><span class="rel__t">UPDATE</span><span class="rel__a">→</span></a><a class="rel__i" href="/admin/#partitioning"><span class="rel__t">Partitioning</span><span class="rel__a">→</span></a><a class="rel__i" href="/admin/#maintenance"><span class="rel__t">Vacuum &amp; maintenance</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/update/"><span class="pager__d">← PREV</span><span class="pager__t">UPDATE</span></a><a class="pager__i pager__i--next" href="/sql/merge/"><span class="pager__d">NEXT →</span><span class="pager__t">MERGE / UPSERT</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#delete-with-a-join">DELETE with a join</a></li><li class="toc__i toc__i--2"><a href="#deleting-duplicates-keeping-one">Deleting duplicates, keeping one</a></li><li class="toc__i toc__i--2"><a href="#soft-deletes">Soft deletes</a></li><li class="toc__i toc__i--2"><a href="#batched-purge">Batched purge</a></li><li class="toc__i toc__i--2"><a href="#space-is-not-returned-automatically">Space is not returned automatically</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

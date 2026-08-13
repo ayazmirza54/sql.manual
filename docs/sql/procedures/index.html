@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stored procedures, functions &amp; triggers · SQL Terminal</title>
+<meta name="description" content="Procedural SQL in each engine: PL/pgSQL, T-SQL, PL/SQL, and the trigger models — with guidance on when not to use them.">
+<meta name="keywords" content="stored procedure function trigger plpgsql tsql plsql create procedure call exec deterministic before after instead of">
+<link rel="canonical" href="https://sql.manual.dev/sql/procedures/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Stored procedures, functions &amp; triggers · SQL Terminal">
+<meta property="og:description" content="Procedural SQL in each engine: PL/pgSQL, T-SQL, PL/SQL, and the trigger models — with guidance on when not to use them.">
+<meta property="og:url" content="https://sql.manual.dev/sql/procedures/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stored procedures, functions &amp; triggers · SQL Terminal">
+<meta name="twitter:description" content="Procedural SQL in each engine: PL/pgSQL, T-SQL, PL/SQL, and the trigger models — with guidance on when not to use them.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Stored procedures, functions & triggers · SQL Terminal","headline":"Stored procedures, functions & triggers","description":"Procedural SQL in each engine: PL/pgSQL, T-SQL, PL/SQL, and the trigger models — with guidance on when not to use them.","url":"https://sql.manual.dev/sql/procedures/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/procedures/">procedures</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Advanced</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">advanced</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL/PSM (SQL:1999)</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Stored procedures, functions &amp; triggers</h1><p class="lede">Procedural SQL in each engine: PL/pgSQL, T-SQL, PL/SQL, and the trigger models — with guidance on when not to use them.</p><p>The standard defines SQL/PSM; almost nobody implements it exactly. Each engine has its own procedural language with its own syntax, error handling and transaction semantics.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Language</th><th scope="col">Define</th><th scope="col">Call</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>PL/pgSQL (also PL/Python, PL/v8, SQL)</td><td><code>CREATE FUNCTION</code> / <code>CREATE PROCEDURE</code></td><td><code>SELECT f()</code> / <code>CALL p()</code></td></tr><tr><th scope="row">MySQL / MariaDB</th><td>SQL/PSM-like</td><td><code>CREATE PROCEDURE</code></td><td><code>CALL p()</code></td></tr><tr><th scope="row">SQL Server</th><td>T-SQL</td><td><code>CREATE PROCEDURE</code></td><td><code>EXEC p</code></td></tr><tr><th scope="row">Oracle</th><td>PL/SQL</td><td><code>CREATE PROCEDURE</code> / <code>PACKAGE</code></td><td><code>BEGIN p; END;</code> / <code>EXEC</code></td></tr><tr><th scope="row">Db2</th><td>SQL PL</td><td><code>CREATE PROCEDURE</code></td><td><code>CALL p()</code></td></tr><tr><th scope="row">Snowflake</th><td>SQL Scripting, JavaScript, Python</td><td><code>CREATE PROCEDURE</code></td><td><code>CALL p()</code></td></tr><tr><th scope="row">BigQuery</th><td>GoogleSQL procedural</td><td><code>CREATE PROCEDURE</code></td><td><code>CALL p()</code></td></tr><tr><th scope="row">SQLite</th><td><strong>None</strong> — no procedural language</td><td>—</td><td>—</td></tr></tbody></table></div>
+<h2 id="function-vs-procedure" class="hd hd--2"><a class="hd__anchor" href="#function-vs-procedure" aria-label="Link to Function vs procedure">#</a>Function vs procedure</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col"></th><th scope="col">Function</th><th scope="col">Procedure</th></tr></thead><tbody><tr><th scope="row">Returns</th><td>A value or table</td><td>Optional output parameters</td></tr><tr><th scope="row">Called in a query</th><td>Yes</td><td>No</td></tr><tr><th scope="row">Can COMMIT</th><td>No (runs inside the caller&#39;s transaction)</td><td>Yes, in PostgreSQL 11+, Oracle, SQL Server</td></tr><tr><th scope="row">Typical use</th><td>Computation, reusable expression</td><td>Multi-step job, batch, admin task</td></tr></tbody></table></div>
+<h2 id="pl-pgsql" class="hd hd--2"><a class="hd__anchor" href="#pl-pgsql" aria-label="Link to PL/pgSQL">#</a>PL/pgSQL</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A function</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-283">COPY</button></span></figcaption><pre id="code-283" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="f">customer_lifetime_value</span>(p_customer_id <span class="t">BIGINT</span>)
+<span class="k">RETURNS</span> <span class="t">NUMERIC</span>
+<span class="k">LANGUAGE</span> plpgsql
+<span class="k">STABLE</span>                              <span class="c">-- no writes; can be inlined and cached within a statement</span>
+<span class="k">PARALLEL</span> SAFE
+<span class="k">AS</span> <span class="s">$$
+DECLARE
+    v_total NUMERIC;
+BEGIN
+    SELECT COALESCE(SUM(total), 0) INTO v_total
+    FROM   orders WHERE customer_id = p_customer_id AND status = &#39;paid&#39;;
+
+    IF v_total IS NULL THEN
+        RAISE EXCEPTION &#39;customer % not found&#39;, p_customer_id
+              USING ERRCODE = &#39;no_data_found&#39;;
+    END IF;
+
+    RETURN v_total;
+END $$</span>;
+
+<span class="k">SELECT</span> <span class="f">customer_lifetime_value</span>(<span class="n">42</span>);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A procedure that commits per batch</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-284">COPY</button></span></figcaption><pre id="code-284" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="f">purge_old_events</span>(p_days <span class="t">INT</span>)
+<span class="k">LANGUAGE</span> plpgsql
+<span class="k">AS</span> <span class="s">$$
+DECLARE
+    v_deleted INT;
+BEGIN
+    LOOP
+        DELETE FROM events
+        WHERE id IN (SELECT id FROM events
+                     WHERE created_at &lt; now() - make_interval(days =&gt; p_days)
+                     LIMIT 10000);
+        GET DIAGNOSTICS v_deleted = ROW_COUNT;
+        EXIT WHEN v_deleted = 0;
+        COMMIT;                     -- only legal in a procedure, not a function
+    END LOOP;
+END $$</span>;
+
+<span class="k">CALL</span> <span class="f">purge_old_events</span>(<span class="n">365</span>);</code></pre></figure>
+<p>::: note Volatility categories matter in PostgreSQL <code>IMMUTABLE</code> (same input → same output, no table access), <code>STABLE</code> (consistent within one statement) and <code>VOLATILE</code> (default; anything goes). Marking a function <code>IMMUTABLE</code> lets it be used in an index expression and constant-folded. Marking it wrongly produces silently stale results. :::</p>
+<h2 id="t-sql" class="hd hd--2"><a class="hd__anchor" href="#t-sql" aria-label="Link to T-SQL">#</a>T-SQL</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server procedure with error handling</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-285">COPY</button></span></figcaption><pre id="code-285" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">ALTER</span> <span class="k">PROCEDURE</span> dbo.transfer_funds
+    <span class="v">@from_account</span> <span class="t">INT</span>, <span class="v">@to_account</span> <span class="t">INT</span>, <span class="v">@amount</span> <span class="f">DECIMAL</span>(<span class="n">12</span>,<span class="n">2</span>)
+<span class="k">AS</span>
+<span class="k">BEGIN</span>
+    <span class="k">SET</span> NOCOUNT <span class="k">ON</span>;
+    <span class="k">SET</span> XACT_ABORT <span class="k">ON</span>;              <span class="c">-- roll back the whole transaction on any error</span>
+
+    <span class="k">BEGIN</span> TRY
+        <span class="k">BEGIN</span> <span class="k">TRANSACTION</span>;
+            <span class="k">UPDATE</span> dbo.accounts <span class="k">SET</span> balance <span class="o">=</span> balance <span class="o">-</span> <span class="v">@amount</span> <span class="k">WHERE</span> id <span class="o">=</span> <span class="v">@from_account</span>;
+            <span class="k">IF</span> @<span class="v">@ROWCOUNT</span> <span class="o">=</span> <span class="n">0</span> THROW <span class="n">50001</span>, <span class="s">&#39;Source account not found&#39;</span>, <span class="n">1</span>;
+
+            <span class="k">IF</span> (<span class="k">SELECT</span> balance <span class="k">FROM</span> dbo.accounts <span class="k">WHERE</span> id <span class="o">=</span> <span class="v">@from_account</span>) <span class="o">&lt;</span> <span class="n">0</span>
+                THROW <span class="n">50002</span>, <span class="s">&#39;Insufficient funds&#39;</span>, <span class="n">1</span>;
+
+            <span class="k">UPDATE</span> dbo.accounts <span class="k">SET</span> balance <span class="o">=</span> balance <span class="o">+</span> <span class="v">@amount</span> <span class="k">WHERE</span> id <span class="o">=</span> <span class="v">@to_account</span>;
+        <span class="k">COMMIT</span> <span class="k">TRANSACTION</span>;
+    <span class="k">END</span> TRY
+    <span class="k">BEGIN</span> CATCH
+        <span class="k">IF</span> @<span class="v">@TRANCOUNT</span> <span class="o">&gt;</span> <span class="n">0</span> <span class="k">ROLLBACK</span> <span class="k">TRANSACTION</span>;
+        THROW;                      <span class="c">-- rethrow with the original error number</span>
+    <span class="k">END</span> CATCH
+<span class="k">END</span>;
+<span class="k">GO</span>
+
+<span class="k">EXEC</span> dbo.transfer_funds <span class="v">@from_account</span> <span class="o">=</span> <span class="n">1</span>, <span class="v">@to_account</span> <span class="o">=</span> <span class="n">2</span>, <span class="v">@amount</span> <span class="o">=</span> <span class="n">100.00</span>;</code></pre></figure>
+<h2 id="pl-sql" class="hd hd--2"><a class="hd__anchor" href="#pl-sql" aria-label="Link to PL/SQL">#</a>PL/SQL</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Oracle package</span><span class="code__engine" data-engine="oracle">Oracle</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-286">COPY</button></span></figcaption><pre id="code-286" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> PACKAGE orders_pkg <span class="k">AS</span>
+    <span class="k">FUNCTION</span> <span class="f">lifetime_value</span>(p_customer_id <span class="t">NUMBER</span>) <span class="k">RETURN</span> <span class="t">NUMBER</span>;
+    <span class="k">PROCEDURE</span> <span class="f">archive_old</span>(p_days <span class="t">NUMBER</span>);
+<span class="k">END</span> orders_pkg;
+<span class="o">/</span>
+<span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> PACKAGE BODY orders_pkg <span class="k">AS</span>
+    <span class="k">FUNCTION</span> <span class="f">lifetime_value</span>(p_customer_id <span class="t">NUMBER</span>) <span class="k">RETURN</span> <span class="t">NUMBER</span> <span class="k">IS</span>
+        v_total <span class="t">NUMBER</span>;
+    <span class="k">BEGIN</span>
+        <span class="k">SELECT</span> <span class="f">NVL</span>(<span class="f">SUM</span>(total), <span class="n">0</span>) <span class="k">INTO</span> v_total
+        <span class="k">FROM</span> orders <span class="k">WHERE</span> customer_id <span class="o">=</span> p_customer_id;
+        <span class="k">RETURN</span> v_total;
+    <span class="k">EXCEPTION</span>
+        <span class="k">WHEN</span> NO_DATA_FOUND <span class="k">THEN</span> <span class="k">RETURN</span> <span class="n">0</span>;
+    <span class="k">END</span>;
+
+    <span class="k">PROCEDURE</span> <span class="f">archive_old</span>(p_days <span class="t">NUMBER</span>) <span class="k">IS</span>
+    <span class="k">BEGIN</span>
+        <span class="k">FOR</span> rec <span class="k">IN</span> (<span class="k">SELECT</span> id <span class="k">FROM</span> orders <span class="k">WHERE</span> created_at <span class="o">&lt;</span> SYSDATE <span class="o">-</span> p_days) <span class="k">LOOP</span>
+            <span class="k">INSERT</span> <span class="k">INTO</span> orders_archive <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders <span class="k">WHERE</span> id <span class="o">=</span> rec.id;
+            <span class="k">DELETE</span> <span class="k">FROM</span> orders <span class="k">WHERE</span> id <span class="o">=</span> rec.id;
+        <span class="k">END</span> <span class="k">LOOP</span>;
+        <span class="k">COMMIT</span>;
+    <span class="k">END</span>;
+<span class="k">END</span> orders_pkg;
+<span class="o">/</span></code></pre></figure>
+<h2 id="triggers" class="hd hd--2"><a class="hd__anchor" href="#triggers" aria-label="Link to Triggers">#</a>Triggers</h2>
+<p>A trigger runs automatically on <code>INSERT</code>, <code>UPDATE</code> or <code>DELETE</code>.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL — audit trail</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-287">COPY</button></span></figcaption><pre id="code-287" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="f">audit_orders</span>() <span class="k">RETURNS</span> <span class="k">trigger</span> <span class="k">LANGUAGE</span> plpgsql <span class="k">AS</span> <span class="s">$$
+BEGIN
+    INSERT INTO orders_audit (order_id, action, old_row, new_row, changed_by, changed_at)
+    VALUES (COALESCE(NEW.id, OLD.id), TG_OP, to_jsonb(OLD), to_jsonb(NEW), current_user, now());
+    RETURN NEW;    -- for AFTER triggers the return value is ignored
+END $$</span>;
+
+<span class="k">CREATE</span> <span class="k">TRIGGER</span> trg_audit_orders
+<span class="k">AFTER</span> <span class="k">INSERT</span> <span class="k">OR</span> <span class="k">UPDATE</span> <span class="k">OR</span> <span class="k">DELETE</span> <span class="k">ON</span> orders
+<span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span> <span class="k">EXECUTE</span> <span class="k">FUNCTION</span> <span class="f">audit_orders</span>();</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-288">COPY</button></span></figcaption><pre id="code-288" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TRIGGER</span> trg_orders_before_update <span class="k">BEFORE</span> <span class="k">UPDATE</span> <span class="k">ON</span> orders
+<span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span>
+<span class="k">BEGIN</span>
+    <span class="k">SET</span> <span class="k">NEW</span>.updated_at <span class="o">=</span> <span class="f">NOW</span>();
+    <span class="k">IF</span> <span class="k">NEW</span>.total <span class="o">&lt;</span> <span class="n">0</span> <span class="k">THEN</span>
+        SIGNAL SQLSTATE <span class="s">&#39;45000&#39;</span> <span class="k">SET</span> MESSAGE_TEXT <span class="o">=</span> <span class="s">&#39;total must be non-negative&#39;</span>;
+    <span class="k">END</span> <span class="k">IF</span>;
+<span class="k">END</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server — statement-level, not row-level</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-289">COPY</button></span></figcaption><pre id="code-289" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TRIGGER</span> trg_audit_orders <span class="k">ON</span> dbo.orders <span class="k">AFTER</span> <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span>
+<span class="k">AS</span>
+<span class="k">BEGIN</span>
+    <span class="k">SET</span> NOCOUNT <span class="k">ON</span>;
+    <span class="c">-- &#39;inserted&#39; and &#39;deleted&#39; are TABLES containing every affected row.</span>
+    <span class="k">INSERT</span> <span class="k">INTO</span> dbo.<span class="f">orders_audit</span> (order_id, <span class="k">action</span>, changed_at)
+    <span class="k">SELECT</span> <span class="k">COALESCE</span>(i.id, d.id),
+           <span class="k">CASE</span> <span class="k">WHEN</span> i.id <span class="k">IS</span> <span class="k">NULL</span> <span class="k">THEN</span> <span class="s">&#39;DELETE&#39;</span>
+                <span class="k">WHEN</span> d.id <span class="k">IS</span> <span class="k">NULL</span> <span class="k">THEN</span> <span class="s">&#39;INSERT&#39;</span> <span class="k">ELSE</span> <span class="s">&#39;UPDATE&#39;</span> <span class="k">END</span>,
+           <span class="f">SYSUTCDATETIME</span>()
+    <span class="k">FROM</span> inserted i <span class="k">FULL</span> <span class="k">OUTER</span> <span class="k">JOIN</span> deleted d <span class="k">ON</span> d.id <span class="o">=</span> i.id;
+<span class="k">END</span>;</code></pre></figure>
+<p>::: danger SQL Server triggers fire once per statement Writing a SQL Server trigger as though it fires per row — <code>SELECT @id = id FROM inserted</code> — silently processes only one row of a multi-row <code>UPDATE</code>. Always write set-based trigger bodies against the <code>inserted</code>/<code>deleted</code> tables. :::</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Timing</th><th scope="col">PostgreSQL</th><th scope="col">MySQL</th><th scope="col">SQL Server</th><th scope="col">Oracle</th><th scope="col">SQLite</th></tr></thead><tbody><tr><th scope="row">BEFORE row</th><td>Yes</td><td>Yes</td><td>No (use INSTEAD OF)</td><td>Yes</td><td>Yes</td></tr><tr><th scope="row">AFTER row</th><td>Yes</td><td>Yes</td><td>Statement-level only</td><td>Yes</td><td>Yes</td></tr><tr><th scope="row">INSTEAD OF (views)</th><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr><tr><th scope="row">Statement-level</th><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td><td>No</td></tr><tr><th scope="row">Multiple per event</th><td>Yes</td><td>8.0+</td><td>Yes</td><td>Yes</td><td>Yes</td></tr></tbody></table></div>
+<p>::: warn Triggers are invisible action at a distance They fire on every write path — including bulk loads and migrations — and they do not appear in the query that caused them. A slow trigger makes an <code>INSERT</code> mysteriously slow with nothing in the statement to explain it. Use them for auditing and invariants that must hold no matter which client writes; keep business logic in the application, where it can be tested and traced.</p>
+<p>They also do not fire for everything: <code>TRUNCATE</code> skips row triggers, and bulk loaders (<code>COPY</code> with certain options, <code>bcp</code>, <code>LOAD DATA</code>) may bypass them entirely. :::</p>
+<h2 id="security" class="hd hd--2"><a class="hd__anchor" href="#security" aria-label="Link to Security">#</a>Security</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Definer vs invoker rights</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-290">COPY</button></span></figcaption><pre id="code-290" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="f">masked_customers</span>() <span class="k">RETURNS</span> <span class="k">SETOF</span> customers
+<span class="k">LANGUAGE</span> <span class="k">sql</span>
+<span class="k">SECURITY</span> DEFINER              <span class="c">-- runs with the FUNCTION OWNER&#39;s privileges</span>
+<span class="k">SET</span> search_path <span class="o">=</span> pg_catalog, <span class="k">public</span>
+<span class="k">AS</span> <span class="s">$$ SELECT id, email_masked, country FROM customers $$</span>;</code></pre></figure>
+<p><code>SECURITY DEFINER</code> (PostgreSQL, Oracle&#39;s <code>AUTHID DEFINER</code>, MySQL&#39;s <code>DEFINER</code>) lets a low-privilege caller run privileged code. It is the standard way to expose a controlled operation — and a privilege-escalation vector if the function builds SQL from its arguments without quoting, or leaves <code>search_path</code> unpinned.</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/transactions/"><span class="rel__t">Transactions</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/views/"><span class="rel__t">Views</span><span class="rel__a">→</span></a><a class="rel__i" href="/admin/#users-roles-privileges"><span class="rel__t">Security &amp; privileges</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">Database explorer</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/pivot/"><span class="pager__d">← PREV</span><span class="pager__t">Pivot &amp; unpivot</span></a><a class="pager__i pager__i--next" href="/sql/text-search/"><span class="pager__d">NEXT →</span><span class="pager__t">Full-text, geospatial &amp; temporal SQL</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#function-vs-procedure">Function vs procedure</a></li><li class="toc__i toc__i--2"><a href="#pl-pgsql">PL/pgSQL</a></li><li class="toc__i toc__i--2"><a href="#t-sql">T-SQL</a></li><li class="toc__i toc__i--2"><a href="#pl-sql">PL/SQL</a></li><li class="toc__i toc__i--2"><a href="#triggers">Triggers</a></li><li class="toc__i toc__i--2"><a href="#security">Security</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

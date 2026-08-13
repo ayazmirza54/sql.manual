@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JSON in SQL · SQL Terminal</title>
+<meta name="description" content="Storing, extracting, filtering and indexing JSON — the operators differ in every engine, so this is a translation table.">
+<meta name="keywords" content="json jsonb json_extract json_value json_query path arrow operator jsonpath index gin unnest semi structured variant">
+<link rel="canonical" href="https://sql.manual.dev/sql/json/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="JSON in SQL · SQL Terminal">
+<meta property="og:description" content="Storing, extracting, filtering and indexing JSON — the operators differ in every engine, so this is a translation table.">
+<meta property="og:url" content="https://sql.manual.dev/sql/json/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JSON in SQL · SQL Terminal">
+<meta name="twitter:description" content="Storing, extracting, filtering and indexing JSON — the operators differ in every engine, so this is a translation table.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"JSON in SQL · SQL Terminal","headline":"JSON in SQL","description":"Storing, extracting, filtering and indexing JSON — the operators differ in every engine, so this is a translation table.","url":"https://sql.manual.dev/sql/json/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/json/">json</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Advanced</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">advanced</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL:2016 / SQL:2023</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>JSON in SQL</h1><p class="lede">Storing, extracting, filtering and indexing JSON — the operators differ in every engine, so this is a translation table.</p><p>Every major engine now stores and queries JSON, and no two spell it the same way. This page is primarily a translation table.</p>
+<h2 id="storage-types" class="hd hd--2"><a class="hd__anchor" href="#storage-types" aria-label="Link to Storage types">#</a>Storage types</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Type</th><th scope="col">Stored as</th><th scope="col">Preserves key order / whitespace</th><th scope="col">Duplicate keys</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td><code>json</code></td><td>Text, reparsed on every access</td><td>Yes</td><td>Kept</td></tr><tr><th scope="row">PostgreSQL</th><td><code>jsonb</code></td><td>Decomposed binary</td><td>No (keys sorted)</td><td>Last wins</td></tr><tr><th scope="row">MySQL / MariaDB</th><td><code>JSON</code></td><td>Binary (MySQL); text (MariaDB alias for LONGTEXT + CHECK)</td><td>No</td><td>Last wins</td></tr><tr><th scope="row">SQL Server</th><td><code>nvarchar</code> + <code>ISJSON()</code>; native <code>json</code> type in 2025</td><td>Text</td><td>Yes</td><td>Kept</td></tr><tr><th scope="row">Oracle</th><td><code>JSON</code> (21c+), earlier <code>CLOB</code>/<code>BLOB</code> + <code>IS JSON</code></td><td>Binary OSON</td><td>No</td><td>—</td></tr><tr><th scope="row">SQLite</th><td><code>TEXT</code> with JSON1 functions; <code>JSONB</code> internal format 3.45+</td><td>Text</td><td>Yes</td><td>—</td></tr><tr><th scope="row">Snowflake</th><td><code>VARIANT</code></td><td>Columnarised binary</td><td>No</td><td>—</td></tr><tr><th scope="row">BigQuery</th><td><code>JSON</code></td><td>Columnarised</td><td>No</td><td>Last wins</td></tr><tr><th scope="row">DuckDB</th><td><code>JSON</code></td><td>Binary</td><td>No</td><td>—</td></tr><tr><th scope="row">ClickHouse</th><td><code>JSON</code> (25.x), earlier <code>String</code> + functions</td><td>Columnar subcolumns</td><td>No</td><td>—</td></tr></tbody></table></div>
+<p>::: tip PostgreSQL: use jsonb, not json <code>jsonb</code> supports indexing and containment operators and does not reparse on each access. Choose <code>json</code> only when you must reproduce the original document byte-for-byte. :::</p>
+<h2 id="extraction-the-same-operation-in-every-dialect" class="hd hd--2"><a class="hd__anchor" href="#extraction-the-same-operation-in-every-dialect" aria-label="Link to Extraction — the same operation in every dialect">#</a>Extraction — the same operation in every dialect</h2>
+<p>Given <code>{&quot;user&quot;: {&quot;name&quot;: &quot;Ada&quot;, &quot;tags&quot;: [&quot;admin&quot;,&quot;dev&quot;]}}</code>:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-244">COPY</button></span></figcaption><pre id="code-244" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> data <span class="o">-&gt;</span> <span class="s">&#39;user&#39;</span> <span class="o">-&gt;&gt;</span> <span class="s">&#39;name&#39;</span>          <span class="k">AS</span> <span class="k">name</span>,      <span class="c">-- -&gt;&gt; returns text, -&gt; returns jsonb</span>
+       data <span class="c">#&gt;&gt; &#39;{user,name}&#39;             AS name_path,</span>
+       <span class="f">jsonb_path_query_first</span>(data, <span class="s">&#39;$.user.tags[0]&#39;</span>)  <span class="k">AS</span> first_tag,
+       data @<span class="o">&gt;</span> <span class="s">&#39;{&quot;user&quot;:{&quot;name&quot;:&quot;Ada&quot;}}&#39;</span>  <span class="k">AS</span> matches;   <span class="c">-- containment</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL / MariaDB</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-245">COPY</button></span></figcaption><pre id="code-245" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">JSON_EXTRACT</span>(data, <span class="s">&#39;$.user.name&#39;</span>)            <span class="k">AS</span> name_quoted,   <span class="c">-- &quot;Ada&quot;</span>
+       <span class="f">JSON_UNQUOTE</span>(<span class="f">JSON_EXTRACT</span>(data, <span class="s">&#39;$.user.name&#39;</span>)) <span class="k">AS</span> <span class="k">name</span>,       <span class="c">-- Ada</span>
+       data <span class="o">-&gt;&gt;</span> <span class="s">&#39;$.user.name&#39;</span>                       <span class="k">AS</span> name_short,    <span class="c">-- same, MySQL 5.7+</span>
+       <span class="f">JSON_EXTRACT</span>(data, <span class="s">&#39;$.user.tags[0]&#39;</span>)         <span class="k">AS</span> first_tag,
+       <span class="f">JSON_CONTAINS</span>(data, <span class="s">&#39;&quot;admin&quot;&#39;</span>, <span class="s">&#39;$.user.tags&#39;</span>) <span class="k">AS</span> is_admin;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-246">COPY</button></span></figcaption><pre id="code-246" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">JSON_VALUE</span>(data, <span class="s">&#39;$.user.name&#39;</span>)      <span class="k">AS</span> <span class="k">name</span>,        <span class="c">-- scalar</span>
+       <span class="f">JSON_QUERY</span>(data, <span class="s">&#39;$.user.tags&#39;</span>)      <span class="k">AS</span> tags_array,  <span class="c">-- object/array</span>
+       <span class="f">ISJSON</span>(data)                         <span class="k">AS</span> <span class="k">valid</span>;
+<span class="c">-- shredding into columns:</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="f">OPENJSON</span>(<span class="v">@doc</span>, <span class="s">&#39;$.user&#39;</span>) <span class="k">WITH</span> (<span class="k">name</span> <span class="f">NVARCHAR</span>(<span class="n">100</span>) <span class="s">&#39;$.name&#39;</span>);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Oracle</span><span class="code__engine" data-engine="oracle">Oracle</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-247">COPY</button></span></figcaption><pre id="code-247" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">JSON_VALUE</span>(data, <span class="s">&#39;$.user.name&#39;</span>)  <span class="k">AS</span> <span class="k">name</span>,
+       <span class="f">JSON_QUERY</span>(data, <span class="s">&#39;$.user.tags&#39;</span>)  <span class="k">AS</span> tags,
+       j.<span class="k">name</span>                           <span class="k">AS</span> dot_access
+<span class="k">FROM</span>   docs d, <span class="f">JSON_TABLE</span>(d.data, <span class="s">&#39;$.user&#39;</span> <span class="k">COLUMNS</span> (<span class="k">name</span> <span class="f">VARCHAR2</span>(<span class="n">100</span>) <span class="t">PATH</span> <span class="s">&#39;$.name&#39;</span>)) j;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQLite</span><span class="code__engine" data-engine="sqlite">SQLite</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-248">COPY</button></span></figcaption><pre id="code-248" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">json_extract</span>(data, <span class="s">&#39;$.user.name&#39;</span>) <span class="k">AS</span> <span class="k">name</span>,
+       data <span class="o">-&gt;&gt;</span> <span class="s">&#39;$.user.name&#39;</span>            <span class="k">AS</span> name_short;   <span class="c">-- 3.38+</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">BigQuery</span><span class="code__engine" data-engine="bigquery">BigQuery</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-249">COPY</button></span></figcaption><pre id="code-249" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">JSON_VALUE</span>(data, <span class="s">&#39;$.user.name&#39;</span>)        <span class="k">AS</span> <span class="k">name</span>,      <span class="c">-- scalar STRING</span>
+       <span class="f">JSON_QUERY</span>(data, <span class="s">&#39;$.user.tags&#39;</span>)        <span class="k">AS</span> tags,      <span class="c">-- JSON</span>
+       data.<span class="k">user</span>.<span class="k">name</span>                         <span class="k">AS</span> dot_access <span class="c">-- native JSON type</span>
+<span class="k">FROM</span>   docs;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Snowflake</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-250">COPY</button></span></figcaption><pre id="code-250" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> data<span class="v">:user</span>.<span class="k">name</span><span class="o">::</span><span class="t">STRING</span>   <span class="k">AS</span> <span class="k">name</span>,
+       data<span class="v">:user</span>.tags[<span class="n">0</span>]<span class="o">::</span><span class="t">STRING</span> <span class="k">AS</span> first_tag
+<span class="k">FROM</span>   docs;</code></pre></figure>
+<h3 id="quick-reference" class="hd hd--3"><a class="hd__anchor" href="#quick-reference" aria-label="Link to Quick reference">#</a>Quick reference</h3>
+<div class="tablewrap"><table><thead><tr><th scope="col">Operation</th><th scope="col">PostgreSQL</th><th scope="col">MySQL</th><th scope="col">SQL Server</th><th scope="col">Oracle</th><th scope="col">SQLite</th><th scope="col">BigQuery</th><th scope="col">Snowflake</th></tr></thead><tbody><tr><th scope="row">Get field (JSON)</th><td><code>-&gt;</code></td><td><code>-&gt;</code></td><td><code>JSON_QUERY</code></td><td><code>JSON_QUERY</code></td><td><code>-&gt;</code></td><td><code>JSON_QUERY</code></td><td><code>:</code></td></tr><tr><th scope="row">Get field (text)</th><td><code>-&gt;&gt;</code></td><td><code>-&gt;&gt;</code></td><td><code>JSON_VALUE</code></td><td><code>JSON_VALUE</code></td><td><code>-&gt;&gt;</code></td><td><code>JSON_VALUE</code></td><td><code>:x::STRING</code></td></tr><tr><th scope="row">By path</th><td><code>#&gt;&gt;</code></td><td><code>$.a.b</code></td><td><code>$.a.b</code></td><td><code>$.a.b</code></td><td><code>$.a.b</code></td><td><code>$.a.b</code></td><td><code>:a.b</code></td></tr><tr><th scope="row">Array element</th><td><code>-&gt; 0</code></td><td><code>$[0]</code></td><td><code>$[0]</code></td><td><code>$[0]</code></td><td><code>$[0]</code></td><td><code>$[0]</code></td><td><code>[0]</code></td></tr><tr><th scope="row">Contains</th><td><code>@&gt;</code></td><td><code>JSON_CONTAINS</code></td><td>—</td><td><code>JSON_EXISTS</code></td><td>—</td><td>—</td><td>—</td></tr><tr><th scope="row">Key exists</th><td><code>?</code></td><td><code>JSON_CONTAINS_PATH</code></td><td>—</td><td><code>JSON_EXISTS</code></td><td><code>json_type</code></td><td>—</td><td>—</td></tr><tr><th scope="row">Expand array to rows</th><td><code>jsonb_array_elements</code></td><td><code>JSON_TABLE</code></td><td><code>OPENJSON</code></td><td><code>JSON_TABLE</code></td><td><code>json_each</code></td><td><code>UNNEST</code></td><td><code>FLATTEN</code></td></tr></tbody></table></div>
+<h2 id="expanding-arrays-into-rows" class="hd hd--2"><a class="hd__anchor" href="#expanding-arrays-into-rows" aria-label="Link to Expanding arrays into rows">#</a>Expanding arrays into rows</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-251">COPY</button></span></figcaption><pre id="code-251" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> d.id, tag
+<span class="k">FROM</span>   docs d, <span class="f">jsonb_array_elements_text</span>(d.data <span class="o">-&gt;</span> <span class="s">&#39;user&#39;</span> <span class="o">-&gt;</span> <span class="s">&#39;tags&#39;</span>) <span class="k">AS</span> tag;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL 8 / Oracle — JSON_TABLE</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-252">COPY</button></span></figcaption><pre id="code-252" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> d.id, t.tag
+<span class="k">FROM</span>   docs d,
+       <span class="f">JSON_TABLE</span>(d.data, <span class="s">&#39;$.user.tags[*]&#39;</span> <span class="k">COLUMNS</span> (tag <span class="f">VARCHAR</span>(<span class="n">64</span>) <span class="t">PATH</span> <span class="s">&#39;$&#39;</span>)) <span class="k">AS</span> t;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-253">COPY</button></span></figcaption><pre id="code-253" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> d.id, t.value <span class="k">AS</span> tag
+<span class="k">FROM</span>   docs d <span class="k">CROSS</span> APPLY <span class="f">OPENJSON</span>(d.data, <span class="s">&#39;$.user.tags&#39;</span>) <span class="k">AS</span> t;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Snowflake</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-254">COPY</button></span></figcaption><pre id="code-254" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> d.id, f.value<span class="o">::</span><span class="t">STRING</span> <span class="k">AS</span> tag
+<span class="k">FROM</span>   docs d, <span class="k">LATERAL</span> <span class="f">FLATTEN</span>(<span class="k">input</span> <span class="o">=&gt;</span> d.data<span class="v">:user</span>.tags) f;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">BigQuery</span><span class="code__engine" data-engine="bigquery">BigQuery</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-255">COPY</button></span></figcaption><pre id="code-255" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> d.id, tag
+<span class="k">FROM</span>   docs d, <span class="f">UNNEST</span>(<span class="f">JSON_VALUE_ARRAY</span>(d.data, <span class="s">&#39;$.user.tags&#39;</span>)) <span class="k">AS</span> tag;</code></pre></figure>
+<h2 id="building-json" class="hd hd--2"><a class="hd__anchor" href="#building-json" aria-label="Link to Building JSON">#</a>Building JSON</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Aggregating rows into a document</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-256">COPY</button></span></figcaption><pre id="code-256" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">jsonb_build_object</span>(
+           <span class="s">&#39;customer_id&#39;</span>, c.id,
+           <span class="s">&#39;email&#39;</span>,       c.email,
+           <span class="s">&#39;orders&#39;</span>,      <span class="k">COALESCE</span>(<span class="f">jsonb_agg</span>(<span class="f">jsonb_build_object</span>(<span class="s">&#39;id&#39;</span>, o.id, <span class="s">&#39;total&#39;</span>, o.total))
+                                   <span class="k">FILTER</span> (<span class="k">WHERE</span> o.id <span class="k">IS</span> <span class="k">NOT</span> <span class="k">NULL</span>), <span class="s">&#39;[]&#39;</span><span class="o">::</span><span class="t">jsonb</span>)
+       ) <span class="k">AS</span> doc
+<span class="k">FROM</span>   customers c <span class="k">LEFT</span> <span class="k">JOIN</span> orders o <span class="k">ON</span> o.customer_id <span class="o">=</span> c.id
+<span class="k">GROUP</span>  <span class="k">BY</span> c.id, c.email;</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Object</th><th scope="col">Array aggregate</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td><code>jsonb_build_object</code></td><td><code>jsonb_agg</code></td></tr><tr><th scope="row">MySQL</th><td><code>JSON_OBJECT</code></td><td><code>JSON_ARRAYAGG</code></td></tr><tr><th scope="row">SQL Server</th><td><code>FOR JSON PATH</code></td><td><code>FOR JSON PATH</code></td></tr><tr><th scope="row">Oracle</th><td><code>JSON_OBJECT</code></td><td><code>JSON_ARRAYAGG</code></td></tr><tr><th scope="row">SQLite</th><td><code>json_object</code></td><td><code>json_group_array</code></td></tr><tr><th scope="row">BigQuery</th><td><code>TO_JSON</code> / <code>JSON_OBJECT</code></td><td><code>ARRAY_AGG</code></td></tr><tr><th scope="row">Snowflake</th><td><code>OBJECT_CONSTRUCT</code></td><td><code>ARRAY_AGG</code></td></tr><tr><th scope="row">DuckDB</th><td><code>json_object</code></td><td><code>json_group_array</code></td></tr></tbody></table></div>
+<h2 id="indexing-json" class="hd hd--2"><a class="hd__anchor" href="#indexing-json" aria-label="Link to Indexing JSON">#</a>Indexing JSON</h2>
+<p>This is where the engines differ most, and where JSON performance is won or lost.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL — GIN for containment, B-tree for a specific path</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-257">COPY</button></span></figcaption><pre id="code-257" class="code__pre"><code class="lang-sql"><span class="c">-- Index the whole document for @&gt;, ? and jsonpath queries:</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_docs_data <span class="k">ON</span> docs <span class="k">USING</span> <span class="f">GIN</span> (data);
+<span class="c">-- Smaller and faster if you only need @&gt; :</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_docs_data <span class="k">ON</span> docs <span class="k">USING</span> <span class="f">GIN</span> (data jsonb_path_ops);
+<span class="c">-- A single hot key, usable for = and range:</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_docs_status <span class="k">ON</span> <span class="f">docs</span> ((data <span class="o">-&gt;&gt;</span> <span class="s">&#39;status&#39;</span>));</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL — index a generated column</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-258">COPY</button></span></figcaption><pre id="code-258" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> docs
+  <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="k">status</span> <span class="f">VARCHAR</span>(<span class="n">32</span>) <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> (data <span class="o">-&gt;&gt;</span> <span class="s">&#39;$.status&#39;</span>) <span class="k">STORED</span>,
+  <span class="k">ADD</span> <span class="k">INDEX</span> <span class="f">idx_status</span> (<span class="k">status</span>);
+<span class="c">-- MySQL 8 also has multi-valued indexes for arrays:</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">INDEX</span> <span class="f">idx_tags</span> ((<span class="k">CAST</span>(data <span class="o">-&gt;</span> <span class="s">&#39;$.tags&#39;</span> <span class="k">AS</span> <span class="f">CHAR</span>(<span class="n">64</span>) <span class="k">ARRAY</span>)));</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server / Oracle</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-259">COPY</button></span></figcaption><pre id="code-259" class="code__pre"><code class="lang-sql"><span class="c">-- SQL Server: computed column + index</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">status</span> <span class="k">AS</span> <span class="f">JSON_VALUE</span>(data, <span class="s">&#39;$.status&#39;</span>);
+<span class="k">CREATE</span> <span class="k">INDEX</span> idx_docs_status <span class="k">ON</span> <span class="f">docs</span> (<span class="k">status</span>);
+<span class="c">-- Oracle: search index over the whole document</span>
+<span class="k">CREATE</span> <span class="k">SEARCH</span> <span class="k">INDEX</span> idx_docs <span class="k">ON</span> <span class="f">docs</span> (data) <span class="k">FOR</span> <span class="t">JSON</span>;</code></pre></figure>
+<p>::: warn JSON is not a substitute for columns A field you filter, join or sort on should be a real column. JSON is for genuinely variable, sparse or write-once payloads. Every engine&#39;s JSON path extraction is slower than a column read, most cannot use statistics on JSON internals for cardinality estimation, and constraints/foreign keys cannot reach inside a document. :::</p>
+<h2 id="validating" class="hd hd--2"><a class="hd__anchor" href="#validating" aria-label="Link to Validating">#</a>Validating</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Constraining shape</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-260">COPY</button></span></figcaption><pre id="code-260" class="code__pre"><code class="lang-sql"><span class="c">-- PostgreSQL</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_kind <span class="k">CHECK</span> (data <span class="o">-&gt;&gt;</span> <span class="s">&#39;kind&#39;</span> <span class="k">IN</span> (<span class="s">&#39;a&#39;</span>,<span class="s">&#39;b&#39;</span>));
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_shape <span class="k">CHECK</span> (<span class="f">jsonb_typeof</span>(data <span class="o">-&gt;</span> <span class="s">&#39;tags&#39;</span>) <span class="o">=</span> <span class="s">&#39;array&#39;</span>);
+<span class="c">-- SQL Server</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_json <span class="k">CHECK</span> (<span class="f">ISJSON</span>(data) <span class="o">=</span> <span class="n">1</span>);
+<span class="c">-- Oracle</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_json <span class="k">CHECK</span> (data <span class="k">IS</span> <span class="t">JSON</span>);
+<span class="c">-- MySQL validates the JSON type automatically; use JSON_SCHEMA_VALID() for shape:</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> docs <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_shape <span class="k">CHECK</span> (<span class="f">JSON_SCHEMA_VALID</span>(<span class="s">&#39;{&quot;type&quot;:&quot;object&quot;}&#39;</span>, data));</code></pre></figure>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/arrays/"><span class="rel__t">Arrays</span><span class="rel__a">→</span></a><a class="rel__i" href="/functions/#json"><span class="rel__t">JSON functions</span><span class="rel__a">→</span></a><a class="rel__i" href="/datatypes/#json"><span class="rel__t">Data types</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/windows/"><span class="pager__d">← PREV</span><span class="pager__t">Window functions</span></a><a class="pager__i pager__i--next" href="/sql/arrays/"><span class="pager__d">NEXT →</span><span class="pager__t">Arrays &amp; nested data</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#storage-types">Storage types</a></li><li class="toc__i toc__i--2"><a href="#extraction-the-same-operation-in-every-dialect">Extraction — the same operation in every dialect</a></li><li class="toc__i toc__i--3"><a href="#quick-reference">Quick reference</a></li><li class="toc__i toc__i--2"><a href="#expanding-arrays-into-rows">Expanding arrays into rows</a></li><li class="toc__i toc__i--2"><a href="#building-json">Building JSON</a></li><li class="toc__i toc__i--2"><a href="#indexing-json">Indexing JSON</a></li><li class="toc__i toc__i--2"><a href="#validating">Validating</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

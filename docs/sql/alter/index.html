@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ALTER · SQL Terminal</title>
+<meta name="description" content="Changing live schemas: which ALTERs are instant, which rewrite the table, and how to migrate without downtime.">
+<meta name="keywords" content="alter table add column drop column rename modify change lock ddl online migration zero downtime">
+<link rel="canonical" href="https://sql.manual.dev/sql/alter/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="ALTER · SQL Terminal">
+<meta property="og:description" content="Changing live schemas: which ALTERs are instant, which rewrite the table, and how to migrate without downtime.">
+<meta property="og:url" content="https://sql.manual.dev/sql/alter/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ALTER · SQL Terminal">
+<meta name="twitter:description" content="Changing live schemas: which ALTERs are instant, which rewrite the table, and how to migrate without downtime.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"ALTER · SQL Terminal","headline":"ALTER","description":"Changing live schemas: which ALTERs are instant, which rewrite the table, and how to migrate without downtime.","url":"https://sql.manual.dev/sql/alter/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/alter/">alter</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">DDL</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">intermediate</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>ALTER</h1><p class="lede">Changing live schemas: which ALTERs are instant, which rewrite the table, and how to migrate without downtime.</p><p><code>ALTER TABLE</code> is where portability and <em>safety</em> diverge most sharply. The same statement can be a metadata-only flick in one engine and a multi-hour full-table rewrite holding an exclusive lock in another.</p>
+<h2 id="the-operations" class="hd hd--2"><a class="hd__anchor" href="#the-operations" aria-label="Link to The operations">#</a>The operations</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Add, drop, rename</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=ALTER%20TABLE%20customers%20ADD%20COLUMN%20phone%20VARCHAR(32)%3B%0AALTER%20TABLE%20customers%20DROP%20COLUMN%20phone%3B%0AALTER%20TABLE%20customers%20RENAME%20COLUMN%20full_name%20TO%20display_name%3B%0AALTER%20TABLE%20customers%20RENAME%20TO%20clients%3B%0A%0AALTER%20TABLE%20customers%20ADD%20CONSTRAINT%20ck_country%20CHECK%20(LENGTH(country)%20%3D%202)%3B%0AALTER%20TABLE%20customers%20DROP%20CONSTRAINT%20ck_country%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-70">COPY</button></span></figcaption><pre id="code-70" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">ADD</span> <span class="k">COLUMN</span> phone <span class="f">VARCHAR</span>(<span class="n">32</span>);
+<span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">DROP</span> <span class="k">COLUMN</span> phone;
+<span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">RENAME</span> <span class="k">COLUMN</span> full_name <span class="k">TO</span> display_name;
+<span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">RENAME</span> <span class="k">TO</span> clients;
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_country <span class="k">CHECK</span> (<span class="f">LENGTH</span>(country) <span class="o">=</span> <span class="n">2</span>);
+<span class="k">ALTER</span> <span class="k">TABLE</span> customers <span class="k">DROP</span> <span class="k">CONSTRAINT</span> ck_country;</code></pre></figure>
+<p>Changing a column type is the least portable statement in common use:</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Syntax</th></tr></thead><tbody><tr><th scope="row">PostgreSQL, Db2, CockroachDB</th><td><code>ALTER TABLE t ALTER COLUMN c TYPE BIGINT USING c::BIGINT</code></td></tr><tr><th scope="row">MySQL / MariaDB</th><td><code>ALTER TABLE t MODIFY c BIGINT NOT NULL</code> (repeat every attribute!)</td></tr><tr><th scope="row">SQL Server / Synapse</th><td><code>ALTER TABLE t ALTER COLUMN c BIGINT NOT NULL</code></td></tr><tr><th scope="row">Oracle</th><td><code>ALTER TABLE t MODIFY (c NUMBER(19))</code></td></tr><tr><th scope="row">SQLite</th><td>Not supported — rebuild the table</td></tr><tr><th scope="row">Snowflake, BigQuery</th><td>Widening only (<code>INT64</code>→<code>NUMERIC</code>, <code>VARCHAR(10)</code>→<code>VARCHAR(20)</code>)</td></tr></tbody></table></div>
+<p>::: danger MySQL MODIFY discards omitted attributes <code>ALTER TABLE t MODIFY c BIGINT</code> on a column that was <code>NOT NULL DEFAULT 0 COMMENT &#39;x&#39;</code> silently drops the <code>NOT NULL</code>, the default and the comment. You must restate the entire column definition every time. :::</p>
+<h2 id="sqlite-the-twelve-step-rebuild" class="hd hd--2"><a class="hd__anchor" href="#sqlite-the-twelve-step-rebuild" aria-label="Link to SQLite: the twelve-step rebuild">#</a>SQLite: the twelve-step rebuild</h2>
+<p>SQLite supports only <code>ADD COLUMN</code>, <code>RENAME COLUMN</code>, <code>RENAME TO</code> and <code>DROP COLUMN</code> (3.35+). Everything else means recreating the table.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The official SQLite table-alteration procedure</span><span class="code__engine" data-engine="sqlite">SQLite</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-71">COPY</button></span></figcaption><pre id="code-71" class="code__pre"><code class="lang-sql"><span class="k">PRAGMA</span> foreign_keys <span class="o">=</span> <span class="k">OFF</span>;
+<span class="k">BEGIN</span>;
+  <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">customers_new</span> (
+      id <span class="t">INTEGER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>,
+      email <span class="t">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>,
+      country <span class="t">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="s">&#39;US&#39;</span>      <span class="c">-- the change</span>
+  );
+  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="f">customers_new</span> (id, email, country) <span class="k">SELECT</span> id, email, <span class="s">&#39;US&#39;</span> <span class="k">FROM</span> customers;
+  <span class="k">DROP</span> <span class="k">TABLE</span> customers;
+  <span class="k">ALTER</span> <span class="k">TABLE</span> customers_new <span class="k">RENAME</span> <span class="k">TO</span> customers;
+  <span class="k">CREATE</span> <span class="k">INDEX</span> idx_customers_email <span class="k">ON</span> <span class="f">customers</span> (email);   <span class="c">-- recreate indexes/triggers</span>
+<span class="k">COMMIT</span>;
+<span class="k">PRAGMA</span> foreign_key_check;
+<span class="k">PRAGMA</span> foreign_keys <span class="o">=</span> <span class="k">ON</span>;</code></pre></figure>
+<h2 id="what-locks-and-for-how-long" class="hd hd--2"><a class="hd__anchor" href="#what-locks-and-for-how-long" aria-label="Link to What locks, and for how long">#</a>What locks, and for how long</h2>
+<p>This table is the difference between a deploy and an outage.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Operation</th><th scope="col">PostgreSQL</th><th scope="col">MySQL 8 (InnoDB)</th><th scope="col">SQL Server</th><th scope="col">Oracle</th></tr></thead><tbody><tr><th scope="row"><code>ADD COLUMN</code> (nullable, no default)</th><td>Instant, metadata only</td><td>Instant (<code>ALGORITHM=INSTANT</code>)</td><td>Instant</td><td>Instant</td></tr><tr><th scope="row"><code>ADD COLUMN</code> with a constant default</th><td>Instant (PG 11+)</td><td>Instant (8.0.12+)</td><td>Instant (2012+, Enterprise)</td><td>Instant (11g+)</td></tr><tr><th scope="row"><code>ADD COLUMN</code> with a volatile default</th><td>Full rewrite</td><td>Rewrite</td><td>Rewrite</td><td>Rewrite</td></tr><tr><th scope="row"><code>DROP COLUMN</code></th><td>Instant (space reclaimed on rewrite)</td><td>Rebuild (<code>INPLACE</code>, online)</td><td>Instant metadata</td><td><code>SET UNUSED</code> is instant</td></tr><tr><th scope="row"><code>ALTER COLUMN TYPE</code> (widening)</th><td>Rewrite (some no-ops in 12+)</td><td>Often rebuild</td><td>Often instant</td><td>Often instant</td></tr><tr><th scope="row"><code>ADD INDEX</code></th><td><code>CREATE INDEX CONCURRENTLY</code> avoids blocking</td><td><code>ALGORITHM=INPLACE</code>, online</td><td><code>WITH (ONLINE=ON)</code> (Enterprise)</td><td><code>ONLINE</code></td></tr><tr><th scope="row"><code>ADD NOT NULL</code></th><td>Full scan; PG 12+ can use a matching <code>CHECK</code> to skip it</td><td>Rebuild</td><td>Scan</td><td>Scan (or <code>NOVALIDATE</code>)</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Non-blocking index creation</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-72">COPY</button></span></figcaption><pre id="code-72" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">CONCURRENTLY</span> idx_orders_customer <span class="k">ON</span> <span class="f">orders</span> (customer_id);
+<span class="c">-- Slower, cannot run inside a transaction, and can leave an INVALID index</span>
+<span class="c">-- if it fails — check with: SELECT indexrelid::regclass FROM pg_index WHERE NOT indisvalid;</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL: state the algorithm so a surprise rebuild fails loudly</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-73">COPY</button></span></figcaption><pre id="code-73" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">ADD</span> <span class="k">COLUMN</span> note <span class="f">VARCHAR</span>(<span class="n">255</span>), ALGORITHM <span class="o">=</span> INSTANT;
+<span class="c">-- If MySQL cannot do it instantly it errors instead of silently locking the table for an hour.</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">ADD</span> <span class="k">INDEX</span> <span class="f">idx_note</span> (note), ALGORITHM <span class="o">=</span> INPLACE, <span class="k">LOCK</span> <span class="o">=</span> <span class="k">NONE</span>;</code></pre></figure>
+<p>::: tip Always set a lock timeout before DDL An <code>ALTER</code> waiting on a long-running query queues behind it — and every <em>subsequent</em> query queues behind the <code>ALTER</code>. A metadata-only change can take a healthy database down. Bound the wait:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-74">COPY</button></span></figcaption><pre id="code-74" class="code__pre"><code class="lang-sql"><span class="k">SET</span> lock_timeout <span class="o">=</span> <span class="s">&#39;3s&#39;</span>;                    <span class="c">-- PostgreSQL</span>
+<span class="k">SET</span> lock_wait_timeout <span class="o">=</span> <span class="n">3</span>;                  <span class="c">-- MySQL (session)</span>
+<span class="k">SET</span> LOCK_TIMEOUT <span class="n">3000</span>;                      <span class="c">-- SQL Server (ms)</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">ADD</span> <span class="k">COLUMN</span> note <span class="t">TEXT</span>;</code></pre></figure>
+<p>:::</p>
+<h2 id="the-expand-contract-migration" class="hd hd--2"><a class="hd__anchor" href="#the-expand-contract-migration" aria-label="Link to The expand–contract migration">#</a>The expand–contract migration</h2>
+<p>The portable pattern for changing a column without downtime, on any engine:</p>
+<ol class="list"><li><strong>Expand</strong> — add the new column (nullable, no default). Instant.</li><li><strong>Dual-write</strong> — deploy code writing both old and new.</li><li><strong>Backfill</strong> — copy in batches (<code>WHERE id BETWEEN … </code>), committing each batch, with a pause between them.</li><li><strong>Verify</strong> — count mismatches; add the <code>NOT NULL</code> constraint as <code>NOT VALID</code>, then validate.</li><li><strong>Switch reads</strong> — deploy code reading the new column.</li><li><strong>Contract</strong> — stop writing the old column, then drop it in a later release.</li></ol>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Batched backfill that does not hold a long transaction</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-75">COPY</button></span></figcaption><pre id="code-75" class="code__pre"><code class="lang-sql"><span class="k">DO</span> <span class="s">$$
+DECLARE last_id BIGINT := 0;
+BEGIN
+  LOOP
+    UPDATE orders SET total_cents = (total * 100)::BIGINT
+     WHERE id &gt; last_id AND id &lt;= last_id + 10000 AND total_cents IS NULL;
+    EXIT WHEN NOT FOUND;
+    last_id := last_id + 10000;
+    COMMIT;                     -- PG 11+ inside procedures; use a driver loop otherwise
+    PERFORM pg_sleep(0.05);     -- let replication and autovacuum keep up
+  END LOOP;
+END $$</span>;</code></pre></figure>
+<p>::: warn Transactional DDL is not universal PostgreSQL, SQLite, SQL Server, Db2 and CockroachDB can roll back DDL inside a transaction — a failed migration leaves nothing behind. <strong>MySQL and Oracle commit implicitly</strong> before and after each DDL statement, so a multi-statement migration that fails halfway leaves the schema in a partial state. Write MySQL and Oracle migrations to be individually idempotent. :::</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/create/"><span class="rel__t">CREATE</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/constraints/"><span class="rel__t">Constraints</span><span class="rel__a">→</span></a><a class="rel__i" href="/transactions/"><span class="rel__t">Transactions</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/create/"><span class="pager__d">← PREV</span><span class="pager__t">CREATE</span></a><a class="pager__i pager__i--next" href="/sql/drop-truncate/"><span class="pager__d">NEXT →</span><span class="pager__t">DROP, TRUNCATE &amp; COMMENT</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#the-operations">The operations</a></li><li class="toc__i toc__i--2"><a href="#sqlite-the-twelve-step-rebuild">SQLite: the twelve-step rebuild</a></li><li class="toc__i toc__i--2"><a href="#what-locks-and-for-how-long">What locks, and for how long</a></li><li class="toc__i toc__i--2"><a href="#the-expand-contract-migration">The expand–contract migration</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

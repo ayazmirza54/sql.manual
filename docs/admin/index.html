@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Database administration · SQL Terminal</title>
+<meta name="description" content="Users, roles and privileges, connection management, backup and restore, replication, monitoring, maintenance, partitioning and high availability.">
+<meta name="keywords" content="dba grant revoke role user permission backup restore pg_dump mysqldump replication monitoring vacuum analyze maintenance partitioning high availability failover disaster recovery">
+<link rel="canonical" href="https://sql.manual.dev/admin/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Database administration · SQL Terminal">
+<meta property="og:description" content="Users, roles and privileges, connection management, backup and restore, replication, monitoring, maintenance, partitioning and high availability.">
+<meta property="og:url" content="https://sql.manual.dev/admin/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Database administration · SQL Terminal">
+<meta name="twitter:description" content="Users, roles and privileges, connection management, backup and restore, replication, monitoring, maintenance, partitioning and high availability.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Database administration · SQL Terminal","headline":"Database administration","description":"Users, roles and privileges, connection management, backup and restore, replication, monitoring, maintenance, partitioning and high availability.","url":"https://sql.manual.dev/admin/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link is-active" aria-current="page" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link is-active" aria-current="page" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/admin/">admin</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Admin</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">advanced</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">Mixed</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Database administration</h1><p class="lede">Users, roles and privileges, connection management, backup and restore, replication, monitoring, maintenance, partitioning and high availability.</p><h2 id="users-roles-privileges" class="hd hd--2"><a class="hd__anchor" href="#users-roles-privileges" aria-label="Link to Users, roles &amp; privileges">#</a>Users, roles &amp; privileges</h2>
+<p>SQL&#39;s DCL is small: <code>GRANT</code> and <code>REVOKE</code>. Everything else is vendor-specific.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Creating principals</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=CREATE%20ROLE%20analyst%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20a%20group%20of%20privileges%0ACREATE%20USER%20alice%20WITH%20PASSWORD%20'%E2%80%A6'%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20PostgreSQL%3A%20a%20role%20that%20can%20log%20in%0AGRANT%20analyst%20TO%20alice%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20role%20membership">TRY IT</a><button class="code__btn" type="button" data-copy="code-301">COPY</button></span></figcaption><pre id="code-301" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">ROLE</span> analyst;                                    <span class="c">-- a group of privileges</span>
+<span class="k">CREATE</span> <span class="k">USER</span> alice <span class="k">WITH</span> <span class="k">PASSWORD</span> <span class="s">&#39;…&#39;</span>;                    <span class="c">-- PostgreSQL: a role that can log in</span>
+<span class="k">GRANT</span> analyst <span class="k">TO</span> alice;                                 <span class="c">-- role membership</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Granting</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=GRANT%20SELECT%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20ON%20orders%20%20%20%20%20%20%20%20%20%20%20%20TO%20analyst%3B%0AGRANT%20SELECT%2C%20INSERT%2C%20UPDATE%2C%20DELETE%20ON%20orders%20%20%20%20%20%20%20%20%20%20%20TO%20app_writer%3B%0AGRANT%20USAGE%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20ON%20SCHEMA%20analytics%20%20TO%20analyst%3B%0AGRANT%20SELECT%20ON%20ALL%20TABLES%20IN%20SCHEMA%20analytics%20%20%20%20%20%20%20%20%20%20%20TO%20analyst%3B%0AGRANT%20EXECUTE%20ON%20FUNCTION%20report(int)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20TO%20analyst%3B%0AGRANT%20SELECT%20(id%2C%20email)%20%20%20%20%20%20%20%20%20%20%20%20ON%20customers%20%20%20%20%20%20%20%20%20TO%20support%3B%20%20%20--%20column-level%0A%0AREVOKE%20INSERT%20ON%20orders%20FROM%20app_writer%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-302">COPY</button></span></figcaption><pre id="code-302" class="code__pre"><code class="lang-sql"><span class="k">GRANT</span> <span class="k">SELECT</span>                        <span class="k">ON</span> orders            <span class="k">TO</span> analyst;
+<span class="k">GRANT</span> <span class="k">SELECT</span>, <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span> <span class="k">ON</span> orders           <span class="k">TO</span> app_writer;
+<span class="k">GRANT</span> <span class="k">USAGE</span>                         <span class="k">ON</span> <span class="k">SCHEMA</span> analytics  <span class="k">TO</span> analyst;
+<span class="k">GRANT</span> <span class="k">SELECT</span> <span class="k">ON</span> <span class="k">ALL</span> <span class="k">TABLES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> analytics           <span class="k">TO</span> analyst;
+<span class="k">GRANT</span> <span class="k">EXECUTE</span> <span class="k">ON</span> <span class="k">FUNCTION</span> <span class="f">report</span>(<span class="t">int</span>)                    <span class="k">TO</span> analyst;
+<span class="k">GRANT</span> <span class="k">SELECT</span> (id, email)            <span class="k">ON</span> customers         <span class="k">TO</span> support;   <span class="c">-- column-level</span>
+
+<span class="k">REVOKE</span> <span class="k">INSERT</span> <span class="k">ON</span> orders <span class="k">FROM</span> app_writer;</code></pre></figure>
+<p>::: tip Grant future objects too <code>GRANT … ON ALL TABLES</code> applies only to tables that exist <strong>now</strong>. A table created tomorrow is not covered:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-303">COPY</button></span></figcaption><pre id="code-303" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">DEFAULT</span> <span class="k">PRIVILEGES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> analytics
+    <span class="k">GRANT</span> <span class="k">SELECT</span> <span class="k">ON</span> <span class="k">TABLES</span> <span class="k">TO</span> analyst;                   <span class="c">-- PostgreSQL</span>
+<span class="k">GRANT</span> <span class="k">SELECT</span> <span class="k">ON</span> FUTURE <span class="k">TABLES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> analytics <span class="k">TO</span> <span class="k">ROLE</span> analyst;   <span class="c">-- Snowflake</span></code></pre></figure>
+<p>:::</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Model</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>Roles only — a &quot;user&quot; is a role with <code>LOGIN</code>. Roles nest</td></tr><tr><th scope="row">MySQL / MariaDB</th><td>Users are <code>&#39;name&#39;@&#39;host&#39;</code>; roles since 8.0</td></tr><tr><th scope="row">SQL Server</th><td>Server logins → database users → database roles; schema-scoped grants</td></tr><tr><th scope="row">Oracle</th><td>Users == schemas; system vs object privileges; roles</td></tr><tr><th scope="row">Snowflake</th><td>Strict RBAC — privileges only via roles, roles are hierarchical</td></tr><tr><th scope="row">BigQuery</th><td>IAM, not SQL — dataset/table/column-level via Google Cloud IAM</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">A least-privilege application role (PostgreSQL)</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-304">COPY</button></span></figcaption><pre id="code-304" class="code__pre"><code class="lang-sql"><span class="k">REVOKE</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="k">SCHEMA</span> <span class="k">public</span> <span class="k">FROM</span> <span class="k">PUBLIC</span>;      <span class="c">-- lock down the default schema</span>
+<span class="k">CREATE</span> <span class="k">ROLE</span> app_rw NOINHERIT;
+<span class="k">GRANT</span> <span class="k">CONNECT</span> <span class="k">ON</span> <span class="k">DATABASE</span> app <span class="k">TO</span> app_rw;
+<span class="k">GRANT</span> <span class="k">USAGE</span> <span class="k">ON</span> <span class="k">SCHEMA</span> app <span class="k">TO</span> app_rw;
+<span class="k">GRANT</span> <span class="k">SELECT</span>, <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span> <span class="k">ON</span> <span class="k">ALL</span> <span class="k">TABLES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> app <span class="k">TO</span> app_rw;
+<span class="k">GRANT</span> <span class="k">USAGE</span> <span class="k">ON</span> <span class="k">ALL</span> <span class="k">SEQUENCES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> app <span class="k">TO</span> app_rw;
+<span class="k">ALTER</span> <span class="k">DEFAULT</span> <span class="k">PRIVILEGES</span> <span class="k">IN</span> <span class="k">SCHEMA</span> app <span class="k">GRANT</span> <span class="k">SELECT</span>, <span class="k">INSERT</span>, <span class="k">UPDATE</span>, <span class="k">DELETE</span> <span class="k">ON</span> <span class="k">TABLES</span> <span class="k">TO</span> app_rw;
+
+<span class="k">CREATE</span> <span class="k">USER</span> app_service <span class="k">WITH</span> <span class="k">PASSWORD</span> :<span class="s">&#39;pw&#39;</span> <span class="k">IN</span> <span class="k">ROLE</span> app_rw;
+<span class="c">-- Note the application does NOT own its tables: it cannot DROP them.</span></code></pre></figure>
+<h3 id="row-level-security" class="hd hd--3"><a class="hd__anchor" href="#row-level-security" aria-label="Link to Row-level security">#</a>Row-level security</h3>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL RLS — tenants cannot see each other&#39;s rows</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-305">COPY</button></span></figcaption><pre id="code-305" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> documents <span class="k">ENABLE</span> <span class="k">ROW</span> <span class="k">LEVEL</span> <span class="k">SECURITY</span>;
+<span class="k">ALTER</span> <span class="k">TABLE</span> documents <span class="k">FORCE</span> <span class="k">ROW</span> <span class="k">LEVEL</span> <span class="k">SECURITY</span>;     <span class="c">-- applies to the table owner too</span>
+
+<span class="k">CREATE</span> <span class="k">POLICY</span> tenant_isolation <span class="k">ON</span> documents
+    <span class="k">USING</span>       (tenant_id <span class="o">=</span> <span class="f">current_setting</span>(<span class="s">&#39;app.tenant_id&#39;</span>)<span class="o">::</span><span class="t">BIGINT</span>)   <span class="c">-- for reads</span>
+    <span class="k">WITH</span> <span class="k">CHECK</span>  (tenant_id <span class="o">=</span> <span class="f">current_setting</span>(<span class="s">&#39;app.tenant_id&#39;</span>)<span class="o">::</span><span class="t">BIGINT</span>);  <span class="c">-- for writes</span>
+
+<span class="c">-- the application sets this per request, inside the transaction:</span>
+<span class="k">SET</span> <span class="k">LOCAL</span> app.tenant_id <span class="o">=</span> <span class="s">&#39;42&#39;</span>;</code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="SQL Server: Supported — security policy"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQL Server</span><span class="sr-only">Supported</span><span class="sup__note">security policy</span></li><li class="sup sup--ok" title="Oracle: Supported — VPD/OLS"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Oracle</span><span class="sr-only">Supported</span><span class="sup__note">VPD/OLS</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Snowflake: Supported — row access policies"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Snowflake</span><span class="sr-only">Supported</span><span class="sup__note">row access policies</span></li><li class="sup sup--ok" title="Databricks: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Databricks</span><span class="sr-only">Supported</span></li><li class="sup sup--no" title="MySQL: Unsupported — use views"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">MySQL</span><span class="sr-only">Unsupported</span><span class="sup__note">use views</span></li><li class="sup sup--no" title="SQLite: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">SQLite</span><span class="sr-only">Unsupported</span></li><li class="sup sup--ok" title="BigQuery: Supported — row access policy"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">BigQuery</span><span class="sr-only">Supported</span><span class="sup__note">row access policy</span></li><li class="sup sup--ok" title="Redshift: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Redshift</span><span class="sr-only">Supported</span></li></ul>
+<h2 id="connection-management" class="hd hd--2"><a class="hd__anchor" href="#connection-management" aria-label="Link to Connection management">#</a>Connection management</h2>
+<p>Connections are expensive: each one costs a backend process (PostgreSQL) or thread (MySQL) plus memory, and the working set of <em>idle</em> connections still competes for cache.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Limit setting</th><th scope="col">Pooler</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td><code>max_connections</code> (default 100)</td><td>PgBouncer, pgcat, Odyssey — essential above ~200</td></tr><tr><th scope="row">MySQL</th><td><code>max_connections</code> (default 151)</td><td>ProxySQL, or the driver&#39;s pool</td></tr><tr><th scope="row">SQL Server</th><td>Effectively unlimited; governed by memory</td><td>Built into ADO.NET</td></tr><tr><th scope="row">Oracle</th><td><code>processes</code> / shared servers</td><td>Built-in connection pooling (DRCP)</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Who is connected, and what are they doing</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-306">COPY</button></span></figcaption><pre id="code-306" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> pid, usename, application_name, client_addr, state,
+       <span class="f">now</span>() <span class="o">-</span> state_change <span class="k">AS</span> state_duration, <span class="k">left</span>(<span class="k">query</span>, <span class="n">80</span>) <span class="k">AS</span> <span class="k">query</span>
+<span class="k">FROM</span>   pg_stat_activity
+<span class="k">WHERE</span>  state <span class="o">&lt;&gt;</span> <span class="s">&#39;idle&#39;</span> <span class="k">OR</span> state_change <span class="o">&lt;</span> <span class="f">now</span>() <span class="o">-</span> <span class="k">interval</span> <span class="s">&#39;5 min&#39;</span>
+<span class="k">ORDER</span>  <span class="k">BY</span> state_duration <span class="k">DESC</span>;
+
+<span class="k">SELECT</span> <span class="f">pg_cancel_backend</span>(<span class="n">12345</span>);     <span class="c">-- cancel the running query, politely</span>
+<span class="k">SELECT</span> <span class="f">pg_terminate_backend</span>(<span class="n">12345</span>);  <span class="c">-- kill the connection</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Equivalents</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-307">COPY</button></span></figcaption><pre id="code-307" class="code__pre"><code class="lang-sql"><span class="k">SHOW</span> <span class="k">FULL</span> PROCESSLIST;  <span class="k">KILL</span> <span class="k">QUERY</span> <span class="n">42</span>;  <span class="k">KILL</span> <span class="n">42</span>;              <span class="c">-- MySQL</span>
+<span class="k">EXEC</span> sp_who2;  <span class="k">KILL</span> <span class="n">53</span>;                                        <span class="c">-- SQL Server</span>
+<span class="k">SELECT</span> sid, <span class="t">serial</span><span class="c">#, status, sql_id FROM v$session;            -- Oracle</span>
+<span class="k">ALTER</span> <span class="k">SYSTEM</span> <span class="k">KILL</span> <span class="k">SESSION</span> <span class="s">&#39;123,4567&#39;</span> <span class="k">IMMEDIATE</span>;</code></pre></figure>
+<p>::: warn Idle-in-transaction is the silent killer A connection sitting in an open transaction holds locks and blocks version cleanup indefinitely. Bound it:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-308">COPY</button></span></figcaption><pre id="code-308" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">SYSTEM</span> <span class="k">SET</span> idle_in_transaction_session_timeout <span class="o">=</span> <span class="s">&#39;60s&#39;</span>;   <span class="c">-- PostgreSQL</span>
+<span class="k">SET</span> <span class="k">GLOBAL</span> wait_timeout <span class="o">=</span> <span class="n">300</span>;                                  <span class="c">-- MySQL</span></code></pre></figure>
+<p>:::</p>
+<h2 id="backup-restore" class="hd hd--2"><a class="hd__anchor" href="#backup-restore" aria-label="Link to Backup &amp; restore">#</a>Backup &amp; restore</h2>
+<p>Two kinds, and you need both:</p>
+<ul class="list"><li><strong>Logical</strong> — a dump of SQL statements or a portable archive. Restores anywhere, slow for large data, no point-in-time recovery on its own.</li><li><strong>Physical</strong> — a byte-level copy of the data files plus the WAL/redo stream. Fast, exact, enables <strong>point-in-time recovery (PITR)</strong>, but restores only to the same major version and platform.</li></ul>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-309">COPY</button></span></figcaption><pre id="code-309" class="code__pre"><code class="lang-bash"><span class="p">#</span> logical — custom format allows parallel, selective restore
+pg_dump<span class="o"> -Fc</span><span class="o"> -Z6</span><span class="o"> -f</span> app.dump app
+pg_restore<span class="o"> -d</span> app_new<span class="o"> -j</span> 4 app.dump
+pg_restore<span class="o"> -d</span> app_new<span class="o"> -t</span> orders<span class="o"> --data-only</span> app.dump    <span class="c"># one table</span>
+
+<span class="p">#</span> physical base backup + WAL archiving → PITR
+pg_basebackup<span class="o"> -D</span> /backup/base<span class="o"> -Ft</span><span class="o"> -z</span><span class="o"> -P</span><span class="o"> -X</span> stream
+<span class="p">#</span> recovery target in postgresql.conf: recovery_target_time = <span class="s">&#39;2026-08-13 09:15:00&#39;</span></code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-310">COPY</button></span></figcaption><pre id="code-310" class="code__pre"><code class="lang-bash">mysqldump<span class="o"> --single-transaction</span><span class="o"> --routines</span><span class="o"> --triggers</span><span class="o"> --events</span> \
+         <span class="o"> --set-gtid-purged</span>=ON app &gt; app.sql          <span class="c"># --single-transaction = non-blocking on InnoDB</span>
+mysql app_new &lt; app.sql
+
+mysqlpump<span class="o"> --parallel-schemas</span>=4 app &gt; app.sql          <span class="c"># parallel logical dump</span>
+xtrabackup<span class="o"> --backup</span><span class="o"> --target-dir</span>=/backup/base         <span class="c"># physical, hot backup</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-311">COPY</button></span></figcaption><pre id="code-311" class="code__pre"><code class="lang-sql"><span class="k">BACKUP</span> <span class="k">DATABASE</span> app <span class="k">TO</span> DISK <span class="o">=</span> <span class="s">&#39;D:\backup\app_full.bak&#39;</span> <span class="k">WITH</span> <span class="k">COMPRESSION</span>, CHECKSUM;
+<span class="k">BACKUP</span> LOG      app <span class="k">TO</span> DISK <span class="o">=</span> <span class="s">&#39;D:\backup\app_log.trn&#39;</span>;
+RESTORE <span class="k">DATABASE</span> app <span class="k">FROM</span> DISK <span class="o">=</span> <span class="s">&#39;D:\backup\app_full.bak&#39;</span> <span class="k">WITH</span> NORECOVERY;
+RESTORE LOG     app <span class="k">FROM</span> DISK <span class="o">=</span> <span class="s">&#39;D:\backup\app_log.trn&#39;</span>
+        <span class="k">WITH</span> STOPAT <span class="o">=</span> <span class="s">&#39;2026-08-13T09:15:00&#39;</span>, RECOVERY;</code></pre></figure>
+<figure class="code" data-lang="bash"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQLite — do not copy the file while it is open</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-312">COPY</button></span></figcaption><pre id="code-312" class="code__pre"><code class="lang-bash">sqlite3 app.db <span class="s">&quot;.backup &#39;backup.db&#39;&quot;</span>        <span class="c"># safe online backup</span>
+sqlite3 app.db <span class="s">&quot;.dump&quot;</span> &gt; app.sql            <span class="c"># logical</span>
+sqlite3 app.db <span class="s">&quot;PRAGMA integrity_check;&quot;</span></code></pre></figure>
+<p>::: danger An untested backup is not a backup Restore drills belong on a schedule, not in a runbook nobody has run. Record the actual <strong>RTO</strong> (how long a restore takes) and <strong>RPO</strong> (how much data a failure loses) by measuring them. The three most common discoveries: the backup never included the schema, the restore takes eleven hours, and nobody has the decryption key. :::</p>
+<h2 id="replication" class="hd hd--2"><a class="hd__anchor" href="#replication" aria-label="Link to Replication">#</a>Replication</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Type</th><th scope="col">What ships</th><th scope="col">Engines</th></tr></thead><tbody><tr><th scope="row"><strong>Physical / streaming</strong></th><td>WAL / redo blocks</td><td>PostgreSQL streaming, Oracle Data Guard</td></tr><tr><th scope="row"><strong>Logical</strong></th><td>Row changes, per table</td><td>PostgreSQL logical replication, MySQL row-based binlog, Debezium/CDC</td></tr><tr><th scope="row"><strong>Statement-based</strong></th><td>The SQL itself</td><td>MySQL (legacy; unsafe with non-deterministic functions)</td></tr><tr><th scope="row"><strong>Synchronous</strong></th><td>Commit waits for a replica</td><td>PostgreSQL <code>synchronous_standby_names</code>, Galera, Always On sync</td></tr><tr><th scope="row"><strong>Asynchronous</strong></th><td>Commit returns immediately</td><td>Default nearly everywhere</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL logical replication</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-313">COPY</button></span></figcaption><pre id="code-313" class="code__pre"><code class="lang-sql"><span class="c">-- publisher</span>
+<span class="k">CREATE</span> <span class="k">PUBLICATION</span> app_pub <span class="k">FOR</span> <span class="k">TABLE</span> orders, customers;
+<span class="c">-- subscriber</span>
+<span class="k">CREATE</span> <span class="k">SUBSCRIPTION</span> app_sub
+    <span class="k">CONNECTION</span> <span class="s">&#39;host=primary dbname=app user=repl&#39;</span>
+    <span class="k">PUBLICATION</span> app_pub;
+
+<span class="c">-- monitor lag on the primary:</span>
+<span class="k">SELECT</span> client_addr, state, sent_lsn, write_lsn, flush_lsn, replay_lsn,
+       <span class="f">pg_wal_lsn_diff</span>(sent_lsn, replay_lsn) <span class="k">AS</span> replay_lag_bytes
+<span class="k">FROM</span>   pg_stat_replication;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-314">COPY</button></span></figcaption><pre id="code-314" class="code__pre"><code class="lang-sql"><span class="k">CHANGE</span> REPLICATION <span class="k">SOURCE</span> <span class="k">TO</span> SOURCE_HOST<span class="o">=</span><span class="s">&#39;primary&#39;</span>, SOURCE_AUTO_POSITION<span class="o">=</span><span class="n">1</span>;
+<span class="k">START</span> <span class="k">REPLICA</span>;
+<span class="k">SHOW</span> <span class="k">REPLICA</span> <span class="k">STATUS</span>\G      <span class="c">-- Seconds_Behind_Source, Replica_IO_Running, Replica_SQL_Running</span></code></pre></figure>
+<p>::: warn Read replicas are eventually consistent A write committed on the primary is not immediately visible on a replica. &quot;Save then redirect to the detail page&quot; reads stale data and looks like a lost write. Route read-after-write to the primary, or wait for the replica&#39;s LSN to catch up. :::</p>
+<h2 id="monitoring" class="hd hd--2"><a class="hd__anchor" href="#monitoring" aria-label="Link to Monitoring">#</a>Monitoring</h2>
+<p>What to watch, in rough priority order:</p>
+<ol class="list"><li><strong>Replication lag</strong> — seconds and bytes behind.</li><li><strong>Connection count</strong> vs the limit, and how many are idle-in-transaction.</li><li><strong>Cache hit ratio</strong> — below ~95% on OLTP means the working set no longer fits.</li><li><strong>Longest-running query / transaction age.</strong></li><li><strong>Lock waits and deadlock rate.</strong></li><li><strong>Disk free</strong>, plus WAL/binlog/undo growth (a stuck replication slot fills the disk and stops the primary).</li><li><strong>Bloat / fragmentation</strong>, and time since last vacuum/analyze.</li><li><strong>Checkpoint frequency</strong> and I/O saturation.</li></ol>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL health snapshot</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-315">COPY</button></span></figcaption><pre id="code-315" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> datname, numbackends, xact_commit, xact_rollback,
+       <span class="f">ROUND</span>(<span class="n">100.0</span> <span class="o">*</span> blks_hit <span class="o">/</span> <span class="k">NULLIF</span>(blks_hit <span class="o">+</span> blks_read, <span class="n">0</span>), <span class="n">2</span>) <span class="k">AS</span> cache_hit_pct,
+       deadlocks, temp_files, <span class="f">pg_size_pretty</span>(temp_bytes) <span class="k">AS</span> temp_written
+<span class="k">FROM</span>   pg_stat_database <span class="k">WHERE</span> datname <span class="o">=</span> <span class="f">current_database</span>();
+
+<span class="k">SELECT</span> slot_name, active, <span class="f">pg_size_pretty</span>(<span class="f">pg_wal_lsn_diff</span>(<span class="f">pg_current_wal_lsn</span>(), restart_lsn)) <span class="k">AS</span> retained
+<span class="k">FROM</span>   pg_replication_slots;    <span class="c">-- an inactive slot retains WAL forever — a classic outage</span></code></pre></figure>
+<h2 id="maintenance" class="hd hd--2"><a class="hd__anchor" href="#maintenance" aria-label="Link to Maintenance">#</a>Maintenance</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-316">COPY</button></span></figcaption><pre id="code-316" class="code__pre"><code class="lang-sql"><span class="k">VACUUM</span> (<span class="k">ANALYZE</span>, <span class="k">VERBOSE</span>) orders;   <span class="c">-- reclaim dead tuples, refresh statistics</span>
+<span class="k">REINDEX</span> <span class="k">INDEX</span> <span class="k">CONCURRENTLY</span> idx_orders_customer;
+
+<span class="k">SELECT</span> relname, n_dead_tup, n_live_tup,
+       <span class="f">ROUND</span>(<span class="n">100.0</span> <span class="o">*</span> n_dead_tup <span class="o">/</span> <span class="k">NULLIF</span>(n_live_tup <span class="o">+</span> n_dead_tup, <span class="n">0</span>), <span class="n">1</span>) <span class="k">AS</span> dead_pct,
+       last_autovacuum, last_autoanalyze
+<span class="k">FROM</span>   pg_stat_user_tables <span class="k">ORDER</span> <span class="k">BY</span> n_dead_tup <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;</code></pre></figure>
+<p>::: danger Transaction ID wraparound PostgreSQL&#39;s 32-bit transaction counter must be frozen by vacuum before it wraps. If autovacuum cannot keep up — usually because of a long transaction, a stuck replication slot or an abandoned prepared transaction — the database eventually refuses all writes to protect itself. Monitor it:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-317">COPY</button></span></figcaption><pre id="code-317" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> datname, <span class="f">age</span>(datfrozenxid) <span class="k">FROM</span> pg_database <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">2</span> <span class="k">DESC</span>;
+<span class="c">-- act well before 200 million; the hard stop is around 2 billion</span></code></pre></figure>
+<p>:::</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Other engines</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-318">COPY</button></span></figcaption><pre id="code-318" class="code__pre"><code class="lang-sql"><span class="k">OPTIMIZE</span> <span class="k">TABLE</span> orders;                             <span class="c">-- MySQL: rebuild, defragment</span>
+<span class="k">ANALYZE</span> <span class="k">TABLE</span> orders;                              <span class="c">-- MySQL: refresh index statistics</span>
+<span class="k">ALTER</span> <span class="k">INDEX</span> <span class="k">ALL</span> <span class="k">ON</span> dbo.orders REBUILD;             <span class="c">-- SQL Server</span>
+<span class="k">EXEC</span> DBMS_STATS.<span class="f">GATHER_SCHEMA_STATS</span>(<span class="s">&#39;APP&#39;</span>);        <span class="c">-- Oracle</span>
+<span class="k">VACUUM</span>; <span class="k">ANALYZE</span>;                                   <span class="c">-- SQLite</span>
+<span class="k">VACUUM</span> <span class="k">FULL</span> SORT <span class="k">ONLY</span> orders;                      <span class="c">-- Redshift: restore sort order</span></code></pre></figure>
+<h2 id="partitioning" class="hd hd--2"><a class="hd__anchor" href="#partitioning" aria-label="Link to Partitioning">#</a>Partitioning</h2>
+<p>Split one logical table into physical pieces so the engine reads only the relevant ones and maintenance operates per piece.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL declarative partitioning</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-319">COPY</button></span></figcaption><pre id="code-319" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">events</span> (
+    id <span class="t">BIGINT</span>, created_at <span class="t">TIMESTAMPTZ</span> <span class="k">NOT</span> <span class="k">NULL</span>, payload <span class="t">JSONB</span>
+) <span class="k">PARTITION</span> <span class="k">BY</span> <span class="k">RANGE</span> (created_at);
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> events_2026_08 <span class="k">PARTITION</span> <span class="k">OF</span> events
+    <span class="k">FOR</span> <span class="k">VALUES</span> <span class="k">FROM</span> (<span class="s">&#39;2026-08-01&#39;</span>) <span class="k">TO</span> (<span class="s">&#39;2026-09-01&#39;</span>);
+
+<span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="f">events_2026_08</span> (created_at);
+
+<span class="c">-- Retention becomes instant:</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> events <span class="k">DETACH</span> <span class="k">PARTITION</span> events_2025_08;
+<span class="k">DROP</span> <span class="k">TABLE</span> events_2025_08;</code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Scheme</th><th scope="col">Split by</th><th scope="col">Good for</th></tr></thead><tbody><tr><th scope="row">Range</th><td>Ordered value, usually a date</td><td>Time-series, retention policies</td></tr><tr><th scope="row">List</th><td>Enumerated value</td><td>Tenant, region, status</td></tr><tr><th scope="row">Hash</th><td>Hash of a key</td><td>Even distribution when there is no natural range</td></tr><tr><th scope="row">Composite</th><td>Range then hash/list</td><td>Large multi-tenant time-series</td></tr></tbody></table></div>
+<p>::: warn Partitioning is not a general speedup It helps only when queries <strong>filter on the partition key</strong> so the planner can prune. Add a partition key most queries do not use and every query fans out across every partition, which is slower than the unpartitioned table. Its real wins are cheap retention (drop a partition instead of a mass <code>DELETE</code>) and per-partition maintenance. :::</p>
+<h2 id="high-availability-disaster-recovery" class="hd hd--2"><a class="hd__anchor" href="#high-availability-disaster-recovery" aria-label="Link to High availability &amp; disaster recovery">#</a>High availability &amp; disaster recovery</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Concept</th><th scope="col">Question it answers</th></tr></thead><tbody><tr><th scope="row"><strong>RTO</strong></th><td>How long until service resumes?</td></tr><tr><th scope="row"><strong>RPO</strong></th><td>How much data may be lost?</td></tr><tr><th scope="row"><strong>Failover</strong></th><td>Promote a replica — automatic or manual?</td></tr><tr><th scope="row"><strong>Split brain</strong></th><td>What stops two nodes both believing they are primary?</td></tr><tr><th scope="row"><strong>Quorum / fencing</strong></th><td>How is that decision made safely?</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Typical HA</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>Streaming replicas + Patroni/repmgr, or a managed service</td></tr><tr><th scope="row">MySQL</th><td>Group Replication / InnoDB Cluster, Galera, or async replicas + Orchestrator</td></tr><tr><th scope="row">SQL Server</th><td>Always On availability groups, failover cluster instances</td></tr><tr><th scope="row">Oracle</th><td>RAC (shared storage, active-active) + Data Guard (standby)</td></tr><tr><th scope="row">Cloud warehouses</th><td>Handled by the provider; your job is backups and access control</td></tr></tbody></table></div>
+<p>::: tip HA is not backup A replica faithfully replicates <code>DROP TABLE orders</code> in milliseconds. Replication protects against hardware failure; backups protect against mistakes and corruption. You need both, and the backups must live somewhere the primary&#39;s credentials cannot reach. :::</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/transactions/"><span class="rel__t">Transactions &amp; locking</span><span class="rel__a">→</span></a><a class="rel__i" href="/cli/"><span class="rel__t">CLI reference</span><span class="rel__a">→</span></a><a class="rel__i" href="/performance/"><span class="rel__t">Performance</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">Database explorer</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#users-roles-privileges">Users, roles &amp; privileges</a></li><li class="toc__i toc__i--3"><a href="#row-level-security">Row-level security</a></li><li class="toc__i toc__i--2"><a href="#connection-management">Connection management</a></li><li class="toc__i toc__i--2"><a href="#backup-restore">Backup &amp; restore</a></li><li class="toc__i toc__i--2"><a href="#replication">Replication</a></li><li class="toc__i toc__i--2"><a href="#monitoring">Monitoring</a></li><li class="toc__i toc__i--2"><a href="#maintenance">Maintenance</a></li><li class="toc__i toc__i--2"><a href="#partitioning">Partitioning</a></li><li class="toc__i toc__i--2"><a href="#high-availability-disaster-recovery">High availability &amp; disaster recovery</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

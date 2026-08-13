@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Views &amp; materialized views · SQL Terminal</title>
+<meta name="description" content="Stored queries, updatable views, WITH CHECK OPTION, and the refresh strategies for materialized views in each engine.">
+<meta name="keywords" content="view materialized view create view updatable check option refresh concurrently indexed view">
+<link rel="canonical" href="https://sql.manual.dev/sql/views/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Views &amp; materialized views · SQL Terminal">
+<meta property="og:description" content="Stored queries, updatable views, WITH CHECK OPTION, and the refresh strategies for materialized views in each engine.">
+<meta property="og:url" content="https://sql.manual.dev/sql/views/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Views &amp; materialized views · SQL Terminal">
+<meta name="twitter:description" content="Stored queries, updatable views, WITH CHECK OPTION, and the refresh strategies for materialized views in each engine.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Views & materialized views · SQL Terminal","headline":"Views & materialized views","description":"Stored queries, updatable views, WITH CHECK OPTION, and the refresh strategies for materialized views in each engine.","url":"https://sql.manual.dev/sql/views/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/views/">views</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Basics</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">intermediate</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92 / SQL:2003</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Views &amp; materialized views</h1><p class="lede">Stored queries, updatable views, WITH CHECK OPTION, and the refresh strategies for materialized views in each engine.</p><p>A <strong>view</strong> is a named query. It stores no data: every reference re-executes the underlying statement, and the optimizer usually inlines it into the calling query.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Creating a view</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=CREATE%20VIEW%20active_customers%20AS%0ASELECT%20c.id%2C%20c.email%2C%20c.created_at%2C%20SUM(o.total)%20AS%20lifetime_value%0AFROM%20%20%20customers%20c%0AJOIN%20%20%20orders%20o%20ON%20o.customer_id%20%3D%20c.id%0AWHERE%20%20c.status%20%3D%20'active'%0AGROUP%20BY%20c.id%2C%20c.email%2C%20c.created_at%3B%0A%0ASELECT%20*%20FROM%20active_customers%20WHERE%20lifetime_value%20%3E%201000%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-43">COPY</button></span></figcaption><pre id="code-43" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">VIEW</span> active_customers <span class="k">AS</span>
+<span class="k">SELECT</span> c.id, c.email, c.created_at, <span class="f">SUM</span>(o.total) <span class="k">AS</span> lifetime_value
+<span class="k">FROM</span>   customers c
+<span class="k">JOIN</span>   orders o <span class="k">ON</span> o.customer_id <span class="o">=</span> c.id
+<span class="k">WHERE</span>  c.<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+<span class="k">GROUP</span> <span class="k">BY</span> c.id, c.email, c.created_at;
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> active_customers <span class="k">WHERE</span> lifetime_value <span class="o">&gt;</span> <span class="n">1000</span>;</code></pre></figure>
+<p>Views are worth using for three reasons: they hide join complexity behind a stable name, they act as a <strong>security boundary</strong> (grant on the view, not the base tables), and they give you a compatibility layer when the physical schema has to change under a live application.</p>
+<p>::: note Views are not a performance feature A plain view costs the same as pasting its body into your query — no more, no less. If you need the result cached, you want a <strong>materialized view</strong> or a summary table. :::</p>
+<h2 id="updatable-views" class="hd hd--2"><a class="hd__anchor" href="#updatable-views" aria-label="Link to Updatable views">#</a>Updatable views</h2>
+<p>The standard allows <code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> through a view when the engine can map each result row unambiguously to exactly one base row: a single base table, no aggregation, no <code>DISTINCT</code>, no <code>GROUP BY</code>, no set operations, no window functions.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Automatically updatable</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-44">COPY</button></span></figcaption><pre id="code-44" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">VIEW</span> eu_customers <span class="k">AS</span>
+<span class="k">SELECT</span> id, email, country <span class="k">FROM</span> customers <span class="k">WHERE</span> country <span class="k">IN</span> (<span class="s">&#39;DE&#39;</span>,<span class="s">&#39;FR&#39;</span>,<span class="s">&#39;ES&#39;</span>,<span class="s">&#39;IT&#39;</span>);
+
+<span class="k">UPDATE</span> eu_customers <span class="k">SET</span> email <span class="o">=</span> <span class="s">&#39;x@y.z&#39;</span> <span class="k">WHERE</span> id <span class="o">=</span> <span class="n">42</span>;   <span class="c">-- writes through</span></code></pre></figure>
+<p><code>WITH CHECK OPTION</code> stops writes that would create rows the view cannot see:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Preventing rows from escaping the view</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-45">COPY</button></span></figcaption><pre id="code-45" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">VIEW</span> eu_customers <span class="k">AS</span>
+<span class="k">SELECT</span> id, email, country <span class="k">FROM</span> customers <span class="k">WHERE</span> country <span class="k">IN</span> (<span class="s">&#39;DE&#39;</span>,<span class="s">&#39;FR&#39;</span>)
+<span class="k">WITH</span> <span class="k">CHECK</span> <span class="k">OPTION</span>;
+
+<span class="k">INSERT</span> <span class="k">INTO</span> eu_customers <span class="k">VALUES</span> (<span class="n">99</span>, <span class="s">&#39;a@b.c&#39;</span>, <span class="s">&#39;US&#39;</span>);
+<span class="c">-- ERROR: new row violates check option for view &quot;eu_customers&quot;</span></code></pre></figure>
+<p>For anything more complex, intercept the write with a trigger:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">INSTEAD OF trigger for a non-updatable view</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-46">COPY</button></span></figcaption><pre id="code-46" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="f">customers_view_insert</span>() <span class="k">RETURNS</span> <span class="k">trigger</span> <span class="k">LANGUAGE</span> plpgsql <span class="k">AS</span> <span class="s">$$
+BEGIN
+  INSERT INTO customers (email, country) VALUES (NEW.email, NEW.country)
+  RETURNING id INTO NEW.id;
+  RETURN NEW;
+END $$</span>;
+
+<span class="k">CREATE</span> <span class="k">TRIGGER</span> trg_insert <span class="k">INSTEAD</span> <span class="k">OF</span> <span class="k">INSERT</span> <span class="k">ON</span> customer_summary
+<span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span> <span class="k">EXECUTE</span> <span class="k">FUNCTION</span> <span class="f">customers_view_insert</span>();</code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="MySQL: Supported — simple views auto"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MySQL</span><span class="sr-only">Supported</span><span class="sup__note">simple views auto</span></li><li class="sup sup--warn" title="SQLite: Different syntax — INSTEAD OF triggers only"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">SQLite</span><span class="sr-only">Different syntax</span><span class="sup__note">INSTEAD OF triggers only</span></li><li class="sup sup--ok" title="SQL Server: Supported — INSTEAD OF"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQL Server</span><span class="sr-only">Supported</span><span class="sup__note">INSTEAD OF</span></li><li class="sup sup--ok" title="Oracle: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Oracle</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="MariaDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MariaDB</span><span class="sr-only">Supported</span></li><li class="sup sup--warn" title="CockroachDB: Different syntax"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">CockroachDB</span><span class="sr-only">Different syntax</span></li><li class="sup sup--no" title="DuckDB: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">DuckDB</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="BigQuery: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">BigQuery</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Snowflake: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Snowflake</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Redshift: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Redshift</span><span class="sr-only">Unsupported</span></li></ul>
+<h2 id="materialized-views" class="hd hd--2"><a class="hd__anchor" href="#materialized-views" aria-label="Link to Materialized views">#</a>Materialized views</h2>
+<p>A materialized view stores the <strong>result</strong>. Queries read the stored rows; the trade-off is staleness plus refresh cost.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-47">COPY</button></span></figcaption><pre id="code-47" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> daily_revenue <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="f">date_trunc</span>(<span class="s">&#39;day&#39;</span>, created_at) <span class="k">AS</span> <span class="k">day</span>, <span class="f">SUM</span>(total) <span class="k">AS</span> revenue
+<span class="k">FROM</span>   orders <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">1</span>
+<span class="k">WITH</span> DATA;
+
+<span class="c">-- A UNIQUE index is required for CONCURRENTLY:</span>
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="f">daily_revenue</span> (<span class="k">day</span>);
+
+<span class="k">REFRESH</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> daily_revenue;               <span class="c">-- takes an ACCESS EXCLUSIVE lock</span>
+<span class="k">REFRESH</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> <span class="k">CONCURRENTLY</span> daily_revenue;  <span class="c">-- readers keep working, slower</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Oracle — with query rewrite and incremental refresh</span><span class="code__engine" data-engine="oracle">Oracle</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-48">COPY</button></span></figcaption><pre id="code-48" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> daily_revenue
+  BUILD <span class="k">IMMEDIATE</span>
+  <span class="k">REFRESH</span> FAST <span class="k">ON</span> <span class="k">COMMIT</span>           <span class="c">-- incremental, needs a materialized view log</span>
+  <span class="k">ENABLE</span> <span class="k">QUERY</span> REWRITE             <span class="c">-- optimizer can silently substitute it</span>
+<span class="k">AS</span> <span class="k">SELECT</span> <span class="f">TRUNC</span>(created_at) <span class="k">AS</span> <span class="k">day</span>, <span class="f">SUM</span>(total) <span class="k">AS</span> revenue <span class="k">FROM</span> orders <span class="k">GROUP</span> <span class="k">BY</span> <span class="f">TRUNC</span>(created_at);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server — indexed views refresh synchronously</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-49">COPY</button></span></figcaption><pre id="code-49" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">VIEW</span> dbo.daily_revenue <span class="k">WITH</span> SCHEMABINDING <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="k">CAST</span>(created_at <span class="k">AS</span> <span class="t">date</span>) <span class="k">AS</span> <span class="k">day</span>, <span class="f">SUM</span>(total) <span class="k">AS</span> revenue, <span class="f">COUNT_BIG</span>(<span class="o">*</span>) <span class="k">AS</span> cnt
+<span class="k">FROM</span>   dbo.orders <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">CAST</span>(created_at <span class="k">AS</span> <span class="t">date</span>);
+
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">CLUSTERED</span> <span class="k">INDEX</span> ix_daily_revenue <span class="k">ON</span> dbo.<span class="f">daily_revenue</span> (<span class="k">day</span>);
+<span class="c">-- from here the view is maintained on every write to dbo.orders</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Snowflake / BigQuery — maintained automatically</span><span class="code__engine" data-engine="snowflake">Snowflake</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-50">COPY</button></span></figcaption><pre id="code-50" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> daily_revenue <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="f">DATE_TRUNC</span>(<span class="s">&#39;day&#39;</span>, created_at) <span class="k">AS</span> <span class="k">day</span>, <span class="f">SUM</span>(total) <span class="k">AS</span> revenue <span class="k">FROM</span> orders <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">1</span>;
+<span class="c">-- Snowflake: single-table only, no joins, no ORDER BY; maintained by a background service.</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">ClickHouse — an insert trigger, not a cache</span><span class="code__engine" data-engine="clickhouse">ClickHouse</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-51">COPY</button></span></figcaption><pre id="code-51" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> daily_revenue_mv
+<span class="k">ENGINE</span> <span class="o">=</span> SummingMergeTree <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">day</span>
+<span class="k">AS</span> <span class="k">SELECT</span> <span class="f">toDate</span>(created_at) <span class="k">AS</span> <span class="k">day</span>, <span class="f">sum</span>(total) <span class="k">AS</span> revenue
+   <span class="k">FROM</span> orders <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">day</span>;
+<span class="c">-- Fires on INSERT into orders and writes the aggregate. It does NOT see pre-existing rows</span>
+<span class="c">-- and does NOT see rows removed by DELETE.</span></code></pre></figure>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Incremental refresh</th><th scope="col">Auto refresh</th><th scope="col">Query rewrite</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>No — full rebuild</td><td>No (schedule it)</td><td>No</td></tr><tr><th scope="row">Oracle</th><td>Yes (<code>FAST</code>, with MV logs)</td><td><code>ON COMMIT</code> / <code>ON DEMAND</code></td><td>Yes</td></tr><tr><th scope="row">SQL Server (indexed view)</th><td>Yes — synchronous</td><td>Always</td><td>Yes (Enterprise)</td></tr><tr><th scope="row">Snowflake</th><td>Yes — background service</td><td>Yes</td><td>Yes</td></tr><tr><th scope="row">BigQuery</th><td>Yes — incremental</td><td>Yes (<code>enable_refresh</code>)</td><td>Yes</td></tr><tr><th scope="row">Redshift</th><td>Yes (<code>AUTO REFRESH YES</code>)</td><td>Yes</td><td>Yes</td></tr><tr><th scope="row">Databricks</th><td>Yes (Delta Live Tables / MVs)</td><td>Scheduled</td><td>Limited</td></tr><tr><th scope="row">ClickHouse</th><td>Insert-time only</td><td>On insert</td><td>No</td></tr><tr><th scope="row">MySQL / SQLite / DuckDB</th><td><strong>Not supported</strong> — use a table + scheduled job</td><td>—</td><td>—</td></tr></tbody></table></div>
+<p>::: warn &quot;Materialized view&quot; means five different things In Oracle and SQL Server it can be maintained transactionally; in PostgreSQL it is a manual snapshot; in ClickHouse it is an insert trigger that never sees historical rows. Read the engine&#39;s page before assuming the semantics you know carry over. :::</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/create/"><span class="rel__t">CREATE</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/procedures/"><span class="rel__t">Triggers</span><span class="rel__a">→</span></a><a class="rel__i" href="/performance/"><span class="rel__t">Performance</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/schemas/"><span class="rel__t">Schemas</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/schemas/"><span class="pager__d">← PREV</span><span class="pager__t">Schemas, catalogs &amp; naming</span></a><a class="pager__i pager__i--next" href="/sql/sequences/"><span class="pager__d">NEXT →</span><span class="pager__t">Sequences &amp; identity columns</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#updatable-views">Updatable views</a></li><li class="toc__i toc__i--2"><a href="#materialized-views">Materialized views</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

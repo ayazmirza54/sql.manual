@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Query performance &amp; execution plans · SQL Terminal</title>
+<meta name="description" content="Reading EXPLAIN output, the operators that matter, statistics and cardinality, and a repeatable method for making a slow query fast.">
+<meta name="keywords" content="explain analyze execution plan query optimization cost estimate cardinality statistics seq scan index scan nested loop hash join spill parallel query cache">
+<link rel="canonical" href="https://sql.manual.dev/performance/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Query performance &amp; execution plans · SQL Terminal">
+<meta property="og:description" content="Reading EXPLAIN output, the operators that matter, statistics and cardinality, and a repeatable method for making a slow query fast.">
+<meta property="og:url" content="https://sql.manual.dev/performance/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Query performance &amp; execution plans · SQL Terminal">
+<meta name="twitter:description" content="Reading EXPLAIN output, the operators that matter, statistics and cardinality, and a repeatable method for making a slow query fast.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Query performance & execution plans · SQL Terminal","headline":"Query performance & execution plans","description":"Reading EXPLAIN output, the operators that matter, statistics and cardinality, and a repeatable method for making a slow query fast.","url":"https://sql.manual.dev/performance/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link is-active" aria-current="page" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link is-active" aria-current="page" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/performance/">performance</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Performance</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">advanced</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">Vendor-specific</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Query performance &amp; execution plans</h1><p class="lede">Reading EXPLAIN output, the operators that matter, statistics and cardinality, and a repeatable method for making a slow query fast.</p><p>Performance work is a loop: <strong>measure → read the plan → find the largest wrong estimate or most expensive operator → change one thing → measure again.</strong> Guessing costs more time than measuring.</p>
+<h2 id="getting-a-plan" class="hd hd--2"><a class="hd__anchor" href="#getting-a-plan" aria-label="Link to Getting a plan">#</a>Getting a plan</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Estimated plan</th><th scope="col">Actual plan (executes the query)</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td><code>EXPLAIN q</code></td><td><code>EXPLAIN (ANALYZE, BUFFERS, VERBOSE) q</code></td></tr><tr><th scope="row">MySQL / MariaDB</th><td><code>EXPLAIN q</code></td><td><code>EXPLAIN ANALYZE q</code> (8.0.18+)</td></tr><tr><th scope="row">SQL Server</th><td><code>SET SHOWPLAN_ALL ON</code></td><td>Include Actual Execution Plan, or <code>SET STATISTICS IO, TIME ON</code></td></tr><tr><th scope="row">Oracle</th><td><code>EXPLAIN PLAN FOR q</code> + <code>DBMS_XPLAN.DISPLAY</code></td><td><code>DBMS_XPLAN.DISPLAY_CURSOR(format=&gt;&#39;ALLSTATS LAST&#39;)</code></td></tr><tr><th scope="row">SQLite</th><td><code>EXPLAIN QUERY PLAN q</code></td><td>—</td></tr><tr><th scope="row">BigQuery</th><td>Dry run / query plan tab</td><td>Execution details in the console or <code>INFORMATION_SCHEMA.JOBS</code></td></tr><tr><th scope="row">Snowflake</th><td><code>EXPLAIN q</code></td><td>Query Profile in the UI</td></tr><tr><th scope="row">ClickHouse</th><td><code>EXPLAIN q</code></td><td><code>EXPLAIN PIPELINE</code>, <code>system.query_log</code></td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The one to use in PostgreSQL</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-354">COPY</button></span></figcaption><pre id="code-354" class="code__pre"><code class="lang-sql"><span class="k">EXPLAIN</span> (<span class="k">ANALYZE</span>, BUFFERS, <span class="k">VERBOSE</span>, SETTINGS, <span class="k">FORMAT</span> <span class="t">TEXT</span>)
+<span class="k">SELECT</span> c.country, <span class="f">COUNT</span>(<span class="o">*</span>)
+<span class="k">FROM</span>   orders o <span class="k">JOIN</span> customers c <span class="k">ON</span> c.id <span class="o">=</span> o.customer_id
+<span class="k">WHERE</span>  o.created_at <span class="o">&gt;=</span> <span class="t">DATE</span> <span class="s">&#39;2026-01-01&#39;</span>
+<span class="k">GROUP</span>  <span class="k">BY</span> c.country;</code></pre></figure>
+<p>::: danger EXPLAIN ANALYZE actually runs the statement On an <code>UPDATE</code> or <code>DELETE</code> it performs the write. Wrap it:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-355">COPY</button></span></figcaption><pre id="code-355" class="code__pre"><code class="lang-sql"><span class="k">BEGIN</span>; <span class="k">EXPLAIN</span> (<span class="k">ANALYZE</span>) <span class="k">DELETE</span> <span class="k">FROM</span> orders <span class="k">WHERE</span> …; <span class="k">ROLLBACK</span>;</code></pre></figure>
+<p>:::</p>
+<h2 id="reading-a-plan" class="hd hd--2"><a class="hd__anchor" href="#reading-a-plan" aria-label="Link to Reading a plan">#</a>Reading a plan</h2>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL, annotated</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-356">COPY</button></span></figcaption><pre id="code-356" class="code__pre"><code class="lang-text">HashAggregate  (cost=18234.55..18240.55 rows=200 width=40)
+               (actual time=412.331..412.402 rows=14 loops=1)
+  Group Key: c.country
+  -&gt;  Hash Join  (cost=1284.00..17984.55 rows=50000 width=32)
+                 (actual time=18.114..389.201 rows=48213 loops=1)
+        Hash Cond: (o.customer_id = c.id)
+        -&gt;  Seq Scan on orders o  (cost=0.00..15234.00 rows=50000 width=8)
+                                  (actual time=0.019..301.442 rows=48213 loops=1)
+              Filter: (created_at &gt;= &#39;2026-01-01&#39;::date)
+              Rows Removed by Filter: 451787          ← 90% of the scan was wasted
+        -&gt;  Hash  (actual time=17.980..17.981 rows=20000 loops=1)
+              Buckets: 32768  Batches: 1  Memory Usage: 1132kB
+              -&gt;  Seq Scan on customers c  (…)
+Planning Time: 0.284 ms
+Execution Time: 412.556 ms</code></pre></figure>
+<p>Read it <strong>innermost first, bottom to top</strong>. Four things to look at, in order:</p>
+<ol class="list"><li><strong><code>rows</code> estimated vs <code>rows</code> actual.</strong> An order-of-magnitude gap is the root cause of most bad plans — everything above it was chosen on bad information.</li><li><strong><code>loops</code>.</strong> <code>actual time</code> is <em>per loop</em>. A node showing <code>0.5ms … loops=48213</code> cost 24 seconds, not 0.5 ms.</li><li><strong><code>Rows Removed by Filter</code>.</strong> Rows read then thrown away — the signature of a missing index.</li><li><strong>Memory / spills.</strong> <code>Batches: 1</code> is good; more means the hash spilled to disk. <code>Sort Method: external merge</code> means the sort spilled.</li></ol>
+<h2 id="the-operators" class="hd hd--2"><a class="hd__anchor" href="#the-operators" aria-label="Link to The operators">#</a>The operators</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Operator</th><th scope="col">Meaning</th><th scope="col">Concerning when</th></tr></thead><tbody><tr><th scope="row"><strong>Seq Scan / Table Scan</strong></th><td>Read every row</td><td>The table is large and the filter is selective</td></tr><tr><th scope="row"><strong>Index Scan / Seek</strong></th><td>Walk the index, fetch matching rows</td><td>Rarely — this is usually the goal</td></tr><tr><th scope="row"><strong>Index Only Scan</strong></th><td>Answered from the index alone</td><td>Ideal; check <code>Heap Fetches</code> is low</td></tr><tr><th scope="row"><strong>Bitmap Heap Scan</strong></th><td>Collect matches in a bitmap, then read pages in order</td><td>Normal for medium selectivity</td></tr><tr><th scope="row"><strong>Nested Loop</strong></th><td>For each outer row, probe the inner</td><td>The inner side has no index, or outer rows are numerous</td></tr><tr><th scope="row"><strong>Hash Join</strong></th><td>Build a hash, probe it</td><td><code>Batches &gt; 1</code> (spilled to disk)</td></tr><tr><th scope="row"><strong>Merge Join</strong></th><td>Walk two sorted inputs</td><td>Only if the sorts it needs are expensive</td></tr><tr><th scope="row"><strong>Sort</strong></th><td>Order rows</td><td><code>external merge Disk:</code> — spilled</td></tr><tr><th scope="row"><strong>Materialize / Memoize</strong></th><td>Cache an inner result</td><td>Usually helpful</td></tr><tr><th scope="row"><strong>Gather / Parallel</strong></th><td>Multi-worker execution</td><td>Worker count lower than expected</td></tr></tbody></table></div>
+<h2 id="cardinality-and-statistics" class="hd hd--2"><a class="hd__anchor" href="#cardinality-and-statistics" aria-label="Link to Cardinality and statistics">#</a>Cardinality and statistics</h2>
+<p>The planner picks a plan from estimated row counts. Wrong estimates produce wrong plans, and no amount of index-adding fixes that.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Refreshing statistics</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-357">COPY</button></span></figcaption><pre id="code-357" class="code__pre"><code class="lang-sql"><span class="k">ANALYZE</span> orders;                                    <span class="c">-- PostgreSQL</span>
+<span class="k">ANALYZE</span> <span class="k">TABLE</span> orders;                              <span class="c">-- MySQL, MariaDB, ClickHouse</span>
+<span class="k">UPDATE</span> <span class="k">STATISTICS</span> dbo.orders <span class="k">WITH</span> FULLSCAN;        <span class="c">-- SQL Server</span>
+<span class="k">EXEC</span> DBMS_STATS.<span class="f">GATHER_TABLE_STATS</span>(<span class="s">&#39;APP&#39;</span>,<span class="s">&#39;ORDERS&#39;</span>);<span class="c">-- Oracle</span>
+<span class="k">ANALYZE</span>;                                           <span class="c">-- SQLite (writes sqlite_stat1)</span></code></pre></figure>
+<p><strong>Correlated columns</strong> are the classic failure. The planner assumes predicates are independent, so <code>WHERE city = &#39;Paris&#39; AND country = &#39;FR&#39;</code> gets estimated as the product of two selectivities — perhaps 10,000× too low, even though every Paris row is in France.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Teaching PostgreSQL about correlation</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-358">COPY</button></span></figcaption><pre id="code-358" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">STATISTICS</span> <span class="f">stat_city_country</span> (dependencies, ndistinct)
+    <span class="k">ON</span> city, country <span class="k">FROM</span> customers;
+<span class="k">ANALYZE</span> customers;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Raising the sample size for a skewed column</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-359">COPY</button></span></figcaption><pre id="code-359" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">ALTER</span> <span class="k">COLUMN</span> <span class="k">status</span> <span class="k">SET</span> <span class="k">STATISTICS</span> <span class="n">1000</span>;   <span class="c">-- default 100</span>
+<span class="k">ANALYZE</span> orders;</code></pre></figure>
+<p>::: warn Bind-variable peeking / parameter sniffing The engine compiles a plan for the <em>first</em> parameter value and reuses it. If <code>status = &#39;failed&#39;</code> (0.9% of rows) compiles an index seek and the plan is then reused for <code>status = &#39;completed&#39;</code> (96%), every subsequent execution does millions of random lookups.</p>
+<p>Fixes: <code>OPTION (RECOMPILE)</code> or <code>OPTIMIZE FOR UNKNOWN</code> (SQL Server), <code>plan_cache_mode = force_custom_plan</code> (PostgreSQL), <code>/*+ BIND_AWARE */</code> and adaptive cursor sharing (Oracle). :::</p>
+<h2 id="a-worked-example" class="hd hd--2"><a class="hd__anchor" href="#a-worked-example" aria-label="Link to A worked example">#</a>A worked example</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The query</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-360">COPY</button></span></figcaption><pre id="code-360" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders <span class="k">WHERE</span> customer_id <span class="o">=</span> <span class="n">12345</span>;</code></pre></figure>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Before — no index</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-361">COPY</button></span></figcaption><pre id="code-361" class="code__pre"><code class="lang-text">Seq Scan on orders  (cost=0.00..18334.00 rows=12 width=64)
+                    (actual time=0.021..142.883 rows=14 loops=1)
+  Filter: (customer_id = 12345)
+  Rows Removed by Filter: 999986
+  Buffers: shared hit=8334
+Execution Time: 142.9 ms</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The fix</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-362">COPY</button></span></figcaption><pre id="code-362" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> idx_orders_customer_id <span class="k">ON</span> <span class="f">orders</span> (customer_id);
+<span class="k">ANALYZE</span> orders;</code></pre></figure>
+<figure class="code" data-lang="text"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">After — index scan</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-363">COPY</button></span></figcaption><pre id="code-363" class="code__pre"><code class="lang-text">Index Scan using idx_orders_customer_id on orders
+      (cost=0.42..38.21 rows=12 width=64) (actual time=0.028..0.041 rows=14 loops=1)
+  Index Cond: (customer_id = 12345)
+  Buffers: shared hit=5
+Execution Time: 0.06 ms</code></pre></figure>
+<p><strong>2,380× faster, and 1,667× fewer buffers touched.</strong> The buffer count matters more than the timing: it is stable across cache states and machine load.</p>
+<h2 id="the-usual-suspects" class="hd hd--2"><a class="hd__anchor" href="#the-usual-suspects" aria-label="Link to The usual suspects">#</a>The usual suspects</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr></thead><tbody><tr><th scope="row">Seq scan on a big table with a selective filter</th><td>Missing index, or a non-sargable predicate</td><td>Add the index; unwrap the column</td></tr><tr><th scope="row">Nested loop with huge <code>loops</code></th><td>Bad cardinality estimate</td><td><code>ANALYZE</code>; extended statistics; rewrite</td></tr><tr><th scope="row">Sort spilling to disk</th><td><code>work_mem</code> too small, or sorting more than needed</td><td>Raise memory; index the sort key; filter earlier</td></tr><tr><th scope="row">Hash join with <code>Batches &gt; 1</code></th><td>Build side larger than memory</td><td>Raise memory; reduce columns; filter first</td></tr><tr><th scope="row">Fast alone, slow in the app</th><td>Parameter sniffing, or N+1 queries</td><td>Recompile hints; batch the queries</td></tr><tr><th scope="row">Gradually slower over weeks</th><td>Table/index bloat, stale statistics</td><td>Vacuum/rebuild; re-analyze</td></tr><tr><th scope="row">Fast on a replica, slow on the primary</th><td>Lock contention, not the plan</td><td>Look at waits, not the plan</td></tr></tbody></table></div>
+<h2 id="things-to-try-before-adding-hardware" class="hd hd--2"><a class="hd__anchor" href="#things-to-try-before-adding-hardware" aria-label="Link to Things to try before adding hardware">#</a>Things to try before adding hardware</h2>
+<ol class="list"><li><strong>Return less.</strong> Name your columns, push <code>LIMIT</code> down, and aggregate in the database rather than the client.</li><li><strong>Filter earlier.</strong> Predicates in <code>WHERE</code> beat filtering after a join; filtering in a subquery beats filtering after aggregation.</li><li><strong>Index the join and filter keys</strong> — including foreign keys, which most schemas leave unindexed.</li><li><strong>Replace correlated subqueries</strong> with joins or window functions.</li><li><strong>Batch writes.</strong> One statement with 1,000 rows beats 1,000 statements by a wide margin.</li><li><strong>Cache the unchanging.</strong> A materialized view or summary table beats recomputing a daily aggregate per request.</li><li><strong>Only then</strong> consider partitioning, sharding or a bigger instance.</li></ol>
+<h2 id="engine-specific-measurement" class="hd hd--2"><a class="hd__anchor" href="#engine-specific-measurement" aria-label="Link to Engine-specific measurement">#</a>Engine-specific measurement</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL — the slowest statements overall</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-364">COPY</button></span></figcaption><pre id="code-364" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> pg_stat_statements;
+<span class="k">SELECT</span> calls, <span class="f">ROUND</span>(total_exec_time<span class="o">::</span><span class="t">numeric</span>, <span class="n">1</span>) <span class="k">AS</span> total_ms,
+       <span class="f">ROUND</span>(mean_exec_time<span class="o">::</span><span class="t">numeric</span>, <span class="n">2</span>) <span class="k">AS</span> mean_ms, <span class="k">rows</span>, <span class="k">query</span>
+<span class="k">FROM</span>   pg_stat_statements <span class="k">ORDER</span> <span class="k">BY</span> total_exec_time <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-365">COPY</button></span></figcaption><pre id="code-365" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> digest_text, count_star, <span class="f">ROUND</span>(avg_timer_wait<span class="o">/</span><span class="n">1e9</span>, <span class="n">2</span>) <span class="k">AS</span> avg_ms,
+       <span class="f">ROUND</span>(sum_timer_wait<span class="o">/</span><span class="n">1e12</span>, <span class="n">2</span>) <span class="k">AS</span> total_s
+<span class="k">FROM</span>   performance_schema.events_statements_summary_by_digest
+<span class="k">ORDER</span>  <span class="k">BY</span> sum_timer_wait <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">20</span>;
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> sys.statements_with_full_table_scans <span class="k">LIMIT</span> <span class="n">20</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-366">COPY</button></span></figcaption><pre id="code-366" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="k">TOP</span> <span class="n">20</span> qs.execution_count,
+       qs.total_worker_time <span class="o">/</span> <span class="n">1000</span> <span class="k">AS</span> cpu_ms,
+       qs.total_elapsed_time <span class="o">/</span> qs.execution_count <span class="o">/</span> <span class="n">1000</span> <span class="k">AS</span> avg_ms,
+       <span class="k">SUBSTRING</span>(st.<span class="t">text</span>, (qs.statement_start_offset<span class="o">/</span><span class="n">2</span>) <span class="o">+</span> <span class="n">1</span>, <span class="n">200</span>) <span class="k">AS</span> stmt
+<span class="k">FROM</span>   sys.dm_exec_query_stats qs
+<span class="k">CROSS</span> APPLY sys.<span class="f">dm_exec_sql_text</span>(qs.sql_handle) st
+<span class="k">ORDER</span>  <span class="k">BY</span> qs.total_worker_time <span class="k">DESC</span>;</code></pre></figure>
+<p>::: tip Optimize total time, not worst case A 5-second query run once an hour costs 5 seconds. A 40 ms query run 200 times per second costs 8 seconds of database time every second. <code>pg_stat_statements</code> sorted by <em>total</em> time — not mean — points at the queries that actually matter. :::</p>
+<h2 id="caching" class="hd hd--2"><a class="hd__anchor" href="#caching" aria-label="Link to Caching">#</a>Caching</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Query result cache</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>None. The buffer cache and OS page cache serve pages, not results</td></tr><tr><th scope="row">MySQL</th><td>Query cache <strong>removed</strong> in 8.0 (it was a contention point)</td></tr><tr><th scope="row">Oracle</th><td>Result cache: <code>/*+ RESULT_CACHE */</code></td></tr><tr><th scope="row">SQL Server</th><td>Plan cache only, not results</td></tr><tr><th scope="row">Snowflake</th><td>Result cache (24 h) + local disk cache; identical query text and unchanged data</td></tr><tr><th scope="row">BigQuery</th><td>Cached results for 24 h; cache hits are free</td></tr><tr><th scope="row">ClickHouse</th><td>Query cache, opt-in per query</td></tr></tbody></table></div>
+<p>::: warn Application-level caching outperforms all of them Database result caches invalidate on any change to the underlying tables, so a busy OLTP table effectively never gets a hit. Cache in your application where you control the key and the TTL. :::</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a><a class="rel__i" href="/joins/#join-algorithms"><span class="rel__t">Joins &amp; join algorithms</span><span class="rel__a">→</span></a><a class="rel__i" href="/transactions/"><span class="rel__t">Transactions &amp; locking</span><span class="rel__a">→</span></a><a class="rel__i" href="/admin/"><span class="rel__t">Administration</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#getting-a-plan">Getting a plan</a></li><li class="toc__i toc__i--2"><a href="#reading-a-plan">Reading a plan</a></li><li class="toc__i toc__i--2"><a href="#the-operators">The operators</a></li><li class="toc__i toc__i--2"><a href="#cardinality-and-statistics">Cardinality and statistics</a></li><li class="toc__i toc__i--2"><a href="#a-worked-example">A worked example</a></li><li class="toc__i toc__i--2"><a href="#the-usual-suspects">The usual suspects</a></li><li class="toc__i toc__i--2"><a href="#things-to-try-before-adding-hardware">Things to try before adding hardware</a></li><li class="toc__i toc__i--2"><a href="#engine-specific-measurement">Engine-specific measurement</a></li><li class="toc__i toc__i--2"><a href="#caching">Caching</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

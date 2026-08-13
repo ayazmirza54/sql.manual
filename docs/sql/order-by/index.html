@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ORDER BY &amp; sorting · SQL Terminal</title>
+<meta name="description" content="Deterministic sorting, NULL placement, collations, custom orderings and the cost of a sort.">
+<meta name="keywords" content="order by asc desc nulls first last collation custom sort case natural sort tie breaker stable">
+<link rel="canonical" href="https://sql.manual.dev/sql/order-by/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="ORDER BY &amp; sorting · SQL Terminal">
+<meta property="og:description" content="Deterministic sorting, NULL placement, collations, custom orderings and the cost of a sort.">
+<meta property="og:url" content="https://sql.manual.dev/sql/order-by/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ORDER BY &amp; sorting · SQL Terminal">
+<meta name="twitter:description" content="Deterministic sorting, NULL placement, collations, custom orderings and the cost of a sort.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"ORDER BY & sorting · SQL Terminal","headline":"ORDER BY & sorting","description":"Deterministic sorting, NULL placement, collations, custom orderings and the cost of a sort.","url":"https://sql.manual.dev/sql/order-by/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/order-by/">order-by</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Querying</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>ORDER BY &amp; sorting</h1><p class="lede">Deterministic sorting, NULL placement, collations, custom orderings and the cost of a sort.</p><p>Without <code>ORDER BY</code> a result has <strong>no defined order</strong>. An unordered query that appears sorted is a coincidence of the current plan; adding an index, a parallel scan or more data changes it.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Basics</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=SELECT%20*%20FROM%20orders%0AORDER%20BY%20created_at%20DESC%2C%20%20%20--%20primary%20key%20of%20the%20sort%0A%20%20%20%20%20%20%20%20%20id%20DESC%3B%20%20%20%20%20%20%20%20%20%20%20--%20tie-breaker%20makes%20the%20order%20deterministic">TRY IT</a><button class="code__btn" type="button" data-copy="code-157">COPY</button></span></figcaption><pre id="code-157" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders
+<span class="k">ORDER</span> <span class="k">BY</span> created_at <span class="k">DESC</span>,   <span class="c">-- primary key of the sort</span>
+         id <span class="k">DESC</span>;           <span class="c">-- tie-breaker makes the order deterministic</span></code></pre></figure>
+<p>::: tip Always add a unique tie-breaker Sorting by a non-unique column leaves rows with equal keys in an arbitrary, unstable order. That silently breaks pagination: the same row can appear on page 1 and page 2. Append the primary key. :::</p>
+<h2 id="null-placement" class="hd hd--2"><a class="hd__anchor" href="#null-placement" aria-label="Link to NULL placement">#</a>NULL placement</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Default for <code>ASC</code></th><th scope="col"><code>NULLS FIRST</code> / <code>NULLS LAST</code></th></tr></thead><tbody><tr><th scope="row">PostgreSQL, Oracle, Db2</th><td>NULLs last</td><td>Yes</td></tr><tr><th scope="row">Snowflake</th><td>NULLs last</td><td>Yes</td></tr><tr><th scope="row">MySQL, MariaDB</th><td>NULLs first</td><td>MariaDB yes; MySQL no</td></tr><tr><th scope="row">SQL Server, Synapse</th><td>NULLs first</td><td>No</td></tr><tr><th scope="row">SQLite</th><td>NULLs first</td><td>3.30+ yes</td></tr><tr><th scope="row">BigQuery, Databricks, DuckDB, ClickHouse</th><td>NULLs first</td><td>Yes</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Explicit, portable NULL ordering</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=ORDER%20BY%20CASE%20WHEN%20due_date%20IS%20NULL%20THEN%201%20ELSE%200%20END%2C%20due_date%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-158">COPY</button></span></figcaption><pre id="code-158" class="code__pre"><code class="lang-sql"><span class="k">ORDER</span> <span class="k">BY</span> <span class="k">CASE</span> <span class="k">WHEN</span> due_date <span class="k">IS</span> <span class="k">NULL</span> <span class="k">THEN</span> <span class="n">1</span> <span class="k">ELSE</span> <span class="n">0</span> <span class="k">END</span>, due_date;</code></pre></figure>
+<h2 id="sorting-by-an-expression-alias-or-position" class="hd hd--2"><a class="hd__anchor" href="#sorting-by-an-expression-alias-or-position" aria-label="Link to Sorting by an expression, alias or position">#</a>Sorting by an expression, alias or position</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Three ways to sort by the same thing</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-159">COPY</button></span></figcaption><pre id="code-159" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> total <span class="o">*</span> <span class="n">1.2</span> <span class="k">AS</span> gross <span class="k">FROM</span> orders <span class="k">ORDER</span> <span class="k">BY</span> total <span class="o">*</span> <span class="n">1.2</span>;  <span class="c">-- expression</span>
+<span class="k">SELECT</span> total <span class="o">*</span> <span class="n">1.2</span> <span class="k">AS</span> gross <span class="k">FROM</span> orders <span class="k">ORDER</span> <span class="k">BY</span> gross;        <span class="c">-- alias (works everywhere)</span>
+<span class="k">SELECT</span> total <span class="o">*</span> <span class="n">1.2</span> <span class="k">AS</span> gross <span class="k">FROM</span> orders <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">1</span>;            <span class="c">-- ordinal position</span></code></pre></figure>
+<p>Ordinal positions are legal in every major engine but break the moment someone inserts a column into the select list. Use them in ad-hoc analysis, not in stored code.</p>
+<h2 id="custom-orderings" class="hd hd--2"><a class="hd__anchor" href="#custom-orderings" aria-label="Link to Custom orderings">#</a>Custom orderings</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">CASE-based priority</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=SELECT%20*%20FROM%20tickets%0AORDER%20BY%20CASE%20priority%0A%20%20%20%20%20%20%20%20%20%20%20%20%20WHEN%20'critical'%20THEN%201%0A%20%20%20%20%20%20%20%20%20%20%20%20%20WHEN%20'high'%20%20%20%20%20THEN%202%0A%20%20%20%20%20%20%20%20%20%20%20%20%20WHEN%20'normal'%20%20%20THEN%203%0A%20%20%20%20%20%20%20%20%20%20%20%20%20ELSE%204%0A%20%20%20%20%20%20%20%20%20END%2C%0A%20%20%20%20%20%20%20%20%20created_at%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-160">COPY</button></span></figcaption><pre id="code-160" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> tickets
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="k">CASE</span> priority
+             <span class="k">WHEN</span> <span class="s">&#39;critical&#39;</span> <span class="k">THEN</span> <span class="n">1</span>
+             <span class="k">WHEN</span> <span class="s">&#39;high&#39;</span>     <span class="k">THEN</span> <span class="n">2</span>
+             <span class="k">WHEN</span> <span class="s">&#39;normal&#39;</span>   <span class="k">THEN</span> <span class="n">3</span>
+             <span class="k">ELSE</span> <span class="n">4</span>
+         <span class="k">END</span>,
+         created_at;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Engine shortcuts</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-161">COPY</button></span></figcaption><pre id="code-161" class="code__pre"><code class="lang-sql"><span class="c">-- MySQL / MariaDB</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="f">FIELD</span>(priority, <span class="s">&#39;critical&#39;</span>, <span class="s">&#39;high&#39;</span>, <span class="s">&#39;normal&#39;</span>, <span class="s">&#39;low&#39;</span>);
+<span class="c">-- PostgreSQL: an enum type sorts in declaration order automatically</span>
+<span class="k">CREATE</span> <span class="k">TYPE</span> priority_t <span class="k">AS</span> <span class="f">ENUM</span> (<span class="s">&#39;critical&#39;</span>,<span class="s">&#39;high&#39;</span>,<span class="s">&#39;normal&#39;</span>,<span class="s">&#39;low&#39;</span>);
+<span class="k">ORDER</span> <span class="k">BY</span> priority;          <span class="c">-- uses the enum&#39;s natural order</span>
+<span class="c">-- PostgreSQL: array position</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="f">array_position</span>(<span class="k">ARRAY</span>[<span class="s">&#39;critical&#39;</span>,<span class="s">&#39;high&#39;</span>,<span class="s">&#39;normal&#39;</span>,<span class="s">&#39;low&#39;</span>], priority);</code></pre></figure>
+<h2 id="collations" class="hd hd--2"><a class="hd__anchor" href="#collations" aria-label="Link to Collations">#</a>Collations</h2>
+<p>Collation decides how text compares and sorts: case sensitivity, accent sensitivity, and locale rules (in Swedish &#39;ä&#39; sorts after &#39;z&#39;; in German it sorts with &#39;a&#39;).</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Per-query collation</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-162">COPY</button></span></figcaption><pre id="code-162" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="k">name</span> <span class="k">FROM</span> products <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">name</span> <span class="k">COLLATE</span> <span class="id">&quot;de-DE-x-icu&quot;</span>;
+<span class="k">SELECT</span> <span class="k">name</span> <span class="k">FROM</span> products <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">name</span> <span class="k">COLLATE</span> <span class="id">&quot;C&quot;</span>;   <span class="c">-- byte order: fastest, ASCII-ish</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Other engines</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-163">COPY</button></span></figcaption><pre id="code-163" class="code__pre"><code class="lang-sql"><span class="c">-- MySQL</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="k">name</span> <span class="k">COLLATE</span> utf8mb4_de_0900_ai_ci;
+<span class="c">-- SQL Server</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="k">name</span> <span class="k">COLLATE</span> Latin1_General_CI_AI;
+<span class="c">-- Oracle</span>
+<span class="k">ALTER</span> <span class="k">SESSION</span> <span class="k">SET</span> NLS_SORT <span class="o">=</span> <span class="s">&#39;GERMAN&#39;</span>; <span class="k">ALTER</span> <span class="k">SESSION</span> <span class="k">SET</span> NLS_COMP <span class="o">=</span> <span class="s">&#39;LINGUISTIC&#39;</span>;</code></pre></figure>
+<p>::: warn Changing a collation invalidates indexes A B-tree index stores keys in collation order. Changing the collation of a column (or upgrading the OS&#39;s ICU/glibc version under PostgreSQL) makes existing indexes silently wrong — lookups start missing rows. After a glibc or ICU upgrade, <code>REINDEX</code> every text index. :::</p>
+<h2 id="natural-sort" class="hd hd--2"><a class="hd__anchor" href="#natural-sort" aria-label="Link to Natural sort">#</a>Natural sort</h2>
+<p><code>&#39;item10&#39;</code> sorts before <code>&#39;item2&#39;</code> in every text collation. Real natural sort needs decomposition:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Natural sort of alphanumeric identifiers</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-164">COPY</button></span></figcaption><pre id="code-164" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> sku <span class="k">FROM</span> products
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="f">regexp_replace</span>(sku, <span class="s">&#39;[0-9]&#39;</span>, <span class="s">&#39;&#39;</span>, <span class="s">&#39;g&#39;</span>),                       <span class="c">-- letter part</span>
+         <span class="k">COALESCE</span>(<span class="k">NULLIF</span>(<span class="f">regexp_replace</span>(sku, <span class="s">&#39;[^0-9]&#39;</span>, <span class="s">&#39;&#39;</span>, <span class="s">&#39;g&#39;</span>), <span class="s">&#39;&#39;</span>), <span class="s">&#39;0&#39;</span>)<span class="o">::</span><span class="t">BIGINT</span>;</code></pre></figure>
+<h2 id="the-cost-of-sorting" class="hd hd--2"><a class="hd__anchor" href="#the-cost-of-sorting" aria-label="Link to The cost of sorting">#</a>The cost of sorting</h2>
+<p>A sort is O(n log n) and needs memory; when it exceeds the working-memory limit the engine spills to disk, often the single largest cost in a slow query.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Spotting a spill</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-165">COPY</button></span></figcaption><pre id="code-165" class="code__pre"><code class="lang-sql"><span class="k">EXPLAIN</span> (<span class="k">ANALYZE</span>, BUFFERS) <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders <span class="k">ORDER</span> <span class="k">BY</span> total <span class="k">DESC</span>;
+<span class="c">--   Sort Method: external merge  Disk: 24864kB      ← spilled</span>
+<span class="c">--   Sort Method: quicksort  Memory: 25kB            ← fit in memory</span>
+<span class="k">SET</span> work_mem <span class="o">=</span> <span class="s">&#39;64MB&#39;</span>;    <span class="c">-- per sort node, per connection — raise carefully</span></code></pre></figure>
+<p>An index on the sort key can remove the sort entirely, if its direction matches:</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Index-ordered scan</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-166">COPY</button></span></figcaption><pre id="code-166" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> idx_orders_created_desc <span class="k">ON</span> <span class="f">orders</span> (created_at <span class="k">DESC</span>, id <span class="k">DESC</span>);
+<span class="c">-- Now this needs no Sort node at all:</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> orders <span class="k">ORDER</span> <span class="k">BY</span> created_at <span class="k">DESC</span>, id <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">50</span>;</code></pre></figure>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/limit/"><span class="rel__t">LIMIT &amp; pagination</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a><a class="rel__i" href="/windows/"><span class="rel__t">Window functions</span><span class="rel__a">→</span></a><a class="rel__i" href="/performance/"><span class="rel__t">Performance</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/group-by/"><span class="pager__d">← PREV</span><span class="pager__t">GROUP BY &amp; HAVING</span></a><a class="pager__i pager__i--next" href="/sql/limit/"><span class="pager__d">NEXT →</span><span class="pager__t">LIMIT, OFFSET &amp; FETCH</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#null-placement">NULL placement</a></li><li class="toc__i toc__i--2"><a href="#sorting-by-an-expression-alias-or-position">Sorting by an expression, alias or position</a></li><li class="toc__i toc__i--2"><a href="#custom-orderings">Custom orderings</a></li><li class="toc__i toc__i--2"><a href="#collations">Collations</a></li><li class="toc__i toc__i--2"><a href="#natural-sort">Natural sort</a></li><li class="toc__i toc__i--2"><a href="#the-cost-of-sorting">The cost of sorting</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

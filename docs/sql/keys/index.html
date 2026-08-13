@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Primary keys &amp; foreign keys · SQL Terminal</title>
+<meta name="description" content="Surrogate vs natural keys, composite keys, referential actions, and the engine-specific behaviour of auto-increment.">
+<meta name="keywords" content="primary key foreign key composite surrogate natural identity autoincrement serial referential integrity cascade">
+<link rel="canonical" href="https://sql.manual.dev/sql/keys/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Primary keys &amp; foreign keys · SQL Terminal">
+<meta property="og:description" content="Surrogate vs natural keys, composite keys, referential actions, and the engine-specific behaviour of auto-increment.">
+<meta property="og:url" content="https://sql.manual.dev/sql/keys/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Primary keys &amp; foreign keys · SQL Terminal">
+<meta name="twitter:description" content="Surrogate vs natural keys, composite keys, referential actions, and the engine-specific behaviour of auto-increment.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Primary keys & foreign keys · SQL Terminal","headline":"Primary keys & foreign keys","description":"Surrogate vs natural keys, composite keys, referential actions, and the engine-specific behaviour of auto-increment.","url":"https://sql.manual.dev/sql/keys/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/keys/">keys</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Basics</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Primary keys &amp; foreign keys</h1><p class="lede">Surrogate vs natural keys, composite keys, referential actions, and the engine-specific behaviour of auto-increment.</p><h2 id="primary-keys" class="hd hd--2"><a class="hd__anchor" href="#primary-keys" aria-label="Link to Primary keys">#</a>Primary keys</h2>
+<p>A primary key uniquely identifies each row. It implies <code>NOT NULL</code> + <code>UNIQUE</code>, and every mainstream engine backs it with an index automatically.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Three ways to declare one</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-7">COPY</button></span></figcaption><pre id="code-7" class="code__pre"><code class="lang-sql"><span class="c">-- column constraint</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">users</span> (id <span class="t">BIGINT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>, email <span class="t">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>);
+
+<span class="c">-- table constraint (required for composite keys)</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">order_items</span> (
+    order_id   <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span>,
+    product_id <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span>,
+    quantity   <span class="t">INT</span> <span class="k">NOT</span> <span class="k">NULL</span>,
+    <span class="k">CONSTRAINT</span> pk_order_items <span class="k">PRIMARY</span> <span class="k">KEY</span> (order_id, product_id)
+);
+
+<span class="c">-- added later</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> users <span class="k">ADD</span> <span class="k">CONSTRAINT</span> pk_users <span class="k">PRIMARY</span> <span class="k">KEY</span> (id);</code></pre></figure>
+<h3 id="surrogate-vs-natural-keys" class="hd hd--3"><a class="hd__anchor" href="#surrogate-vs-natural-keys" aria-label="Link to Surrogate vs natural keys">#</a>Surrogate vs natural keys</h3>
+<div class="tablewrap"><table><thead><tr><th scope="col"></th><th scope="col">Surrogate (generated id)</th><th scope="col">Natural (real-world value)</th></tr></thead><tbody><tr><th scope="row">Stability</th><td>Never changes</td><td>Changes when the world changes (email, ISBN, VAT number)</td></tr><tr><th scope="row">Width</th><td>Narrow — 4/8 bytes</td><td>Often wide text, inflating every secondary index</td></tr><tr><th scope="row">Joins</th><td>Fast integer comparison</td><td>Slower string comparison, collation-sensitive</td></tr><tr><th scope="row">Meaning</th><td>None — needs a lookup to interpret</td><td>Self-describing</td></tr><tr><th scope="row">Recommendation</th><td>Default choice for OLTP</td><td>Add as a <code>UNIQUE</code> constraint alongside the surrogate</td></tr></tbody></table></div>
+<p>::: tip The usual answer Use a surrogate primary key <strong>and</strong> a <code>UNIQUE</code> constraint on the natural key. You get stable joins plus enforced business uniqueness. Do not rely on the surrogate alone — without the <code>UNIQUE</code> constraint nothing stops two rows with the same email. :::</p>
+<h3 id="auto-generated-keys-per-engine" class="hd hd--3"><a class="hd__anchor" href="#auto-generated-keys-per-engine" aria-label="Link to Auto-generated keys, per engine">#</a>Auto-generated keys, per engine</h3>
+<p>This is one of the least portable areas of SQL.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Standard identity columns (SQL:2003)</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-8">COPY</button></span></figcaption><pre id="code-8" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">INT</span> <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> <span class="k">IDENTITY</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>, <span class="k">name</span> <span class="t">TEXT</span>);
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">u</span> (id <span class="t">INT</span> <span class="k">GENERATED</span> <span class="k">BY</span> <span class="k">DEFAULT</span> <span class="k">AS</span> <span class="k">IDENTITY</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>, <span class="k">name</span> <span class="t">TEXT</span>);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">PostgreSQL</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-9">COPY</button></span></figcaption><pre id="code-9" class="code__pre"><code class="lang-sql"><span class="c">-- Preferred (PG 10+): standard identity</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">BIGINT</span> <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> <span class="k">IDENTITY</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>);
+<span class="c">-- Legacy but still ubiquitous: serial types create a sequence + default</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="k">BIGSERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">MySQL / MariaDB</span><span class="code__engine" data-engine="mysql">MySQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-10">COPY</button></span></figcaption><pre id="code-10" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">BIGINT</span> <span class="k">UNSIGNED</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">AUTO_INCREMENT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>);
+<span class="k">SELECT</span> <span class="f">LAST_INSERT_ID</span>();</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-11">COPY</button></span></figcaption><pre id="code-11" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">BIGINT</span> <span class="k">IDENTITY</span>(<span class="n">1</span>,<span class="n">1</span>) <span class="k">PRIMARY</span> <span class="k">KEY</span>);
+<span class="k">SELECT</span> <span class="f">SCOPE_IDENTITY</span>();
+<span class="c">-- SQL Server 2012+ also supports sequences and standard IDENTITY</span></code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQLite</span><span class="code__engine" data-engine="sqlite">SQLite</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-12">COPY</button></span></figcaption><pre id="code-12" class="code__pre"><code class="lang-sql"><span class="c">-- INTEGER PRIMARY KEY aliases the internal rowid; the AUTOINCREMENT keyword</span>
+<span class="c">-- only prevents id reuse and adds overhead — usually omit it.</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">INTEGER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>, <span class="k">name</span> <span class="t">TEXT</span>);</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Oracle</span><span class="code__engine" data-engine="oracle">Oracle</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-13">COPY</button></span></figcaption><pre id="code-13" class="code__pre"><code class="lang-sql"><span class="c">-- 12c+</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">NUMBER</span> <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> <span class="k">IDENTITY</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>);
+<span class="c">-- pre-12c pattern</span>
+<span class="k">CREATE</span> <span class="k">SEQUENCE</span> t_seq;
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">t</span> (id <span class="t">NUMBER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>);
+<span class="c">-- then: INSERT INTO t VALUES (t_seq.NEXTVAL);</span></code></pre></figure>
+<p>::: warn Warehouses do not enforce keys Redshift, Snowflake, BigQuery, Databricks and Synapse accept <code>PRIMARY KEY</code>/<code>FOREIGN KEY</code> declarations but <strong>do not enforce them</strong>. They exist purely as optimizer hints. Duplicate rows will land silently; deduplicate in your pipeline. Redshift and Snowflake will produce wrong results from a query the optimizer rewrote assuming an unenforced uniqueness constraint you violated. :::</p>
+<h2 id="foreign-keys" class="hd hd--2"><a class="hd__anchor" href="#foreign-keys" aria-label="Link to Foreign keys">#</a>Foreign keys</h2>
+<p>A foreign key requires that each non-<code>NULL</code> value in the referencing column exists in the referenced column, which must be a primary key or unique constraint.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Declaring a foreign key</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><a class="code__btn" href="/playground/?q=CREATE%20TABLE%20orders%20(%0A%20%20%20%20id%20%20%20%20%20%20%20%20%20%20BIGINT%20PRIMARY%20KEY%2C%0A%20%20%20%20customer_id%20BIGINT%20NOT%20NULL%2C%0A%20%20%20%20CONSTRAINT%20fk_orders_customer%0A%20%20%20%20%20%20%20%20FOREIGN%20KEY%20(customer_id)%20REFERENCES%20customers%20(id)%0A%20%20%20%20%20%20%20%20ON%20DELETE%20RESTRICT%0A%20%20%20%20%20%20%20%20ON%20UPDATE%20CASCADE%0A)%3B">TRY IT</a><button class="code__btn" type="button" data-copy="code-14">COPY</button></span></figcaption><pre id="code-14" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">orders</span> (
+    id          <span class="t">BIGINT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>,
+    customer_id <span class="t">BIGINT</span> <span class="k">NOT</span> <span class="k">NULL</span>,
+    <span class="k">CONSTRAINT</span> fk_orders_customer
+        <span class="k">FOREIGN</span> <span class="k">KEY</span> (customer_id) <span class="k">REFERENCES</span> <span class="f">customers</span> (id)
+        <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">RESTRICT</span>
+        <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span>
+);</code></pre></figure>
+<h3 id="referential-actions" class="hd hd--3"><a class="hd__anchor" href="#referential-actions" aria-label="Link to Referential actions">#</a>Referential actions</h3>
+<div class="tablewrap"><table><thead><tr><th scope="col">Action</th><th scope="col">On delete of the parent</th><th scope="col">On update of the parent key</th></tr></thead><tbody><tr><th scope="row"><code>NO ACTION</code></th><td>Reject — check deferred to end of statement/transaction</td><td>Reject</td></tr><tr><th scope="row"><code>RESTRICT</code></th><td>Reject immediately, cannot be deferred</td><td>Reject immediately</td></tr><tr><th scope="row"><code>CASCADE</code></th><td>Delete the children too</td><td>Propagate the new value</td></tr><tr><th scope="row"><code>SET NULL</code></th><td>Set the child column to <code>NULL</code> (must be nullable)</td><td>Same</td></tr><tr><th scope="row"><code>SET DEFAULT</code></th><td>Set the child column to its default</td><td>Same</td></tr></tbody></table></div>
+<p>::: danger ON DELETE CASCADE is a loaded gun A single <code>DELETE</code> on a parent can silently remove millions of descendant rows across a deep tree, inside one transaction, holding locks the whole time. It is right for genuinely owned data (order → order_items) and wrong for anything a human might want back. Prefer <code>RESTRICT</code> plus an explicit archival step for everything else. :::</p>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="MySQL: Supported — InnoDB only"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MySQL</span><span class="sr-only">Supported</span><span class="sup__note">InnoDB only</span></li><li class="sup sup--warn" title="SQLite: Different syntax — PRAGMA foreign keys"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">SQLite</span><span class="sr-only">Different syntax</span><span class="sup__note">PRAGMA foreign keys</span></li><li class="sup sup--ok" title="SQL Server: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQL Server</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Oracle: Supported — no ON UPDATE"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Oracle</span><span class="sr-only">Supported</span><span class="sup__note">no ON UPDATE</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="CockroachDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">CockroachDB</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="MariaDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MariaDB</span><span class="sr-only">Supported</span></li><li class="sup sup--no" title="Redshift: Unsupported — declarative only"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Redshift</span><span class="sr-only">Unsupported</span><span class="sup__note">declarative only</span></li><li class="sup sup--no" title="Snowflake: Unsupported — declarative only"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Snowflake</span><span class="sr-only">Unsupported</span><span class="sup__note">declarative only</span></li><li class="sup sup--no" title="BigQuery: Unsupported — declarative only"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">BigQuery</span><span class="sr-only">Unsupported</span><span class="sup__note">declarative only</span></li><li class="sup sup--no" title="Databricks: Unsupported — declarative only"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Databricks</span><span class="sr-only">Unsupported</span><span class="sup__note">declarative only</span></li><li class="sup sup--no" title="ClickHouse: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">ClickHouse</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Trino: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Trino</span><span class="sr-only">Unsupported</span></li></ul>
+<p>::: warn Two footguns worth memorising <strong>SQLite</strong> does not enforce foreign keys unless you run <code>PRAGMA foreign_keys = ON;</code> on <strong>every connection</strong> — the default is off for backwards compatibility.</p>
+<p><strong>Oracle</strong> has no <code>ON UPDATE</code> clause at all. Primary key values are expected to be immutable; propagate updates with a trigger or, better, don&#39;t update keys. :::</p>
+<h3 id="always-index-your-foreign-keys" class="hd hd--3"><a class="hd__anchor" href="#always-index-your-foreign-keys" aria-label="Link to Always index your foreign keys">#</a>Always index your foreign keys</h3>
+<p>Only PostgreSQL, SQL Server and Oracle leave the referencing column unindexed by default; MySQL/InnoDB creates one automatically. An unindexed FK column makes every parent delete or update perform a full scan of the child table, and in Oracle it escalates to a share lock on the whole child table.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The index most schemas are missing</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-15">COPY</button></span></figcaption><pre id="code-15" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">INDEX</span> idx_orders_customer_id <span class="k">ON</span> <span class="f">orders</span> (customer_id);</code></pre></figure>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/constraints/"><span class="rel__t">Constraints</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/sequences/"><span class="rel__t">Sequences &amp; identity</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/create/"><span class="rel__t">CREATE TABLE</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/relational-model/"><span class="pager__d">← PREV</span><span class="pager__t">Relational databases, tables, rows &amp; columns</span></a><a class="pager__i pager__i--next" href="/sql/constraints/"><span class="pager__d">NEXT →</span><span class="pager__t">Constraints</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#primary-keys">Primary keys</a></li><li class="toc__i toc__i--3"><a href="#surrogate-vs-natural-keys">Surrogate vs natural keys</a></li><li class="toc__i toc__i--3"><a href="#auto-generated-keys-per-engine">Auto-generated keys, per engine</a></li><li class="toc__i toc__i--2"><a href="#foreign-keys">Foreign keys</a></li><li class="toc__i toc__i--3"><a href="#referential-actions">Referential actions</a></li><li class="toc__i toc__i--3"><a href="#always-index-your-foreign-keys">Always index your foreign keys</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

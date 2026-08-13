@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Constraints · SQL Terminal</title>
+<meta name="description" content="NOT NULL, UNIQUE, CHECK, DEFAULT, EXCLUDE and deferrable constraints — with the enforcement gaps in each engine.">
+<meta name="keywords" content="constraint not null unique check default exclude deferrable validate enforced">
+<link rel="canonical" href="https://sql.manual.dev/sql/constraints/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Constraints · SQL Terminal">
+<meta property="og:description" content="NOT NULL, UNIQUE, CHECK, DEFAULT, EXCLUDE and deferrable constraints — with the enforcement gaps in each engine.">
+<meta property="og:url" content="https://sql.manual.dev/sql/constraints/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Constraints · SQL Terminal">
+<meta name="twitter:description" content="NOT NULL, UNIQUE, CHECK, DEFAULT, EXCLUDE and deferrable constraints — with the enforcement gaps in each engine.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Constraints · SQL Terminal","headline":"Constraints","description":"NOT NULL, UNIQUE, CHECK, DEFAULT, EXCLUDE and deferrable constraints — with the enforcement gaps in each engine.","url":"https://sql.manual.dev/sql/constraints/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link is-active" aria-current="page" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Basics</p><ul class="sb__list"><li><a class="sb__link" href="/sql/what-is-sql/">What is SQL?</a></li><li><a class="sb__link" href="/sql/relational-model/">Relational databases, tables, rows &amp; columns</a></li><li><a class="sb__link" href="/sql/keys/">Primary keys &amp; foreign keys</a></li><li><a class="sb__link is-active" aria-current="page" href="/sql/constraints/">Constraints</a></li><li><a class="sb__link" href="/sql/null/">NULL &amp; three-valued logic</a></li><li><a class="sb__link" href="/sql/schemas/">Schemas, catalogs &amp; naming</a></li><li><a class="sb__link" href="/sql/views/">Views &amp; materialized views</a></li><li><a class="sb__link" href="/sql/sequences/">Sequences &amp; identity columns</a></li></ul></div><div class="sb__group"><p class="sb__title">DDL — Data Definition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/create/">CREATE</a></li><li><a class="sb__link" href="/sql/alter/">ALTER</a></li><li><a class="sb__link" href="/sql/drop-truncate/">DROP, TRUNCATE &amp; COMMENT</a></li></ul></div><div class="sb__group"><p class="sb__title">DML — Data Manipulation</p><ul class="sb__list"><li><a class="sb__link" href="/sql/select/">SELECT</a></li><li><a class="sb__link" href="/sql/insert/">INSERT</a></li><li><a class="sb__link" href="/sql/update/">UPDATE</a></li><li><a class="sb__link" href="/sql/delete/">DELETE</a></li><li><a class="sb__link" href="/sql/merge/">MERGE / UPSERT</a></li></ul></div><div class="sb__group"><p class="sb__title">Querying</p><ul class="sb__list"><li><a class="sb__link" href="/sql/where/">WHERE &amp; predicates</a></li><li><a class="sb__link" href="/sql/group-by/">GROUP BY &amp; HAVING</a></li><li><a class="sb__link" href="/sql/order-by/">ORDER BY &amp; sorting</a></li><li><a class="sb__link" href="/sql/limit/">LIMIT, OFFSET &amp; FETCH</a></li></ul></div><div class="sb__group"><p class="sb__title">Joins</p><ul class="sb__list"><li><a class="sb__link" href="/joins/">SQL Joins</a></li></ul></div><div class="sb__group"><p class="sb__title">Composition</p><ul class="sb__list"><li><a class="sb__link" href="/sql/subqueries/">Subqueries</a></li><li><a class="sb__link" href="/sql/cte/">CTEs &amp; recursive queries</a></li><li><a class="sb__link" href="/sql/set-operations/">UNION, INTERSECT &amp; EXCEPT</a></li></ul></div><div class="sb__group"><p class="sb__title">Advanced SQL</p><ul class="sb__list"><li><a class="sb__link" href="/windows/">Window functions</a></li><li><a class="sb__link" href="/sql/json/">JSON in SQL</a></li><li><a class="sb__link" href="/sql/arrays/">Arrays &amp; nested data</a></li><li><a class="sb__link" href="/sql/pivot/">Pivot &amp; unpivot</a></li><li><a class="sb__link" href="/sql/procedures/">Stored procedures, functions &amp; triggers</a></li><li><a class="sb__link" href="/sql/text-search/">Full-text, geospatial &amp; temporal SQL</a></li></ul></div><div class="sb__group"><p class="sb__title">Engineering</p><ul class="sb__list"><li><a class="sb__link" href="/indexes/">Indexes</a></li><li><a class="sb__link" href="/performance/">Performance</a></li><li><a class="sb__link" href="/transactions/">Transactions</a></li><li><a class="sb__link" href="/admin/">Administration</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/sql/">sql</a><span class="crumb__sep">/</span><a href="/sql/constraints/">constraints</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">CATEGORY</span><span class="pmeta__v">Basics</span></div><div class="pmeta__i"><span class="pmeta__k">DIFFICULTY</span><span class="pmeta__v">beginner</span></div><div class="pmeta__i"><span class="pmeta__k">STANDARD</span><span class="pmeta__v">SQL-92</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Constraints</h1><p class="lede">NOT NULL, UNIQUE, CHECK, DEFAULT, EXCLUDE and deferrable constraints — with the enforcement gaps in each engine.</p><p>Constraints are declarative rules the database enforces on every write, from every client, forever. Application-level validation is advisory; a constraint is the only thing that actually guarantees an invariant holds.</p>
+<h2 id="the-catalogue" class="hd hd--2"><a class="hd__anchor" href="#the-catalogue" aria-label="Link to The catalogue">#</a>The catalogue</h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Constraint</th><th scope="col">Guarantees</th><th scope="col">Index created?</th></tr></thead><tbody><tr><th scope="row"><code>NOT NULL</code></th><td>Value is present</td><td>No</td></tr><tr><th scope="row"><code>UNIQUE</code></th><td>No two rows share the value</td><td>Yes (all major engines)</td></tr><tr><th scope="row"><code>PRIMARY KEY</code></th><td><code>UNIQUE</code> + <code>NOT NULL</code>, one per table</td><td>Yes</td></tr><tr><th scope="row"><code>FOREIGN KEY</code></th><td>Value exists in the referenced table</td><td>Not automatically (except MySQL)</td></tr><tr><th scope="row"><code>CHECK</code></th><td>A boolean expression holds per row</td><td>No</td></tr><tr><th scope="row"><code>DEFAULT</code></th><td>Supplies a value when the column is omitted</td><td>No</td></tr><tr><th scope="row"><code>EXCLUDE</code></th><td>No two rows satisfy a set of operator comparisons</td><td>Yes (GiST) — PostgreSQL only</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">All of them, on one table</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-16">COPY</button></span></figcaption><pre id="code-16" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">bookings</span> (
+    id          <span class="t">BIGINT</span> <span class="k">GENERATED</span> <span class="k">ALWAYS</span> <span class="k">AS</span> <span class="k">IDENTITY</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>,
+    room_id     <span class="t">INT</span>       <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="f">rooms</span>(id),
+    guest_email <span class="t">TEXT</span>      <span class="k">NOT</span> <span class="k">NULL</span>,
+    guests      <span class="t">INT</span>       <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="n">1</span>,
+    period      TSTZRANGE <span class="k">NOT</span> <span class="k">NULL</span>,
+    <span class="k">status</span>      <span class="t">TEXT</span>      <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="s">&#39;pending&#39;</span>,
+
+    <span class="k">CONSTRAINT</span> ck_guests   <span class="k">CHECK</span> (guests <span class="k">BETWEEN</span> <span class="n">1</span> <span class="k">AND</span> <span class="n">8</span>),
+    <span class="k">CONSTRAINT</span> ck_status   <span class="k">CHECK</span> (<span class="k">status</span> <span class="k">IN</span> (<span class="s">&#39;pending&#39;</span>,<span class="s">&#39;confirmed&#39;</span>,<span class="s">&#39;cancelled&#39;</span>)),
+    <span class="k">CONSTRAINT</span> ck_email    <span class="k">CHECK</span> (guest_email <span class="k">LIKE</span> <span class="s">&#39;%@%&#39;</span>),
+    <span class="k">CONSTRAINT</span> uq_ref      <span class="k">UNIQUE</span> (room_id, period),
+    <span class="c">-- no two confirmed bookings for the same room may overlap in time:</span>
+    <span class="k">CONSTRAINT</span> ex_overlap  <span class="k">EXCLUDE</span> <span class="k">USING</span> <span class="f">GIST</span> (room_id <span class="k">WITH</span> <span class="o">=</span>, period <span class="k">WITH</span> <span class="o">&amp;&amp;</span>)
+                           <span class="k">WHERE</span> (<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;confirmed&#39;</span>)
+);</code></pre></figure>
+<h2 id="unique-and-null" class="hd hd--2"><a class="hd__anchor" href="#unique-and-null" aria-label="Link to UNIQUE and NULL">#</a>UNIQUE and NULL</h2>
+<p><code>UNIQUE</code> permits multiple <code>NULL</code>s in most engines, because two unknowns are not known to be equal. SQL Server is the notable exception.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col"><code>NULL</code>s allowed in a UNIQUE column</th></tr></thead><tbody><tr><th scope="row">PostgreSQL</th><td>Many. PG 15+ adds <code>UNIQUE NULLS NOT DISTINCT</code> to opt into single-NULL behaviour</td></tr><tr><th scope="row">MySQL / MariaDB</th><td>Many</td></tr><tr><th scope="row">SQLite</th><td>Many</td></tr><tr><th scope="row">Oracle</th><td>Many (but a composite unique key with all columns NULL is not stored)</td></tr><tr><th scope="row"><strong>SQL Server</strong></th><td><strong>Exactly one</strong> — a second <code>NULL</code> violates the constraint</td></tr><tr><th scope="row">Db2</th><td>One by default; <code>EXCLUDING NULL KEYS</code> on an index changes it</td></tr></tbody></table></div>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Workaround: a partial unique index for &#39;at most one active row per user&#39;</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-17">COPY</button></span></figcaption><pre id="code-17" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> uq_one_active_session
+    <span class="k">ON</span> <span class="f">sessions</span> (user_id)
+    <span class="k">WHERE</span> ended_at <span class="k">IS</span> <span class="k">NULL</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The same intent in SQL Server</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-18">COPY</button></span></figcaption><pre id="code-18" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> uq_one_active_session
+    <span class="k">ON</span> <span class="f">sessions</span> (user_id)
+    <span class="k">WHERE</span> ended_at <span class="k">IS</span> <span class="k">NULL</span>;   <span class="c">-- filtered index</span></code></pre></figure>
+<h2 id="check-constraints" class="hd hd--2"><a class="hd__anchor" href="#check-constraints" aria-label="Link to CHECK constraints">#</a>CHECK constraints</h2>
+<p>A <code>CHECK</code> passes when the expression is <code>TRUE</code> <strong>or <code>UNKNOWN</code></strong>. A row with <code>NULL</code> in the checked column therefore passes unless you also declare <code>NOT NULL</code> — a subtle and common source of dirty data.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">This does not reject NULL</span><span class="code__engine" data-engine="ansi">ANSI SQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-19">COPY</button></span></figcaption><pre id="code-19" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">products</span> (
+    price <span class="t">NUMERIC</span> <span class="k">CHECK</span> (price <span class="o">&gt;</span> <span class="n">0</span>)      <span class="c">-- NULL price is accepted!</span>
+);
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">products_fixed</span> (
+    price <span class="t">NUMERIC</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">CHECK</span> (price <span class="o">&gt;</span> <span class="n">0</span>)
+);</code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="MySQL: Supported — 8.0.16+ enforced"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MySQL</span><span class="sr-only">Supported</span><span class="sup__note">8.0.16+ enforced</span></li><li class="sup sup--ok" title="MariaDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">MariaDB</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="SQLite: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQLite</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="SQL Server: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">SQL Server</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Oracle: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Oracle</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="CockroachDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">CockroachDB</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="DuckDB: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">DuckDB</span><span class="sr-only">Supported</span></li><li class="sup sup--no" title="Redshift: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Redshift</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Snowflake: Unsupported — parsed not enforced"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Snowflake</span><span class="sr-only">Unsupported</span><span class="sup__note">parsed not enforced</span></li><li class="sup sup--no" title="BigQuery: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">BigQuery</span><span class="sr-only">Unsupported</span></li><li class="sup sup--warn" title="Databricks: Different syntax — CONSTRAINT on Delta"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">Databricks</span><span class="sr-only">Different syntax</span><span class="sup__note">CONSTRAINT on Delta</span></li><li class="sup sup--no" title="Trino: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Trino</span><span class="sr-only">Unsupported</span></li><li class="sup sup--warn" title="ClickHouse: Different syntax — CONSTRAINT on INSERT"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">ClickHouse</span><span class="sr-only">Different syntax</span><span class="sup__note">CONSTRAINT on INSERT</span></li></ul>
+<p>::: warn MySQL before 8.0.16 parsed and ignored CHECK MySQL accepted <code>CHECK</code> syntax from 5.x onward but silently did nothing with it until 8.0.16. If you inherit a schema from that era, the constraints you think you have may never have been enforced. Re-validate the data before relying on them. :::</p>
+<h2 id="adding-constraints-to-a-live-table" class="hd hd--2"><a class="hd__anchor" href="#adding-constraints-to-a-live-table" aria-label="Link to Adding constraints to a live table">#</a>Adding constraints to a live table</h2>
+<p>Validating an existing table takes a lock and a full scan. PostgreSQL and Oracle let you split the two phases.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Two-phase constraint addition (PostgreSQL)</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-20">COPY</button></span></figcaption><pre id="code-20" class="code__pre"><code class="lang-sql"><span class="c">-- 1. Add unvalidated: brief ACCESS EXCLUSIVE lock, no scan. New rows are checked.</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_total <span class="k">CHECK</span> (total <span class="o">&gt;=</span> <span class="n">0</span>) <span class="k">NOT</span> <span class="k">VALID</span>;
+
+<span class="c">-- 2. Validate later: SHARE UPDATE EXCLUSIVE only, does not block reads or writes.</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">VALIDATE</span> <span class="k">CONSTRAINT</span> ck_total;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Oracle equivalent</span><span class="code__engine" data-engine="oracle">Oracle</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-21">COPY</button></span></figcaption><pre id="code-21" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_total <span class="k">CHECK</span> (total <span class="o">&gt;=</span> <span class="n">0</span>) <span class="k">ENABLE</span> NOVALIDATE;
+<span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">MODIFY</span> <span class="k">CONSTRAINT</span> ck_total <span class="k">VALIDATE</span>;</code></pre></figure>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">SQL Server: WITH NOCHECK skips validation of existing rows</span><span class="code__engine" data-engine="sqlserver">SQL Server</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-22">COPY</button></span></figcaption><pre id="code-22" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">WITH</span> NOCHECK <span class="k">ADD</span> <span class="k">CONSTRAINT</span> ck_total <span class="k">CHECK</span> (total <span class="o">&gt;=</span> <span class="n">0</span>);
+<span class="c">-- the constraint is now &#39;untrusted&#39; and the optimizer will ignore it:</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> orders <span class="k">WITH</span> <span class="k">CHECK</span> <span class="k">CHECK</span> <span class="k">CONSTRAINT</span> ck_total;   <span class="c">-- makes it trusted again</span></code></pre></figure>
+<h2 id="deferrable-constraints" class="hd hd--2"><a class="hd__anchor" href="#deferrable-constraints" aria-label="Link to Deferrable constraints">#</a>Deferrable constraints</h2>
+<p>A deferred constraint is checked at <code>COMMIT</code> rather than at statement end — necessary for circular references and for bulk swaps of unique values.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Swapping two unique values in one transaction</span><span class="code__engine" data-engine="postgresql">PostgreSQL</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-23">COPY</button></span></figcaption><pre id="code-23" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> pages <span class="k">ADD</span> <span class="k">CONSTRAINT</span> uq_slot <span class="k">UNIQUE</span> (slot) <span class="k">DEFERRABLE</span> <span class="k">INITIALLY</span> <span class="k">IMMEDIATE</span>;
+
+<span class="k">BEGIN</span>;
+  <span class="k">SET</span> <span class="k">CONSTRAINTS</span> uq_slot <span class="k">DEFERRED</span>;
+  <span class="k">UPDATE</span> pages <span class="k">SET</span> slot <span class="o">=</span> <span class="n">2</span> <span class="k">WHERE</span> id <span class="o">=</span> <span class="n">1</span>;   <span class="c">-- transiently duplicates slot 2</span>
+  <span class="k">UPDATE</span> pages <span class="k">SET</span> slot <span class="o">=</span> <span class="n">1</span> <span class="k">WHERE</span> id <span class="o">=</span> <span class="n">2</span>;
+<span class="k">COMMIT</span>;                                      <span class="c">-- checked here, and passes</span></code></pre></figure>
+<ul class="support" role="list"><li class="sup sup--ok" title="PostgreSQL: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">PostgreSQL</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Oracle: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Oracle</span><span class="sr-only">Supported</span></li><li class="sup sup--ok" title="Db2: Supported"><span class="sup__mark" aria-hidden="true">✓</span><span class="sup__name">Db2</span><span class="sr-only">Supported</span></li><li class="sup sup--warn" title="CockroachDB: Different syntax — unique only"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">CockroachDB</span><span class="sr-only">Different syntax</span><span class="sup__note">unique only</span></li><li class="sup sup--no" title="MySQL: Unsupported — FKs deferred only in a sense"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">MySQL</span><span class="sr-only">Unsupported</span><span class="sup__note">FKs deferred only in a sense</span></li><li class="sup sup--no" title="SQL Server: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">SQL Server</span><span class="sr-only">Unsupported</span></li><li class="sup sup--warn" title="SQLite: Different syntax — FK only DEFERRABLE"><span class="sup__mark" aria-hidden="true">⚠</span><span class="sup__name">SQLite</span><span class="sr-only">Different syntax</span><span class="sup__note">FK only DEFERRABLE</span></li><li class="sup sup--no" title="BigQuery: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">BigQuery</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Snowflake: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Snowflake</span><span class="sr-only">Unsupported</span></li><li class="sup sup--no" title="Redshift: Unsupported"><span class="sup__mark" aria-hidden="true">✕</span><span class="sup__name">Redshift</span><span class="sr-only">Unsupported</span></li></ul>
+<p>::: note SQL Server and MySQL have no deferrable constraints In SQL Server, drop and recreate the constraint, or use a temporary sentinel value. In MySQL, <code>SET FOREIGN_KEY_CHECKS = 0</code> disables FK checking for the session — a blunt instrument that lets you commit inconsistent data, so re-enable it and validate afterwards. :::</p>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/sql/keys/"><span class="rel__t">Primary &amp; foreign keys</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/alter/"><span class="rel__t">ALTER TABLE</span><span class="rel__a">→</span></a><a class="rel__i" href="/sql/null/"><span class="rel__t">NULL</span><span class="rel__a">→</span></a><a class="rel__i" href="/indexes/"><span class="rel__t">Indexes</span><span class="rel__a">→</span></a></div></section>
+    <nav class="pager" aria-label="Pagination"><a class="pager__i pager__i--prev" href="/sql/keys/"><span class="pager__d">← PREV</span><span class="pager__t">Primary keys &amp; foreign keys</span></a><a class="pager__i pager__i--next" href="/sql/null/"><span class="pager__d">NEXT →</span><span class="pager__t">NULL &amp; three-valued logic</span></a></nav>
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#the-catalogue">The catalogue</a></li><li class="toc__i toc__i--2"><a href="#unique-and-null">UNIQUE and NULL</a></li><li class="toc__i toc__i--2"><a href="#check-constraints">CHECK constraints</a></li><li class="toc__i toc__i--2"><a href="#adding-constraints-to-a-live-table">Adding constraints to a live table</a></li><li class="toc__i toc__i--2"><a href="#deferrable-constraints">Deferrable constraints</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClickHouse · SQL Terminal</title>
+<meta name="description" content="Extremely fast columnar analytics. MergeTree engines, sparse primary indexes and a deliberately non-standard write model.">
+<meta name="keywords" content="ClickHouse sql reference syntax types indexes transactions performance cli">
+<link rel="canonical" href="https://sql.manual.dev/databases/clickhouse/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="ClickHouse · SQL Terminal">
+<meta property="og:description" content="Extremely fast columnar analytics. MergeTree engines, sparse primary indexes and a deliberately non-standard write model.">
+<meta property="og:url" content="https://sql.manual.dev/databases/clickhouse/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ClickHouse · SQL Terminal">
+<meta name="twitter:description" content="Extremely fast columnar analytics. MergeTree engines, sparse primary indexes and a deliberately non-standard write model.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"ClickHouse · SQL Terminal","headline":"ClickHouse","description":"Extremely fast columnar analytics. MergeTree engines, sparse primary indexes and a deliberately non-standard write model.","url":"https://sql.manual.dev/databases/clickhouse/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link is-active" aria-current="page" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell">
+  <aside class="sb" aria-label="Section navigation"><div class="sb__inner"><div class="sb__group"><p class="sb__title">Engines</p><ul class="sb__list"><li><a class="sb__link" href="/databases/postgresql/">PostgreSQL</a></li><li><a class="sb__link" href="/databases/mysql/">MySQL</a></li><li><a class="sb__link" href="/databases/sqlite/">SQLite</a></li><li><a class="sb__link" href="/databases/sqlserver/">SQL Server</a></li><li><a class="sb__link" href="/databases/oracle/">Oracle Database</a></li><li><a class="sb__link" href="/databases/redshift/">Amazon Redshift</a></li><li><a class="sb__link" href="/databases/snowflake/">Snowflake</a></li><li><a class="sb__link" href="/databases/bigquery/">Google BigQuery</a></li><li><a class="sb__link" href="/databases/duckdb/">DuckDB</a></li><li><a class="sb__link" href="/databases/mariadb/">MariaDB</a></li><li><a class="sb__link is-active" aria-current="page" href="/databases/clickhouse/">ClickHouse</a></li><li><a class="sb__link" href="/databases/trino/">Trino / Presto</a></li><li><a class="sb__link" href="/databases/databricks/">Databricks SQL</a></li><li><a class="sb__link" href="/databases/cockroachdb/">CockroachDB</a></li><li><a class="sb__link" href="/databases/db2/">IBM Db2</a></li><li><a class="sb__link" href="/databases/synapse/">Azure Synapse</a></li></ul></div><div class="sb__group"><p class="sb__title">Cross-engine</p><ul class="sb__list"><li><a class="sb__link" href="/dialects/">Dialect overview</a></li><li><a class="sb__link" href="/comparison/">Dialect diff</a></li><li><a class="sb__link" href="/datatypes/">Data types</a></li><li><a class="sb__link" href="/cli/">CLI reference</a></li></ul></div></div></aside>
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/databases/">databases</a><span class="crumb__sep">/</span><a href="/databases/clickhouse/">clickhouse</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">ENGINE</span><span class="pmeta__v">ClickHouse</span></div><div class="pmeta__i"><span class="pmeta__k">VERSION</span><span class="pmeta__v">25.x</span></div><div class="pmeta__i"><span class="pmeta__k">LICENSE</span><span class="pmeta__v">Apache 2.0</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>ClickHouse</h1><p class="lede">Extremely fast columnar analytics. MergeTree engines, sparse primary indexes and a deliberately non-standard write model.</p><div class="tags"><span class="tag">OLAP · Columnar</span><span class="tag">Apache 2.0</span><span class="tag">CLI: clickhouse-client</span></div><h2 id="overview" class="hd hd--2"><a class="hd__anchor" href="#overview" aria-label="Link to Overview">#</a>Overview</h2>
+<p>ClickHouse is an open-source columnar OLAP database designed for very high ingest rates and sub-second aggregation over billions of rows. It achieves that partly by giving up things OLTP users expect: there are no real transactions, updates are asynchronous, and uniqueness is not enforced.</p>
+<dl class="kv"><div class="kv__row"><dt>FIRST RELEASE</dt><dd>2016 (Yandex)</dd></div><div class="kv__row"><dt>LICENSE</dt><dd>Apache 2.0</dd></div><div class="kv__row"><dt>DEFAULT PORTS</dt><dd>9000 (native), 8123 (HTTP)</dd></div><div class="kv__row"><dt>BEST FOR</dt><dd>Observability, event analytics, time series, real-time dashboards</dd></div><div class="kv__row"><dt>NOT FOR</dt><dd>OLTP, frequent single-row updates, workloads needing transactions</dd></div></dl>
+<h2 id="mergetree" class="hd hd--2"><a class="hd__anchor" href="#mergetree" aria-label="Link to MergeTree">#</a>MergeTree</h2>
+<p>The table engine is mandatory and determines everything.</p>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">The standard shape</span><span class="code__engine" data-engine="clickhouse">ClickHouse</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-445">COPY</button></span></figcaption><pre id="code-445" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="f">events</span> (
+    event_time <span class="t">DateTime</span>,
+    user_id    UInt64,
+    <span class="k">name</span>       <span class="f">LowCardinality</span>(<span class="t">String</span>),
+    duration   UInt32
+)
+<span class="k">ENGINE</span> <span class="o">=</span> MergeTree
+<span class="k">ORDER</span> <span class="k">BY</span> (user_id, event_time)        <span class="c">-- also the sparse primary index</span>
+<span class="k">PARTITION</span> <span class="k">BY</span> <span class="f">toYYYYMM</span>(event_time)
+TTL event_time <span class="o">+</span> <span class="k">INTERVAL</span> <span class="n">90</span> <span class="k">DAY</span>;     <span class="c">-- automatic expiry</span></code></pre></figure>
+<p>The <code>ORDER BY</code> clause is the sorting key <strong>and</strong> the sparse primary index: one index entry per ~8192 rows. Queries that filter on a prefix of it skip whole granules. Queries that do not are full scans — which ClickHouse is still remarkably fast at, but the difference is orders of magnitude.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Engine</th><th scope="col">Behaviour</th></tr></thead><tbody><tr><th scope="row"><code>MergeTree</code></th><td>The base: sorted, partitioned, background-merged parts</td></tr><tr><th scope="row"><code>ReplacingMergeTree(ver)</code></th><td>Deduplicates by sorting key during merges — <em>eventually</em></td></tr><tr><th scope="row"><code>SummingMergeTree</code></th><td>Pre-aggregates numeric columns on merge</td></tr><tr><th scope="row"><code>AggregatingMergeTree</code></th><td>Stores aggregate function states</td></tr><tr><th scope="row"><code>ReplicatedMergeTree</code></th><td>Adds replication via ClickHouse Keeper</td></tr></tbody></table></div>
+<p>::: danger Deduplication is eventual, not immediate <code>ReplacingMergeTree</code> removes duplicates when background merges happen — which may be minutes or hours later, or never for parts in different partitions. Queries must use <code>FINAL</code> (expensive) or aggregate explicitly (<code>argMax</code>) if they need deduplicated results <em>now</em>. :::</p>
+<h2 id="writes" class="hd hd--2"><a class="hd__anchor" href="#writes" aria-label="Link to Writes">#</a>Writes</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Updates and deletes are not what you expect</span><span class="code__engine" data-engine="clickhouse">ClickHouse</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-446">COPY</button></span></figcaption><pre id="code-446" class="code__pre"><code class="lang-sql"><span class="k">ALTER</span> <span class="k">TABLE</span> events <span class="k">UPDATE</span> duration <span class="o">=</span> <span class="n">0</span> <span class="k">WHERE</span> user_id <span class="o">=</span> <span class="n">42</span>;   <span class="c">-- a &quot;mutation&quot;: async, rewrites parts</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> events <span class="k">DELETE</span> <span class="k">WHERE</span> event_time <span class="o">&lt;</span> <span class="s">&#39;2025-01-01&#39;</span>;   <span class="c">-- same</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> events <span class="k">WHERE</span> user_id <span class="o">=</span> <span class="n">42</span>;                       <span class="c">-- lightweight delete (23.3+), marks rows</span>
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="k">system</span>.mutations <span class="k">WHERE</span> is_done <span class="o">=</span> <span class="n">0</span>;            <span class="c">-- track progress</span></code></pre></figure>
+<p>Insert in <strong>large batches</strong> (tens of thousands of rows). Many small inserts create many small parts and overwhelm the background merge scheduler — the classic &quot;too many parts&quot; error.</p>
+<h2 id="dialect" class="hd hd--2"><a class="hd__anchor" href="#dialect" aria-label="Link to Dialect">#</a>Dialect</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">ClickHouse SQL</span><span class="code__engine" data-engine="clickhouse">ClickHouse</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-447">COPY</button></span></figcaption><pre id="code-447" class="code__pre"><code class="lang-sql"><span class="k">SELECT</span> <span class="f">toStartOfMonth</span>(event_time) <span class="k">AS</span> m, <span class="f">count</span>(), <span class="f">uniqExact</span>(user_id), <span class="f">quantile</span>(<span class="n">0.95</span>)(duration)
+<span class="k">FROM</span> events <span class="k">WHERE</span> event_time <span class="o">&gt;=</span> <span class="f">now</span>() <span class="o">-</span> <span class="k">INTERVAL</span> <span class="n">30</span> <span class="k">DAY</span> <span class="k">GROUP</span> <span class="k">BY</span> m <span class="k">ORDER</span> <span class="k">BY</span> m;
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> events <span class="k">ORDER</span> <span class="k">BY</span> user_id, event_time <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">1</span> <span class="k">BY</span> user_id;   <span class="c">-- latest per user</span>
+<span class="k">SELECT</span> <span class="f">countIf</span>(<span class="k">status</span> <span class="o">=</span> <span class="s">&#39;error&#39;</span>), <span class="f">sumIf</span>(duration, <span class="k">status</span> <span class="o">=</span> <span class="s">&#39;ok&#39;</span>) <span class="k">FROM</span> events; <span class="c">-- -If combinators</span>
+<span class="k">SELECT</span> <span class="k">name</span>, <span class="f">arrayJoin</span>(tags) <span class="k">AS</span> tag <span class="k">FROM</span> articles;</code></pre></figure>
+<h2 id="materialized-views-are-insert-triggers" class="hd hd--2"><a class="hd__anchor" href="#materialized-views-are-insert-triggers" aria-label="Link to Materialized views are insert triggers">#</a>Materialized views are insert triggers</h2>
+<figure class="code" data-lang="sql"><figcaption class="code__bar"><span class="code__dot" aria-hidden="true"></span><span class="code__title">Not a cached query</span><span class="code__engine" data-engine="clickhouse">ClickHouse</span><span class="code__actions"><button class="code__btn" type="button" data-copy="code-448">COPY</button></span></figcaption><pre id="code-448" class="code__pre"><code class="lang-sql"><span class="k">CREATE</span> <span class="k">MATERIALIZED</span> <span class="k">VIEW</span> daily_mv <span class="k">ENGINE</span> <span class="o">=</span> SummingMergeTree <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">day</span> <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="f">toDate</span>(event_time) <span class="k">AS</span> <span class="k">day</span>, <span class="f">count</span>() <span class="k">AS</span> events <span class="k">FROM</span> events <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">day</span>;</code></pre></figure>
+<p>It fires on <code>INSERT</code> into the source table only. It does <strong>not</strong> see pre-existing rows and does not react to deletes.</p>
+<h2 id="best-practices" class="hd hd--2"><a class="hd__anchor" href="#best-practices" aria-label="Link to Best practices">#</a>Best practices</h2>
+<ul class="list"><li>Choose <code>ORDER BY</code> to match your most common filter prefix — it is the single most important decision.</li><li>Use <code>LowCardinality(String)</code> for columns with a small distinct set; it is a large compression and speed win.</li><li>Batch inserts; never insert row by row.</li><li>Prefer append-only modelling over updates.</li><li>Use <code>uniqExact</code> only when you need exactness — <code>uniq</code> (HLL) is far cheaper.</li><li>Monitor <code>system.parts</code>, <code>system.mutations</code> and <code>system.query_log</code>.</li></ul>
+    <section class="rel"><h2 class="rel__h">RELATED TOPICS</h2><div class="rel__g"><a class="rel__i" href="/comparison/"><span class="rel__t">Dialect diff</span><span class="rel__a">→</span></a><a class="rel__i" href="/datatypes/"><span class="rel__t">Data types</span><span class="rel__a">→</span></a><a class="rel__i" href="/cli/"><span class="rel__t">CLI reference</span><span class="rel__a">→</span></a><a class="rel__i" href="/databases/"><span class="rel__t">All engines</span><span class="rel__a">→</span></a></div></section>
+    
+  </main>
+  <div class="toccol"><nav class="toc" aria-label="On this page"><p class="toc__h">ON THIS PAGE</p><ul class="toc__l"><li class="toc__i toc__i--2"><a href="#overview">Overview</a></li><li class="toc__i toc__i--2"><a href="#mergetree">MergeTree</a></li><li class="toc__i toc__i--2"><a href="#writes">Writes</a></li><li class="toc__i toc__i--2"><a href="#dialect">Dialect</a></li><li class="toc__i toc__i--2"><a href="#materialized-views-are-insert-triggers">Materialized views are insert triggers</a></li><li class="toc__i toc__i--2"><a href="#best-practices">Best practices</a></li></ul></nav></div>
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>

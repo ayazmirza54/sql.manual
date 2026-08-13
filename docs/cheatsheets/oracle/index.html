@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oracle / PL/SQL cheat sheet · SQL Terminal</title>
+<meta name="description" content="Oracle-specific syntax, DUAL, ROWNUM, hierarchical queries and PL/SQL structure.">
+<meta name="keywords" content="Oracle / PL/SQL cheat sheet reference quick syntax printable">
+<link rel="canonical" href="https://sql.manual.dev/cheatsheets/oracle/">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08090a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SQL Terminal">
+<meta property="og:title" content="Oracle / PL/SQL cheat sheet · SQL Terminal">
+<meta property="og:description" content="Oracle-specific syntax, DUAL, ROWNUM, hierarchical queries and PL/SQL structure.">
+<meta property="og:url" content="https://sql.manual.dev/cheatsheets/oracle/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oracle / PL/SQL cheat sheet · SQL Terminal">
+<meta name="twitter:description" content="Oracle-specific syntax, DUAL, ROWNUM, hierarchical queries and PL/SQL structure.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/styles.css">
+<script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","name":"Oracle / PL/SQL cheat sheet · SQL Terminal","headline":"Oracle / PL/SQL cheat sheet","description":"Oracle-specific syntax, DUAL, ROWNUM, hierarchical queries and PL/SQL structure.","url":"https://sql.manual.dev/cheatsheets/oracle/","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"SQL Terminal","url":"https://sql.manual.dev"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="hdr__top">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">&gt;_</span>
+      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    </a>
+    <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
+      <span class="search-trigger__p">$</span>
+      <span class="search-trigger__t">search the reference</span>
+      <span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span>
+    </button>
+    <div class="hdr__act">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle color theme" title="Toggle theme">
+        <svg class="iconbtn__t" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="iconbtn iconbtn--wide" href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">SOURCE</a>
+      <button class="iconbtn iconbtn--menu" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">≡</button>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Primary"><div class="nav__scroll"><a class="nav__link" href="/sql/">SQL</a><a class="nav__link" href="/databases/">DATABASES</a><a class="nav__link" href="/dialects/">DIALECTS</a><a class="nav__link" href="/functions/">FUNCTIONS</a><a class="nav__link" href="/commands/">COMMANDS</a><a class="nav__link" href="/operators/">OPERATORS</a><a class="nav__link" href="/joins/">JOINS</a><a class="nav__link" href="/windows/">WINDOWS</a><a class="nav__link" href="/datatypes/">TYPES</a><a class="nav__link" href="/indexes/">INDEXES</a><a class="nav__link" href="/transactions/">TRANSACTIONS</a><a class="nav__link" href="/performance/">PERFORMANCE</a><a class="nav__link" href="/admin/">ADMIN</a><a class="nav__link" href="/cli/">CLI</a><a class="nav__link" href="/cookbook/">COOKBOOK</a><a class="nav__link is-active" aria-current="page" href="/cheatsheets/">CHEATSHEETS</a><a class="nav__link" href="/comparison/">COMPARISON</a><a class="nav__link" href="/playground/">PLAYGROUND</a></div></nav>
+</header>
+
+<div class="shell shell--wide shell--nosb">
+  
+  <main class="main" id="main">
+    <nav class="crumb" aria-label="Breadcrumb"><span class="crumb__tilde">~</span>/<a href="/cheatsheets/">cheatsheets</a><span class="crumb__sep">/</span><a href="/cheatsheets/oracle/">oracle</a></nav>
+    <div class="pmeta"><div class="pmeta__i"><span class="pmeta__k">ENGINE</span><span class="pmeta__v">Oracle</span></div><div class="pmeta__i"><span class="pmeta__k">FORMAT</span><span class="pmeta__v">printable</span></div><div class="pmeta__i"><span class="pmeta__k">UPDATED</span><span class="pmeta__v">2026</span></div></div>
+    <h1>Oracle / PL/SQL cheat sheet</h1><p class="lede">Oracle-specific syntax, DUAL, ROWNUM, hierarchical queries and PL/SQL structure.</p><p class="printhint">sql.manual — Oracle / PL/SQL cheat sheet</p><div class="toolbar"><button class="btn" type="button" onclick="window.print()">PRINT / SAVE AS PDF</button><a class="btn" href="/cheatsheets/">All cheat sheets</a></div><div class="cheatgrid"><section><h2 class="cheat__h">Oracle-isms</h2><div class="cheat__rows"><div class="cheat__r"><code>SELECT 1 FROM dual</code><span>The one-row dummy table</span></div><div class="cheat__r"><code>NVL(a, 0) / NVL2(a, b, c)</code><span>NULL handling</span></div><div class="cheat__r"><code>DECODE(x, a, 1, b, 2, 0)</code><span>Value mapping (prefer CASE)</span></div><div class="cheat__r"><code>MINUS</code><span>Oracle spelling of EXCEPT</span></div><div class="cheat__r"><code>&#39;&#39; IS NULL</code><span>⚠ empty string equals NULL in Oracle</span></div><div class="cheat__r"><code>SYSDATE / SYSTIMESTAMP</code><span>Current time</span></div><div class="cheat__r"><code>|| for concatenation</code><span>NULL behaves as empty string</span></div></div></section><section><h2 class="cheat__h">Row limiting</h2><div class="cheat__rows"><div class="cheat__r"><code>FETCH FIRST 10 ROWS ONLY</code><span>12c and later</span></div><div class="cheat__r"><code>FETCH FIRST 10 ROWS WITH TIES</code><span>Include ties</span></div><div class="cheat__r"><code>WHERE ROWNUM &lt;= 10</code><span>11g — applied BEFORE ORDER BY</span></div><div class="cheat__r"><code>SELECT * FROM (ordered_query) WHERE ROWNUM &lt;= 10</code><span>The 11g pattern</span></div></div></section><section><h2 class="cheat__h">Hierarchical queries</h2><div class="cheat__rows"><div class="cheat__r"><code>START WITH … CONNECT BY PRIOR id = parent_id</code><span>Tree traversal</span></div><div class="cheat__r"><code>LEVEL</code><span>Current depth</span></div><div class="cheat__r"><code>SYS_CONNECT_BY_PATH(name, &#39;/&#39;)</code><span>Path string</span></div><div class="cheat__r"><code>CONNECT_BY_ROOT / CONNECT_BY_ISLEAF</code><span>Root value, leaf flag</span></div><div class="cheat__r"><code>NOCYCLE</code><span>Tolerate cycles</span></div><div class="cheat__r"><code>ORDER SIBLINGS BY name</code><span>Sort within each level</span></div></div></section><section><h2 class="cheat__h">PL/SQL</h2><div class="cheat__rows"><div class="cheat__r"><code>DECLARE … BEGIN … EXCEPTION … END; /</code><span>Block structure — the / matters</span></div><div class="cheat__r"><code>SELECT x INTO v FROM …</code><span>Assign from a query</span></div><div class="cheat__r"><code>%TYPE / %ROWTYPE</code><span>Anchor a variable to a column/row</span></div><div class="cheat__r"><code>SQL%ROWCOUNT</code><span>Rows affected</span></div><div class="cheat__r"><code>WHEN NO_DATA_FOUND THEN …</code><span>Common exception</span></div><div class="cheat__r"><code>SET SERVEROUTPUT ON</code><span>To see DBMS_OUTPUT</span></div></div></section><section><h2 class="cheat__h">Admin &amp; diagnostics</h2><div class="cheat__rows"><div class="cheat__r"><code>SELECT * FROM user_tables / all_tables</code><span>Catalog</span></div><div class="cheat__r"><code>SELECT * FROM v$session</code><span>Sessions</span></div><div class="cheat__r"><code>EXPLAIN PLAN FOR …; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY)</code><span>Plan</span></div><div class="cheat__r"><code>DBMS_XPLAN.DISPLAY_CURSOR(format=&gt;&#39;ALLSTATS LAST&#39;)</code><span>Actual plan</span></div><div class="cheat__r"><code>EXEC DBMS_STATS.GATHER_TABLE_STATS(…)</code><span>Refresh statistics</span></div><div class="cheat__r"><code>FLASHBACK TABLE t TO BEFORE DROP</code><span>Undrop from the recycle bin</span></div></div></section></div>
+    
+    
+  </main>
+  
+</div>
+<footer class="ftr">
+  <div class="ftr__in">
+    <div class="ftr__col">
+      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__t">The complete SQL &amp; database reference. Reference material for engineers, analysts, DBAs and students.</p>
+      <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">REFERENCE</p>
+      <a href="/sql/">SQL fundamentals</a><a href="/functions/">Function encyclopedia</a><a href="/datatypes/">Data types</a><a href="/operators/">Operators</a><a href="/commands/">Commands</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">ENGINES</p>
+      <a href="/databases/postgresql/">PostgreSQL</a><a href="/databases/mysql/">MySQL</a><a href="/databases/sqlite/">SQLite</a><a href="/databases/sqlserver/">SQL Server</a><a href="/databases/">All 16 engines</a>
+    </div>
+    <div class="ftr__col">
+      <p class="ftr__h">TOOLS</p>
+      <a href="/comparison/">Dialect diff</a><a href="/playground/">SQL playground</a><a href="/cheatsheets/">Cheat sheets</a><a href="/cookbook/">Cookbook</a><a href="/cli/">CLI reference</a>
+    </div>
+  </div>
+  <div class="ftr__bar">
+    <span>© 2026 SQL Terminal</span>
+    <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <a href="https://github.com/ayazmirza54/sql.manual" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
+  </div>
+</footer>
+
+<div class="palette" data-palette hidden>
+  <div class="palette__scrim" data-palette-close></div>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette__inputrow">
+      <span class="palette__prompt">$</span>
+      <input class="palette__input" type="text" placeholder="search functions, syntax, engines, recipes…" autocomplete="off" spellcheck="false" data-palette-input aria-label="Search">
+      <kbd class="palette__esc">ESC</kbd>
+    </div>
+    <div class="palette__filters" data-palette-filters></div>
+    <div class="palette__results" data-palette-results role="listbox" aria-label="Search results"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>TAB</kbd> filter</span>
+      <span class="palette__count" data-palette-count></span>
+    </div>
+  </div>
+</div>
+<script src="/assets/app.js" defer></script>
+
+</body>
+</html>
