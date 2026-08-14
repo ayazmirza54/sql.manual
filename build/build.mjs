@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 import { markdown, esc, slugify, codeBlock, supportGrid, inline, ENGINE_LABEL, highlight } from './md.mjs';
 import { layout } from './layout.mjs';
-import { bannerHtml, bannerWidth } from './banner.mjs';
+import { bannerSvg } from './banner.mjs';
 import { site, nav, engines, engineById } from '../content/site.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -971,7 +971,7 @@ await emit('search', layout({
   const hero =
     `<section class="hero"><div class="hero__in"><div class="hero__grid"><div>` +
     `<p class="hero__cmd"><b>$</b> sql --help</p>` +
-    `<pre class="hero__ascii" aria-hidden="true">${bannerHtml('SQLTERMINAL', 3)}</pre>` +
+    `${bannerSvg('SQLTERMINAL', 3, 'SQL Terminal')}` +
     `<h1 class="hero__wordmark">SQL <span class="dim">TERMINAL</span></h1>` +
     `<p class="hero__type">${esc(site.tagline)}</p>` +
     `<p class="hero__sub">Standard SQL, sixteen engines, and every difference between them — searchable in one keystroke.</p>` +

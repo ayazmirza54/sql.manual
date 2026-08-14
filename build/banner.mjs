@@ -79,19 +79,50 @@ export function asciiBanner(text, on = '█', off = ' ') {
 }
 
 /**
- * Renders a two-tone wordmark: the first `splitAt` characters get one class,
- * the rest another — the "opencode" treatment, where the two halves of the
- * name are shaded differently.
+ * Renders the wordmark as inline SVG rectangles.
  *
- * @returns {string} HTML for a <pre> body
+ * Drawing this as text is unreliable: U+2588 FULL BLOCK is missing from many
+ * monospace fonts, so it resolves to a fallback whose advance width differs
+ * from the space character. Columns then drift and the letters collide --
+ * which is exactly what happens on Android. Rectangles have no font
+ * dependency, tile without seams, and scale to any width.
+ *
+ * Cells are 0.6 wide by 1.0 tall, reproducing monospace character proportions
+ * so the letterforms keep their narrow terminal look.
+ *
+ * @param {string} text
+ * @param {number} splitAt  glyph index where the bright half begins
+ * @returns {string} an <svg> element
  */
-export function bannerHtml(text, splitAt, dimClass = 'dim') {
-  const cut = splitAt * (GLYPH_W + GAP);
-  return asciiBanner(text)
-    .map((row) => {
-      const a = row.slice(0, cut).replace(/ /g, ' ');
-      const b = row.slice(cut).replace(/ /g, ' ');
-      return `<span class="${dimClass}">${a}</span>${b}`;
-    })
-    .join('\n');
+export function bannerSvg(text, splitAt, title = text) {
+  const rows = asciiBanner(text, '#', '.');
+  const cols = bannerWidth(text);
+  const cw = 0.6;
+  const cutCol = splitAt * (GLYPH_W + GAP);
+
+  // Run-length encode each row into as few rects as possible: adjacent filled
+  // cells merge into one rect, which removes horizontal antialiasing seams.
+  const runs = { dim: [], lit: [] };
+  rows.forEach((row, y) => {
+    let x = 0;
+    while (x < cols) {
+      if (row[x] !== '#') { x++; continue; }
+      let end = x;
+      while (end < cols && row[end] === '#' && (end < cutCol) === (x < cutCol)) end++;
+      runs[x < cutCol ? 'dim' : 'lit'].push(
+        // 1.004 height gives a hairline overlap so rows fuse into solid strokes
+        `<rect x="${+(x * cw).toFixed(3)}" y="${y}" width="${+((end - x) * cw).toFixed(3)}" height="1.004"/>`
+      );
+      x = end;
+    }
+  });
+
+  return (
+    `<svg class="hero__mark" viewBox="0 0 ${+(cols * cw).toFixed(2)} ${GLYPH_H}" ` +
+    `role="img" aria-hidden="true" focusable="false" preserveAspectRatio="xMinYMid meet">` +
+    `<title>${title}</title>` +
+    `<g class="m-dim">${runs.dim.join('')}</g>` +
+    `<g class="m-lit">${runs.lit.join('')}</g>` +
+    `</svg>`
+  );
 }
