@@ -143,7 +143,7 @@ export function layout(p) {
 ${keywords ? `<meta name="keywords" content="${esc(keywords)}">` : ''}
 <link rel="canonical" href="${esc(canonical)}">
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#08090a">
+<meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${esc(site.name)}">
 <meta property="og:title" content="${esc(fullTitle)}">
@@ -153,6 +153,8 @@ ${keywords ? `<meta name="keywords" content="${esc(keywords)}">` : ''}
 <meta name="twitter:title" content="${esc(fullTitle)}">
 <meta name="twitter:description" content="${esc(description)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/InstrumentSans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css">
 <script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
@@ -161,9 +163,9 @@ ${keywords ? `<meta name="keywords" content="${esc(keywords)}">` : ''}
 <a class="skip" href="#main">Skip to content</a>
 <header class="hdr">
   <div class="hdr__top">
-    <a class="brand" href="/">
-      <span class="brand__mark" aria-hidden="true">&gt;_</span>
-      <span class="brand__name">SQL<span class="brand__dim">TERMINAL</span></span>
+    <a class="brand" href="/" aria-label="SQL Terminal home">
+      <span class="brand__mark" aria-hidden="true">&gt;</span>
+      <span class="brand__name">sql terminal</span>
     </a>
     <button class="search-trigger" type="button" data-open-palette aria-label="Open search (Command K)">
       <span class="search-trigger__p">$</span>
@@ -195,7 +197,7 @@ ${hero}
 <footer class="ftr">
   <div class="ftr__in">
     <div class="ftr__col">
-      <p class="ftr__brand">&gt;_ SQL TERMINAL</p>
+      <p class="ftr__brand"><b aria-hidden="true">&gt;</b> sql terminal</p>
       <p class="ftr__t">${esc(site.tagline)} Reference material for engineers, analysts, DBAs and students.</p>
       <p class="ftr__t ftr__t--dim">Content is hand-written and version-aware. Where engines differ, the difference is shown rather than hidden.</p>
     </div>

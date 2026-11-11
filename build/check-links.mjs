@@ -14,7 +14,7 @@ for(const f of files){
   anchors.set(from,ids);
   for(const m of html.matchAll(/href="(\/[^"#?]*)([#?][^"]*)?"/g)){
     let href=m[1]; if(!href.endsWith('/')&&!/\.\w+$/.test(href))href+='/';
-    if(/\.(css|js|json|svg|xml|txt)$/.test(href))continue;
+    if(/\.(css|js|json|svg|xml|txt|woff2)$/.test(href))continue;
     if(!pageSet.has(href)){ if(!broken.has(href))broken.set(href,new Set()); broken.get(href).add(from); }
   }
 }

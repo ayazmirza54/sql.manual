@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 import { markdown, esc, slugify, codeBlock, supportGrid, inline, ENGINE_LABEL, highlight } from './md.mjs';
 import { layout } from './layout.mjs';
-import { bannerSvg } from './banner.mjs';
+import { px } from './pixel.mjs';
 import { site, nav, engines, engineById } from '../content/site.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -943,16 +943,130 @@ await emit('search', layout({
  * home
  * ------------------------------------------------------------------ */
 {
-  const stats = [
-    { v: String(engines.length), l: 'Database engines' },
-    { v: `${Math.round(searchIndex.length / 50) * 50}+`, l: 'Indexed entries' },
-    { v: `${Math.round(codeExampleCount / 50) * 50}+`, l: 'Code examples' },
-    { v: `${fnMod.default.length}+`, l: 'Functions' },
-    { v: `${operators.length}+`, l: 'Operators' },
+  const nEntries = `${Math.floor(searchIndex.length / 50) * 50}+`;
+  const nExamples = `${Math.floor(codeExampleCount / 50) * 50}+`;
+  const nFns = fnMod.default.length;
+
+  const h2 = (icon, text, id) => `<h2 class="lp__h2" id="${id}">${px(icon)}<span>${esc(text)}</span></h2>`;
+  const feat = (icon, title, inner, tag = 'h3') =>
+    `<div class="feat"><${tag} class="feat__h">${px(icon)}${esc(title)}</${tag}>${inner}</div>`;
+  const dash = (items) => `<ul class="dash">${items.map((i) => `<li>${i}</li>`).join('')}</ul>`;
+
+  /* --- hero diagram: one question, the standard answer, every dialect --- */
+  const heroArt =
+    `<div class="art art--lg hero-art" role="img" aria-label="Diagram: a question is answered once in standard SQL, then mapped through the dialect diff to PostgreSQL, SQL Server and MySQL.">` +
+    `<span class="art__l">your question</span>` +
+    `<div class="bx bx--out hero-art__out">` +
+    `<p><span class="mu">sql&gt;</span> newest 10 orders</p>` +
+    `<p class="mu">× TOP &nbsp; × ROWNUM &nbsp; × LIMIT</p>` +
+    `<span class="art__l">standard</span>` +
+    `<div class="hero-art__row">` +
+    `<div class="bx hero-art__in"><p><span class="mu">(ansi)</span> FETCH FIRST 10</p>` +
+    `<dl><dt>postgresql</dt><dd class="ok">ok</dd><dt>sql server</dt><dd class="mu">TOP</dd><dt>mysql</dt><dd class="mu">LIMIT</dd></dl></div>` +
+    `<div class="flow"><span class="ch">ansi</span>` +
+    `<span class="flow__mid"><span class="ch ch--b">dialect</span><span class="arrow"></span>${px('db')}</span>` +
+    `<span class="ch ch--b">vendor</span></div>` +
+    `</div></div></div>`;
+
+  /* --- quick start: the same task in four dialects, CSS-only tabs --- */
+  const dialects = [
+    ['PostgreSQL', 'postgresql', `SELECT *\nFROM   orders\nORDER BY created_at DESC\nFETCH FIRST 10 ROWS ONLY;   -- LIMIT 10 also works`],
+    ['MySQL', 'mysql', `SELECT *\nFROM   orders\nORDER BY created_at DESC\nLIMIT 10;`],
+    ['SQL Server', 'sqlserver', `SELECT TOP (10) *\nFROM   orders\nORDER BY created_at DESC;`],
+    ['Oracle', 'oracle', `SELECT *\nFROM   orders\nORDER BY created_at DESC\nFETCH FIRST 10 ROWS ONLY;   -- 12c and later`],
   ];
+  const tabs =
+    `<div class="tabs">` +
+    dialects.map(([label], i) => `<input class="tabs__r sr-only" type="radio" name="qs" id="qs-${i}"${i === 0 ? ' checked' : ''} aria-label="${esc(label)}">`).join('') +
+    `<div class="tabs__bar">${dialects.map(([label], i) => `<label for="qs-${i}">${esc(label)}</label>`).join('')}</div>` +
+    `<div class="tabs__panels">${dialects
+      .map(([, engine, sql]) => `<div class="tabs__p">${codeBlock(sql, { lang: 'sql', title: 'Newest 10 orders', engine })}</div>`)
+      .join('')}</div></div>`;
+
+  const steps =
+    `<div class="feats feats--3" style="margin-top:2rem">` +
+    feat('search', '1. Search it',
+      `<p>Press <kbd>⌘</kbd><kbd>K</kbd> or <kbd>/</kbd> on any page. ${nEntries} entries: every topic, function, operator, type and recipe.</p>` +
+      `<div class="feat__art art" aria-hidden="true"><span class="art__l">search</span><div class="bx"><p><span class="ok">$</span> window fun<span class="cur"></span></p>` +
+      `<dl><dt><span class="ch">topic</span></dt><dd>Window functions</dd><dt><span class="ch ch--d">fn</span></dt><dd class="mu">ROW_NUMBER()</dd><dt><span class="ch ch--d">fn</span></dt><dd class="mu">LAG()</dd></dl></div></div>`) +
+    feat('diff', '2. Compare it',
+      `<p>The <a href="/comparison/">dialect diff</a> writes the same task for every engine, side by side, with support marked.</p>` +
+      `<div class="feat__art art" aria-hidden="true"><span class="art__l">top-n rows</span><div class="bx">` +
+      `<dl style="margin-top:0"><dt>postgresql</dt><dd class="ok">LIMIT 10</dd><dt>sql server</dt><dd class="ok">TOP (10)</dd><dt>oracle</dt><dd class="ok">FETCH FIRST</dd><dt>mysql</dt><dd class="ok">LIMIT 10</dd></dl></div></div>`) +
+    feat('play', '3. Run it',
+      `<p>The <a href="/playground/">playground</a> is SQLite compiled to WebAssembly. Nothing is sent to a server.</p>` +
+      `<div class="feat__art art" aria-hidden="true"><span class="art__l">playground</span><div class="bx"><p><span class="mu">sqlite&gt;</span> SELECT 6 * 7;</p>` +
+      `<p class="ok">42</p><p class="mu">1 row</p><p><span class="mu">sqlite&gt;</span> <span class="cur"></span></p></div></div>`) +
+    `</div>`;
+
+  /* --- what's covered --- */
+  const covered =
+    `<div class="feats feats--3">` +
+    feat('code', 'SQL reference',
+      `<p>Every construct from <a href="/sql/select/">SELECT</a> to <a href="/sql/cte/">recursive CTEs</a>, each marked ANSI or vendor-specific (<a href="/sql/">SQL</a>).</p>` +
+      `<div class="feat__art art" aria-hidden="true"><div class="chs"><span class="ch">select</span><span class="ch">join</span><span class="ch ch--d">window</span><span class="ch ch--d">cte</span><span class="ch ch--d">merge</span><span class="ch ch--b">json</span><span class="ch ch--b">pivot</span></div></div>`) +
+    feat('db', `${engines.length} engines`,
+      `<p>PostgreSQL, MySQL, SQLite, SQL Server, Oracle, the cloud warehouses and more, each with its own explorer page (<a href="/databases/">databases</a>).</p>` +
+      `<div class="feat__art art" aria-hidden="true"><div class="chs"><span class="ch">postgresql</span><span class="ch">mysql</span><span class="ch">sqlite</span><span class="ch ch--d">snowflake</span><span class="ch ch--d">bigquery</span><span class="ch ch--g">+${engines.length - 5}</span></div></div>`) +
+    feat('table', 'Functions and types',
+      `<p>${nFns} functions, ${operators.length} operators and every data type, mapped across engines (<a href="/functions/">functions</a>, <a href="/datatypes/">types</a>).</p>` +
+      `<div class="feat__art art" aria-hidden="true"><div class="bx bx--tab"><p>COALESCE(a, b)</p><p class="mu">NVL &nbsp; IFNULL &nbsp; ISNULL</p></div></div>`) +
+    `</div>`;
+
+  /* --- why --- */
+  const why =
+    `<div class="beside"><div>` +
+    dash([
+      `SQL is a standard that no engine implements the same way. <a href="/sql/limit/">Row limiting</a> alone has four spellings.`,
+      `Most references pick one dialect and present it as universal, so what you copy fails somewhere else.`,
+      `Here, where engines differ, <a href="/dialects/">every version is shown</a> with the reason for the difference.`,
+      `The traps are called out: <a href="/sql/null/"><code>NOT IN</code> with NULLs</a>, default <a href="/windows/">window frames</a>, constraints a warehouse does not enforce.`,
+    ]) +
+    `</div><div class="art art__pair" aria-hidden="true">` +
+    `<div><span class="art__l">from memory</span><div class="bx bx--out"><p class="mu">sql server</p><p>SELECT *</p><p>FROM orders</p><p class="bad">LIMIT 10;</p><p style="margin-top:.8em"><span class="ch ch--r">syntax error</span></p></div></div>` +
+    `<div><span class="art__l art__l--ok">from the manual</span><div class="bx"><p class="mu">sql server</p><p><span class="ok">SELECT TOP (10)</span> *</p><p>FROM orders;</p><p>&nbsp;</p><p style="margin-top:.8em"><span class="ch">10 rows</span></p></div></div>` +
+    `</div></div>`;
+
+  /* --- feature bento --- */
+  const bento =
+    `<div class="bento"><div class="bento__col">` +
+    feat('diff', 'Dialect diff', dash([
+      `The same task written for every engine, side by side (<a href="/comparison/">comparison</a>).`,
+      `A <a href="/dialects/">feature matrix</a> shows which engines have <code>MERGE</code>, <code>QUALIFY</code>, <code>RETURNING</code> and the rest.`,
+      `Support badges on every topic: full, different syntax, partial or missing.`,
+    ]) +
+      `<div class="feat__art art" aria-hidden="true"><div class="art__flowrow"><div class="bx bx--tab"><p>RETURNING</p></div><span class="arrow"></span><div class="chs" style="flex:1;min-width:10em"><span class="ch">postgresql</span><span class="ch">sqlite</span><span class="ch ch--d">sql server</span><span class="ch ch--g">mysql</span></div></div></div>`, 'h2') +
+    feat('play', 'Playground in the browser', dash([
+      `A real SQLite engine, compiled to WebAssembly and bundled with the site (<a href="/playground/">playground</a>).`,
+      `Portable examples carry a <code>TRY IT</code> button that opens them ready to run.`,
+      `Your queries and data stay in the tab. There is no server to send them to.`,
+    ]), 'h2') +
+    feat('print', 'Cheat sheets and cookbook', dash([
+      `${cheatsheets.length} single-page <a href="/cheatsheets/">cheat sheets</a>, laid out to print.`,
+      `${cookMod.default.length} <a href="/cookbook/">cookbook</a> recipes for the questions that start with "how do I".`,
+      `A <a href="/cli/">CLI reference</a> for psql, mysql, sqlite3, sqlcmd, sqlplus and the warehouse clients.`,
+    ]), 'h2') +
+    `</div><div class="bento__col">` +
+    feat('table', 'Function encyclopedia', dash([
+      `${nFns} functions in 14 categories, each with syntax, return type and a runnable example (<a href="/functions/">functions</a>).`,
+      `Per-dialect support and the vendor spelling when the name changes.`,
+      `<a href="/operators/">Operators</a>, <a href="/commands/">commands</a> and <a href="/datatypes/">data types</a> get the same treatment.`,
+    ]), 'h2') +
+    feat('bolt', 'Engineering depth', dash([
+      `<a href="/indexes/">Indexes</a>: B-tree, GIN, BRIN, covering, partial, and what stops them being used.`,
+      `<a href="/performance/">Performance</a>: reading <code>EXPLAIN</code>, statistics and a repeatable tuning method.`,
+      `<a href="/transactions/">Transactions</a>: isolation levels, MVCC, locking and deadlocks.`,
+      `<a href="/admin/">Administration</a>: privileges, backup, replication and partitioning.`,
+    ]) +
+      `<div class="feat__art art" aria-hidden="true"><span class="art__l">explain</span><div class="bx"><p><span class="bad">Seq Scan</span> on orders <span class="mu">cost=1840</span></p><p class="mu">+ index (customer_id)</p><p><span class="ok">Index Scan</span> on orders <span class="mu">cost=8</span></p></div></div>`, 'h2') +
+    feat('shield', 'Written to be trusted', dash([
+      `Every construct carries its standard revision or a vendor tag.`,
+      `Version-aware: "since 8.0", "12c and later", "3.35+".`,
+      `Hand-written and open to correction on <a href="${site.repo}">GitHub</a>.`,
+    ]), 'h2') +
+    `</div></div>`;
 
   const quick = [
-    ['SQL Fundamentals', '/sql/', 'Every construct, ANSI vs vendor'],
     ['PostgreSQL', '/databases/postgresql/', 'Types, indexes, JSONB, psql'],
     ['MySQL', '/databases/mysql/', 'InnoDB, sql_mode, JSON'],
     ['SQLite', '/databases/sqlite/', 'PRAGMAs, affinity, WAL'],
@@ -961,93 +1075,53 @@ await emit('search', layout({
     ['Redshift', '/databases/redshift/', 'Distkeys, sortkeys, COPY'],
     ['Snowflake', '/databases/snowflake/', 'Warehouses, VARIANT, cloning'],
     ['BigQuery', '/databases/bigquery/', 'Partitioning, cost control'],
+    [`All ${engines.length} engines`, '/databases/', 'DuckDB, MariaDB, ClickHouse, Trino and more'],
   ]
-    .map(
-      ([label, href, desc]) =>
-        `<a class="card" href="${href}"><span class="card__t">[ ${esc(label)} ]</span><span class="card__d">${esc(desc)}</span></a>`
-    )
+    .map(([label, href, desc]) => `<a class="card" href="${href}"><span class="card__t">${esc(label)}</span><span class="card__d">${esc(desc)}</span></a>`)
     .join('');
 
-  const hero =
-    `<section class="hero"><div class="hero__in"><div class="hero__grid"><div>` +
-    `<p class="hero__cmd"><b>$</b> sql --help</p>` +
-    `${bannerSvg('SQLTERMINAL', 3, 'SQL Terminal')}` +
-    `<h1 class="hero__wordmark">SQL <span class="dim">TERMINAL</span></h1>` +
-    `<p class="hero__type">${esc(site.tagline)}</p>` +
-    `<p class="hero__sub">Standard SQL, sixteen engines, and every difference between them — searchable in one keystroke.</p>` +
-    `<ul class="hero__lines">` +
-    `<li>Learn SQL.</li><li>Compare dialects.</li><li>Explore databases.</li><li>Query faster.</li></ul>` +
-    `<button class="hero__search" type="button" data-open-palette aria-label="Open search">` +
-    `<span class="p">$</span><span class="t">search "window functions"</span><span class="cursor" aria-hidden="true"></span>` +
-    `<span class="search-trigger__k"><kbd>⌘</kbd><kbd>K</kbd></span></button>` +
-    `<div class="hero__cta">` +
-    `<a class="btn btn--primary" href="/sql/">START WITH SQL →</a>` +
-    `<a class="btn" href="/comparison/">DIALECT DIFF</a>` +
-    `<a class="btn" href="/playground/">PLAYGROUND</a>` +
-    `<a class="btn" href="/cheatsheets/">CHEAT SHEETS</a>` +
-    `</div></div>` +
-    `<div class="termwin"><div class="termwin__bar"><span class="termwin__dots"><i></i><i></i><i></i></span>` +
-    `<span class="termwin__t">~/sql/advanced/window-functions</span></div>` +
-    `<div class="termwin__body"><pre>` +
-    `<span class="p">$</span> sql --explain "latest order per customer"\n\n` +
-    `<span class="c">-- PostgreSQL · fastest with (customer_id, created_at DESC)</span>\n` +
-    `<span class="k">SELECT DISTINCT ON</span> (customer_id) *\n` +
-    `<span class="k">FROM</span>   orders\n` +
-    `<span class="k">ORDER BY</span> customer_id, created_at <span class="k">DESC</span>;\n\n` +
-    `<span class="c">-- Portable · any engine with window functions</span>\n` +
-    `<span class="k">SELECT</span> * <span class="k">FROM</span> (\n` +
-    `  <span class="k">SELECT</span> o.*, <span class="f">ROW_NUMBER</span>() <span class="k">OVER</span> (\n` +
-    `           <span class="k">PARTITION BY</span> customer_id\n` +
-    `           <span class="k">ORDER BY</span> created_at <span class="k">DESC</span>) <span class="k">AS</span> rn\n` +
-    `  <span class="k">FROM</span> orders o\n` +
-    `) t <span class="k">WHERE</span> rn = <span class="n">1</span>;\n\n` +
-    `<span class="ok">●</span> 16 engines  <span class="ok">●</span> ANSI marked  <span class="ok">●</span> differences shown` +
-    `</pre></div></div>` +
-    `</div>` +
-    `<div class="stats">${stats.map((s) => `<div class="stat"><div class="stat__v">${esc(s.v)}</div><div class="stat__l">${esc(s.l)}</div></div>`).join('')}</div>` +
-    `</div></section>`;
+  const cta = () =>
+    `<div class="lp__cta">` +
+    `<a class="btn btn--primary btn--lg" href="/sql/">${px('book')}Start with SQL</a>` +
+    `<a class="btn btn--lg" href="/playground/">${px('play')}Open the playground</a></div>`;
 
   const body =
-    `<section class="section"><div class="section__h"><h2>Quick access</h2><a class="more" href="/databases/">all 16 engines →</a></div>` +
-    `<div class="cards">${quick}</div></section>` +
-
-    `<section class="section"><div class="section__h"><h2>Reference</h2></div>` +
-    `<div class="cards">` +
-    [
-      ['Function encyclopedia', '/functions/', `${fnMod.default.length} functions with syntax, examples, dialect support and performance notes`],
-      ['Dialect diff', '/comparison/', 'The same task written for every engine, side by side'],
-      ['Data types', '/datatypes/', 'Every type and what it is called in each engine'],
-      ['Operators', '/operators/', `${operators.length} operators, grouped by what they do`],
-      ['Joins', '/joins/', 'Every join type with row-matching diagrams'],
-      ['Window functions', '/windows/', 'Frames, ranking, offsets — and the defaults that bite'],
-      ['Indexes', '/indexes/', 'B-tree, GIN, BRIN, covering, partial — and what blocks them'],
-      ['Performance', '/performance/', 'Reading EXPLAIN, statistics, and a repeatable method'],
-      ['Transactions', '/transactions/', 'ACID, isolation levels, MVCC, deadlocks, locking'],
-      ['Administration', '/admin/', 'Privileges, backup, replication, partitioning, HA'],
-      ['SQL cookbook', '/cookbook/', `${cookMod.default.length} practical "how do I…" recipes`],
-      ['CLI reference', '/cli/', 'psql, mysql, sqlite3, sqlcmd, sqlplus, bq, snowsql, duckdb'],
-    ]
-      .map(
-        ([label, href, desc]) =>
-          `<a class="card" href="${href}"><span class="card__t">${esc(label)}</span><span class="card__d">${esc(desc)}</span></a>`
-      )
-      .join('') +
-    `</div></section>` +
-
-    `<section class="section"><div class="section__h"><h2>How this reference is written</h2></div>` +
-    `<div class="minicards">` +
-    `<div class="minicard"><span class="minicard__t">ANSI vs vendor, always marked</span><span class="minicard__d">Nothing is presented as universal when it is not. Every construct carries its standard revision or a vendor tag.</span></div>` +
-    `<div class="minicard"><span class="minicard__t">Differences shown, not averaged</span><span class="minicard__d">Where engines diverge, both versions appear — with the reason for the divergence.</span></div>` +
-    `<div class="minicard"><span class="minicard__t">Traps called out</span><span class="minicard__d"><code>NOT IN</code> with NULLs, <code>LAST_VALUE</code> frames, <code>LEFT JOIN</code> filtered in <code>WHERE</code>, unenforced warehouse constraints.</span></div>` +
-    `<div class="minicard"><span class="minicard__t">Version-aware</span><span class="minicard__d">"Since 8.0", "12c and later", "3.35+" — because half of SQL portability is knowing which version you are on.</span></div>` +
-    `</div></section>`;
+    `<div class="lp">` +
+    `<a class="lp__badge" href="${site.repo}" target="_blank" rel="noopener noreferrer">Free and open source</a>` +
+    `<h1 class="lp__h1">One manual for every database</h1>` +
+    `<p class="lp__sub">Standard SQL, ${engines.length} engines and every difference between them, searchable in one keystroke.</p>` +
+    cta() +
+    heroArt +
+    h2('bolt', 'Quick start', 'quick-start') +
+    `<p class="lp__p" style="margin-top:0">One task, four dialects. This is what every page of the manual does.</p>` +
+    tabs +
+    `<p class="lp__p">Only two of these four are standard SQL. <a href="/sql/limit/">Limiting rows</a> explains which, and what the other engines want instead.</p>` +
+    steps +
+    h2('grid', "What's covered", 'covered') +
+    covered +
+    `<p class="lp__p">In numbers: ${nEntries} indexed entries and ${nExamples} code examples across ${engines.length} engines.</p>` +
+    h2('shield', 'Why use it?', 'why') +
+    why +
+    bento +
+    h2('db', 'Pick your engine', 'engines') +
+    `<div class="cards">${quick}</div>` +
+    h2('help', 'FAQ', 'faq') +
+    `<h3 class="lp__h3">Which databases does it cover?</h3>` +
+    `<p class="lp__p">${engines.length} engines: PostgreSQL, MySQL, SQLite, SQL Server and Oracle in the most depth, then Redshift, Snowflake, BigQuery, DuckDB, MariaDB, ClickHouse, Trino, Databricks, CockroachDB, Db2 and Synapse. <a href="/databases/">Databases</a> lists them all.</p>` +
+    `<h3 class="lp__h3">Does the playground send my queries anywhere?</h3>` +
+    `<p class="lp__p">No. The <a href="/playground/">playground</a> runs SQLite inside your browser tab, so your queries and data never leave it. It runs SQLite's dialect, so engine-specific examples for other databases will not run there.</p>` +
+    `<h3 class="lp__h3">Is it free?</h3>` +
+    `<p class="lp__p">Yes. The whole site is free to read and the <a href="${site.repo}">source is on GitHub</a>.</p>` +
+    h2('terminal', 'Start querying', 'start') +
+    `<p class="lp__p" style="margin-top:0">Read the <a href="/sql/">SQL reference</a> from the top, or press <kbd>⌘</kbd><kbd>K</kbd> and search for what you need.</p>` +
+    cta() +
+    `</div>`;
 
   await emit('', layout({
     path: '/',
     title: site.name,
     description: site.description,
     keywords: 'sql reference postgresql mysql sqlite sql server oracle bigquery snowflake redshift duckdb cheat sheet dialect comparison functions',
-    hero,
     body,
     sidebar: [],
     wide: true,
@@ -1080,7 +1154,7 @@ await writeFile(
 
 await writeFile(
   path.join(OUT, 'favicon.svg'),
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#0c0e10"/><path d="M6 11l5 5-5 5" stroke="#3fd68c" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 21h11" stroke="#3fd68c" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/><rect x="1" y="1" width="30" height="30" fill="none" stroke="#eee" stroke-width="2"/><path fill="#7fff00" shape-rendering="crispEdges" d="M7 8h3v3H7zM10 11h3v3h-3zM13 14h3v3h-3zM10 17h3v3h-3zM7 20h3v3H7zM17 20h8v3h-8z"/></svg>`,
   'utf8'
 );
 
@@ -1094,7 +1168,7 @@ const notFound = layout({
   body:
     `<div class="termwin" style="max-width:640px;margin:40px auto"><div class="termwin__bar"><span class="termwin__dots"><i></i><i></i><i></i></span><span class="termwin__t">error</span></div>` +
     `<div class="termwin__body"><pre><span class="p">$</span> sql --find "$REQUEST_URI"\n\n<span class="c">ERROR:  relation "page" does not exist</span>\n<span class="c">LINE 1: SELECT * FROM page WHERE url = …</span>\n\nHINT:   try the search palette, or start from one of these:</pre></div></div>` +
-    `<div class="cards" style="max-width:640px;margin:0 auto">` +
+    `<div class="cards" style="max-width:640px;margin:16px auto 0">` +
     `<a class="card" href="/"><span class="card__t">Home</span></a>` +
     `<a class="card" href="/sql/"><span class="card__t">SQL reference</span></a>` +
     `<a class="card" href="/databases/"><span class="card__t">Database explorer</span></a>` +

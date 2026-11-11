@@ -65,12 +65,14 @@ content/                 all content lives here — add files, the site picks th
 build/
   md.mjs                 markdown subset parser + SQL/shell syntax highlighter
   layout.mjs             HTML shell, navigation, SEO metadata, command palette
+  pixel.mjs              pixel icons drawn on 12x12 grids, rendered as crisp SVG
   build.mjs              the generator
   check-links.mjs        link and anchor validation
 assets/
   styles.css             the design system
   app.js                 command palette, search, copy buttons, theme, scrollspy
   joins.js  comparison.js  playground.js
+  fonts/                 Departure Mono, Instrument Sans, Martian Mono (SIL OFL), self-hosted
   vendor/                sql.js (SQLite → WebAssembly), vendored so the playground works offline
 docs/                    generated output — served by GitHub Pages
 ```
