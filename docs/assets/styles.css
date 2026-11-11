@@ -1,6 +1,7 @@
 /* ============================================================
    SQL TERMINAL — design system
-   Black canvas, lime + teal accents, pixel display type.
+   Black canvas, one hot accent, pixel display type.
+   Two colour schemes: ember (default) and lime.
    Departure Mono for display, Instrument Sans for prose,
    Martian Mono for code.
    ============================================================ */
@@ -23,42 +24,45 @@
 }
 
 :root {
+  /* neutrals, shared by every colour scheme */
   --bg: #000000;
   --bg-1: #000000;
-  --bg-2: #0f111a;
-  --bg-3: #181b28;
-  --bg-inset: #0f111a;
-  --hair: #1c1f26;
-  --line: #20474b;
-  --line-2: #2c6268;
-  --line-3: #3c858d;
+  --hair: #1f1c1a;
   --tx: #eeeeee;
-  --tx-2: #b6bac6;
-  --tx-3: #8f93a2;
-  --tx-4: #747886;
-  --grn: #7fff00;
-  --grn-dim: #408000;
-  --soft: #c3e88d;
-  --blu: #0086b3;
-  --sky: #4db8e0;
+  --tx-2: #bcb8b4;
+  --tx-3: #979290;
+  --tx-4: #7b7572;
   --amb: #ffcb6b;
   --red: #ff5370;
   --pur: #c792ea;
-  --cyn: #c3e88d;
-  --accent: var(--grn);
-  --sel: rgba(127, 255, 0, 0.22);
-  --glow: 0 0 0 1px var(--grn);
-
-  /* fixed fills: the same in both themes, always paired with --ink text */
-  --lime: #7fff00;
-  --lime-soft: #c3e88d;
-  --teal: #0086b3;
   --ink: #000000;
-
   --syn-f: #82aaff;
-  --syn-n: #f78c6c;
+  --syn-n: #f5c16c;
   --syn-o: #89ddff;
-  --syn-c: #6f7591;
+  --syn-c: #7d7570;
+
+  /* scheme: ember (default). The token names are historical: --grn is the
+     accent, --lime the accent fill, --teal the secondary fill, whatever
+     hue the active scheme gives them. */
+  --bg-2: #17100c;
+  --bg-3: #221812;
+  --bg-inset: #17100c;
+  --line: #4a2a1c;
+  --line-2: #6e3d28;
+  --line-3: #96553a;
+  --grn: #ff6a1a;
+  --grn-dim: #8a3208;
+  --soft: #ffb787;
+  --blu: #b3301a;
+  --sky: #ffa24d;
+  --cyn: #ffc49c;
+  --lime: #ff6a1a;
+  --lime-soft: #ffb787;
+  --lime-deep: #4f1c05;
+  --teal: #b3301a;
+  --sel: rgba(255, 106, 26, 0.28);
+  --accent: var(--grn);
+  --glow: 0 0 0 1px var(--grn);
 
   --px: "Departure Mono", "Martian Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --mono: "Martian Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -71,33 +75,83 @@
   --hdr-h: 104px;
 }
 
+/* scheme: lime (the original devvm palette). Set `scheme: 'lime'` in content/site.mjs. */
+[data-scheme='lime'] {
+  --hair: #1c1f26;
+  --tx-2: #b6bac6;
+  --tx-3: #8f93a2;
+  --tx-4: #747886;
+  --syn-n: #f78c6c;
+  --syn-c: #6f7591;
+  --bg-2: #0f111a;
+  --bg-3: #181b28;
+  --bg-inset: #0f111a;
+  --line: #20474b;
+  --line-2: #2c6268;
+  --line-3: #3c858d;
+  --grn: #7fff00;
+  --grn-dim: #408000;
+  --soft: #c3e88d;
+  --blu: #0086b3;
+  --sky: #4db8e0;
+  --cyn: #c3e88d;
+  --lime: #7fff00;
+  --lime-soft: #c3e88d;
+  --lime-deep: #2c5800;
+  --teal: #0086b3;
+  --sel: rgba(127, 255, 0, 0.22);
+}
+
 [data-theme='light'] {
   --bg: #ffffff;
   --bg-1: #ffffff;
-  --bg-2: #f2f6f3;
-  --bg-3: #e6ede8;
-  --bg-inset: #f5f8f6;
+  --hair: #ebe4df;
+  --tx: #120d0a;
+  --tx-2: #40372f;
+  --tx-3: #63574e;
+  --tx-4: #776a60;
+  --amb: #855600;
+  --red: #c2183c;
+  --pur: #7a3fb0;
+  --syn-f: #2456b0;
+  --syn-n: #8a5a00;
+  --syn-o: #0b6f8f;
+  --syn-c: #776a60;
+
+  --bg-2: #f9f3ef;
+  --bg-3: #f0e6df;
+  --bg-inset: #fbf6f3;
+  --line: #e2c6b7;
+  --line-2: #cba48f;
+  --line-3: #a87860;
+  --grn: #b03a00;
+  --grn-dim: #8a3208;
+  --soft: #8f2f00;
+  --sky: #9a4a00;
+  --cyn: #9c3400;
+  --sel: rgba(255, 106, 26, 0.3);
+}
+
+[data-scheme='lime'][data-theme='light'] {
   --hair: #e1e7e4;
-  --line: #b3cfd2;
-  --line-2: #8ab4b9;
-  --line-3: #5a9198;
   --tx: #0b0d12;
   --tx-2: #353a46;
   --tx-3: #555b6b;
   --tx-4: #6a7080;
+  --syn-n: #b04a1c;
+  --syn-c: #6a7080;
+  --bg-2: #f2f6f3;
+  --bg-3: #e6ede8;
+  --bg-inset: #f5f8f6;
+  --line: #b3cfd2;
+  --line-2: #8ab4b9;
+  --line-3: #5a9198;
   --grn: #336b00;
   --grn-dim: #408000;
   --soft: #2f6410;
   --sky: #006a90;
-  --amb: #855600;
-  --red: #c2183c;
-  --pur: #7a3fb0;
   --cyn: #2f6410;
   --sel: rgba(127, 255, 0, 0.35);
-  --syn-f: #2456b0;
-  --syn-n: #b04a1c;
-  --syn-o: #0b6f8f;
-  --syn-c: #6a7080;
 }
 
 *,
@@ -533,7 +587,7 @@ a.minicard:hover { border-color: var(--accent); color: var(--tx); text-decoratio
 .art .bad { color: var(--red); }
 .ch { display: inline-block; background: var(--lime); color: var(--ink); padding: 0 .65em; line-height: 1.3; white-space: nowrap; }
 .ch--b { background: var(--teal); color: #fff; }
-.ch--d { background: #2c5800; color: var(--lime); }
+.ch--d { background: var(--lime-deep); color: var(--lime); }
 .ch--g { background: #8f93a2; color: var(--ink); }
 .ch--r { background: var(--red); color: var(--ink); }
 .chs { display: flex; flex-wrap: wrap; gap: .45em; }
@@ -832,7 +886,7 @@ select.field { cursor: pointer; }
 /* ---------------- print (cheat sheets) ---------------- */
 
 @media print {
-  :root, [data-theme] { --grn: #1d5200; --soft: #1d5200; --cyn: #1d5200; --hair: #ddd; --teal: #555; --bg: #fff; --bg-1: #fff; --bg-2: #fff; --bg-inset: #fff; --tx: #000; --tx-2: #222; --tx-3: #444; --tx-4: #555; --line: #ccc; --line-2: #bbb; }
+  :root, [data-theme], [data-scheme] { --grn: #333; --soft: #333; --cyn: #333; --hair: #ddd; --teal: #555; --bg: #fff; --bg-1: #fff; --bg-2: #fff; --bg-inset: #fff; --tx: #000; --tx-2: #222; --tx-3: #444; --tx-4: #555; --line: #ccc; --line-2: #bbb; }
   html { font-size: 11px; }
   .hdr, .ftr, .toccol, .sb, .palette, .pager, .rel, .skip, .code__actions, .crumb { display: none !important; }
   body { background: #fff; color: #000; }

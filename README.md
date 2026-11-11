@@ -50,7 +50,7 @@ There are no dependencies and no install step. Node 18+ is the only requirement.
 
 ```
 content/                 all content lives here — add files, the site picks them up
-  site.mjs               site config, engine registry, navigation
+  site.mjs               site config (incl. colour scheme: ember or lime), engine registry, navigation
   sql/                   SQL topics, grouped into ordered sections
     basics.mjs  ddl.mjs  dml.mjs  querying.mjs  joins.mjs  relational.mjs  advanced.mjs
   databases/             per-engine explorer pages

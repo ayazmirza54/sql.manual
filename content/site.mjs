@@ -6,7 +6,12 @@ export const site = {
   url: 'https://sql.manual.dev',
   updated: '2026',
   repo: 'https://github.com/ayazmirza54/sql.manual',
+  /** Colour scheme: 'ember' (warm orange, the default) or 'lime'. */
+  scheme: 'ember',
 };
+
+/** Accent colour of each scheme, for the favicon. */
+export const schemeAccent = { ember: '#ff6a1a', lime: '#7fff00' };
 
 export const nav = [
   { label: 'SQL', href: '/sql/' },

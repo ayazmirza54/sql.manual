@@ -134,7 +134,7 @@ export function layout(p) {
   };
 
   return `<!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-scheme="${esc(site.scheme)}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
