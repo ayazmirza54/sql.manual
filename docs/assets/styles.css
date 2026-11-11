@@ -748,6 +748,9 @@ a.minicard:hover { border-color: var(--accent); color: var(--tx); text-decoratio
   font-family: var(--px); font-size: 11px; font-synthesis: none; color: var(--tx-4); border-top: 1px solid var(--hair);
 }
 .ftr__status { display: inline-flex; align-items: center; gap: 6px; }
+.ftr__credit { color: var(--tx-3); }
+.ftr__credit b { color: var(--tx); font-weight: 400; }
+.ftr__credit i { color: var(--accent); font-style: normal; }
 .ftr__bar a { color: var(--tx-3); margin-left: auto; }
 .ftr__bar a:hover { color: var(--accent); }
 

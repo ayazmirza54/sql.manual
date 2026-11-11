@@ -217,6 +217,7 @@ ${hero}
   <div class="ftr__bar">
     <span>© ${site.updated} ${esc(site.name)}</span>
     <span class="ftr__status"><span class="dot dot--ok"></span>docs build ok</span>
+    <span class="ftr__credit">Made by <b>Ayaz</b> <i aria-hidden="true">×</i><span class="sr-only"> and </span> <b>Claude</b> <i aria-hidden="true">×</i><span class="sr-only"> and </span> <b>Codex</b></span>
     <a href="${site.repo}" target="_blank" rel="noopener noreferrer">Contribute a correction</a>
   </div>
 </footer>
