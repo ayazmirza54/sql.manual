@@ -4,6 +4,8 @@ export const site = {
   description:
     'SQL Terminal is a complete, searchable SQL and database reference: ANSI SQL, PostgreSQL, MySQL, SQLite, SQL Server, Oracle, Redshift, Snowflake, BigQuery and more — with syntax, examples, dialect differences and an in-browser playground.',
   url: 'https://sql.manual.dev',
+  // Social card: must be an absolute URL on the host that actually serves the site.
+  ogImage: 'https://sqlmanual.vercel.app/assets/og-image.png',
   updated: '2026',
   repo: 'https://github.com/ayazmirza54/sql.manual',
 };

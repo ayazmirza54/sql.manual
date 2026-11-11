@@ -149,9 +149,15 @@ ${keywords ? `<meta name="keywords" content="${esc(keywords)}">` : ''}
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(canonical)}">
+<meta property="og:image" content="${esc(site.ogImage)}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(site.name)} shown on a laptop and a phone">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(fullTitle)}">
 <meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${esc(site.ogImage)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/styles.css">
 <script>(function(){try{var t=localStorage.getItem('sqlt-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
